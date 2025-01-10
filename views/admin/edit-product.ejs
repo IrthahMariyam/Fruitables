@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+    <style>
+        .error-message {
+            color: red;
+        }
+        .thumbnails-container {
+            display: flex;
+            overflow-x: auto;
+        }
+        .thumbnail {
+            margin-right: 10px;
+            position: relative;
+        }
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+
+
+
+</head>
+<body>
+   
+
+<%- include("../../views/partials/admin/header") %>
+
+<section class="content-main" >
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Edit Product</h2>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    
+                    <form  id="form1" name="form">
+                        <input type="hidden" name="productId" id="productId"value="<%= product._id %>">
+
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label text-white">Product Name</label>
+                            <input type="text" name="productName" class="form-control border" id="product_name" value="<%= product.productName %>">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-white">Full description</label>
+                            <textarea name="description" class="form-control border" rows="4" id="descriptionid"><%= product.description %></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label class="form-label text-white">Regular price</label>
+                                <input type="text" name="regularPrice" class="form-control border" value="<%= product.price %>">
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label text-white">Sale price</label>
+                                <input type="text" name="salePrice" class="form-control border" value="<%= product.salesPrice %>">
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label text-white">Quantity</label>
+                                <input type="text" name="quantity" class="form-control border" value="<%= product.quantity %>">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label class="form-label text-white">Color</label>
+                                <input type="text" name="color" class="form-control border" value="<%= product.color %>">
+                            </div>
+                        </div>
+                       
+                        <div class="row">
+                            <div class="col-lg-4">
+                              <div class="mb-4">
+                                <label class="form-label text-white">Item</label>
+                              </div>
+                            </div>
+                            <div class="col-lg-4">
+                              <div class="mb-4">
+                                <input class="form-check-input" type="radio" name="item" id="item1" value="Fruit" <%= product.item === 'Fruit' ? 'checked' : '' %>>
+                                <label class="form-check-label text-white" for="item1">
+                                  Fruit
+                                </label>
+                              </div>
+                            </div>
+                            <div class="col-lg-4">
+                              <div class="mb-4">
+                                <input class="form-check-input" type="radio" name="item" id="item2" value="Vegetable" <%= product.item === 'vegetable' ? 'checked' : '' %>>
+                                <label class="form-check-label text-white" for="item2">
+                                  Vegetable
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          
+
+
+                        <div class="mb-4">
+                            <label class="form-label text-white">Category</label>
+                            <select name="category" class="form-select border">
+                                <% category.forEach(cat => { %>
+                                    <option value="<%= cat._id %>" <%= cat._id.equals(product.category) ? 'selected' : '' %>><%= cat.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+
+                        <div class="mb-4">
+                            <label class="form-label text-white">Status</label>
+                            <select name="Available" class="form-select border">
+                                <option value="Available" <%= product.status === 'Available' ? 'selected' : '' %>>Available</option>
+                                <option value="Out of Stock" <%= product.status === 'Out of Stock' ? 'selected' : '' %>>Out of Stock</option>
+                                <option value="Removed" <%= product.status === 'Removed' ? 'selected' : '' %>>Removed</option>
+                            </select>
+                        </div>
+
+                        <!-- Existing Images -->
+                        <div class="mb-4">
+                            <label class="form-label text-white">Existing Images</label>
+                            <div class="thumbnails-container" id="existingImages">
+                                <% if (product && product.productImage && product.productImage.length > 0) { %>
+                                    <% product.productImage.forEach((image, index) => { %>
+                                      <img style="width: 100px;height: 100px; "src="<%= image %>" alt="Product Image <%= index + 1 %>">
+                                      <div class="thumbnail">
+                                        <!-- <img  "src="<%= image %>" width="100" height="100" alt="Product Image"> -->
+                                        <!-- <button type="button" class="remove-btn" onclick="removeExistingImage('<%= image %>', <%= index %>)">X</button> -->
+                                    </div>
+                                    <% }); %>
+                                  <% } else { %>
+                                    <p>No images found for this product.</p>
+                                  <% } %>
+
+                                
+                                    
+                                
+                            </div>
+                        </div>
+
+                        <!-- Upload New Images -->
+                        <!-- <div class="mb-4">
+                            <label class="form-label text-white">Upload New Images</label>
+                            <input type="file" id="upload" multiple onchange="handleImage(event)" />
+                            <div id="cropperContainers"></div>
+                        </div> -->
+
+
+
+                        <!-- image new code -->
+                        <div class="mb-4">
+                            <label class="form-label text-white">Choose Images</label>
+                            <input type="file" id="upload" multiple onchange="handleImage(event)" />
+
+                            <div id="cropperContainers"></div> 
+                                                 
+                          
+                            <div id="cropperContainer1" class="crop-container" style="display: none;">
+                                <img id="cropImage1" alt="Image to crop">
+                                <button type="button" id="saveButton1" class="btn btn-primary mt-2">Save Cropped Image</button>
+                            </div>
+                        </div>
+                        <!-- image new code -->
+
+                        <div>
+                            <button class="btn btn-md btn-primary" type="submit">Update Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<script>
+    const cloudName = "dwwxgavec";  // Replace with your Cloudinary cloud name
+const uploadPreset = "my_images"; // Replace with your upload preset (can be found in Cloudinary dashboard)
+
+let croppers = {};  // Object to store the cropper instances
+let croppedImages = [];  // Array to store the cropped image blobs
+
+const handleImage = (e) => {
+    const files = e.target.files;  // Get the selected files
+    console.log("Selected Files: ", files);
+
+    // Clear any existing cropper containers
+    const cropperContainers = document.getElementById("cropperContainers");
+    cropperContainers.innerHTML = "";
+
+    // Iterate through the selected files
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+
+        // Create a new cropper container dynamically
+        const cropperContainer = document.createElement('div');
+        cropperContainer.id = `cropperContainer${i}`;
+        cropperContainer.style.marginBottom = "20px";  // Styling for separation
+        cropperContainers.appendChild(cropperContainer);
+
+        // Create an image element for previewing the selected image
+        const img = document.createElement('img');
+        img.id = `cropImage${i}`;
+        img.style.width = '300px';
+        img.style.height = '200px';
+        cropperContainer.appendChild(img);
+
+        const saveButton = document.createElement('button');
+        saveButton.textContent = 'Save Cropped Image';
+        saveButton.id = `saveButton${i}`;
+        saveButton.setAttribute("type", "button");
+        cropperContainer.appendChild(saveButton);
+
+        // Read the file as data URL
+        reader.onload = function () {
+            img.src = reader.result;
+
+            // Initialize the cropper for this image
+            if (croppers[i]) {
+                croppers[i].destroy();  // Destroy any existing cropper before initializing a new one
+            }
+
+            croppers[i] = new Cropper(img, {
+                aspectRatio: 1,  // Maintain a square aspect ratio
+                viewMode: 1,
+                autoCropArea: 1,
+            });
+
+            // Handle the "Save Cropped Image" button click event
+            saveButton.onclick = function () {
+                const croppedCanvas = croppers[i].getCroppedCanvas({
+                    width: 600,  // Resize to 600x600
+                    height: 600
+                });
+
+                // Compress and convert the cropped image to a Blob
+                croppedCanvas.toBlob(function (blob) {
+                    const url = URL.createObjectURL(blob);
+
+                    // If the image is already cropped, replace the preview with the new cropped image
+                    img.src = url;  // Replace the preview with the new cropped image
+
+                    img.dataset.blob = blob;  // Store the Blob for future submission (e.g., sending to the backend)
+
+                    // Push the cropped image Blob to the array
+                    croppedImages.push(blob);
+                    console.log("Cropped Images Array: ", croppedImages);
+
+                    // Display the cropped image
+                    const croppedImagePreview = document.createElement('img');
+                    croppedImagePreview.src = url;
+                    croppedImagePreview.style.width = '200px';
+                    croppedImagePreview.style.height = '200px';
+                    cropperContainer.appendChild(croppedImagePreview);
+
+                    // Hide the cropper container (or remove it)
+                    cropperContainer.innerHTML = '';  // Clear the cropper UI
+                    cropperContainer.appendChild(croppedImagePreview);  // Only show the cropped image
+
+                    // Add a button to allow re-cropping the cropped image
+                    const reCropButton = document.createElement('button');
+                    reCropButton.textContent = 'Re-Crop This Image';
+                    reCropButton.setAttribute("type", "button");
+                    cropperContainer.appendChild(reCropButton);
+
+                    // Handle re-cropping the cropped image
+                    reCropButton.onclick = function () {
+                        // Replace the cropped image with the cropper again
+                        img.src = url;  // Use the cropped image as the source for re-cropping
+
+                        // Destroy the previous cropper instance
+                        croppers[i].destroy();
+
+                        // Re-initialize the cropper with the cropped image
+                        croppers[i] = new Cropper(img, {
+                            aspectRatio: 1,  // Maintain a square aspect ratio
+                            viewMode: 1,
+                            autoCropArea: 1,
+                        });
+
+                        // Clear the cropped image preview and display the cropper again
+                        cropperContainer.innerHTML = '';  // Clear the cropped image preview
+                        cropperContainer.appendChild(img);  // Add the image back for cropping
+                        cropperContainer.appendChild(saveButton);  // Add the save button
+                    };
+                }, 'image/jpeg', 0.7);  // Adjust the quality of the image (0.7 = 70%)
+            };
+        };
+
+        reader.readAsDataURL(file);
+    }
+};
+
+const uploadImageToCloudinary = (blob) => {
+    const formData = new FormData();
+    formData.append("file", blob);  // Append the cropped blob
+    formData.append("upload_preset", uploadPreset);  // Add your upload preset (set in Cloudinary dashboard)
+
+    return fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData,
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            const imageUrl = data.secure_url; // Cloudinary URL for the uploaded image
+            console.log("Uploaded Image URL:", imageUrl);
+            return imageUrl;
+        })
+        .catch((error) => {
+            console.error("Error uploading image:", error);
+            return null;
+        });
+};
+
+document.getElementById('form1').onsubmit = async function (event) {
+    event.preventDefault();
+    // Get form data
+    const productName = document.getElementById('product_name').value;
+  
+    const description = document.getElementById('descriptionid').value;
+    const regularPrice = document.querySelector('[name="regularPrice"]').value;
+    const salePrice = document.querySelector('[name="salePrice"]').value;
+
+    const quantity = document.querySelector('[name="quantity"]').value;
+    const color = document.querySelector('[name="color"]').value;
+   
+    const Status = document.querySelector('[name="Available"]').value;
+
+    const category = document.querySelector('[name="category"]').value;
+    const item= document.querySelector('[name="item"]').value;
+    const radios = document.getElementsByName('item');
+   let selectedValue;
+   for (const radio of radios) { 
+    if (radio.checked) {
+         selectedValue = radio.value;
+          break; } }
+          alert(selectedValue)
+    const data = {
+        productName: productName,
+        description: description,
+        regularPrice: regularPrice,
+        salePrice: salePrice,
+        quantity: quantity,
+        color: color,
+        category: category,
+        item:selectedValue,
+    };
+
+    console.log(data,'data')
+    // Upload all cropped images to Cloudinary and get their URLs
+    const imageUrls = [];
+    for (let i = 0; i < croppedImages.length; i++) {
+        const imageUrl = await uploadImageToCloudinary(croppedImages[i]);
+        if (imageUrl) {
+            imageUrls.push(imageUrl);
+        }
+    }
+
+    // Add image URLs to the form data
+    data.images = imageUrls;
+
+    // Send the data to the backend
+    axios.post('/admin/editProduct/<%= product._id %>', data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            alert('Product added successfully');
+            window.location.href = '/admin/products';
+        })
+        .catch(error => {
+            alert(error?.response?.data?.message || error?.message || 'Error adding product');
+        });
+        document.getElementById("productForm").reset();
+         // Clear image input by resetting value
+  const imageField = document.getElementById("cropperContainers");
+  if (imageField) {
+    imageField.value = "";
+  }
+  imageField.innerHTML = "";
+  // Optional: Clear cropping preview if any
+  const croppingPreview = document.getElementById("croppingPreview");
+ 
+  if (croppingPreview) {
+    croppingPreview.src = "";
+    croppingPreview.style.display = "none";
+  }
+
+    };
+
+</script>
+
+
+
+<%- include("../../views/partials/admin/footer") %>
+
+</body>
+</html>

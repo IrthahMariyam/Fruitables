@@ -1,0 +1,223 @@
+<%- include("../../views/partials/admin/header") %>
+<style>
+  #searchform{
+    width:50%
+  }
+</style>
+
+
+
+
+
+  <!-- partial -->
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card corona-gradient-card">
+            <div class="card-body py-0 px-0 px-sm-3">
+              <div class="row align-items-center">
+                <div class="col-12 col-sm-12 col-xl-12">
+                  <h1 style="text-align:center ; font-size: 50px;">Product Details </h1>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main-panel">
+      <div class="content-wrapper">
+        <div class="main-panel">
+
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center;">
+              <form action="/admin/searchProduct" method="GET" id="searchform" style="display: flex; align-items: center;">
+                
+                <input type="text" id="search" name="searchProduct" placeholder="Search by name" required style="margin-right: 10px;">
+                <button type="submit">Search</button>
+              </form>
+            </div>
+            <div>
+             
+              <button class="btn btn-danger" style="margin-left: 10px;">
+                <a href="/admin/addProducts" class="text-white" style="text-decoration: none;">Add Product</a>
+              </button>
+            </div>
+          </div>
+          
+
+
+
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Product Details</h4>
+                    <div class="table-responsive">
+                      <table class="table table-hover" border="1">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Images</th>
+                            <th>Actions</th>
+                            <th>delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% if (products && products.length > 0) { %>
+
+                            <%for(let i=0;i<products.length;i++){%>
+                              <%console.log(products[i].productName)%>
+                              <tr>
+                                <td>
+                                  <%=products[i].productName%>
+                                </td>
+                                <td>
+                                  <%=products[i].category.name%>
+                                </td>
+                                <td>
+                                  <%=products[i].price%>
+                                </td>
+                                <td>
+                                  <img src="<%=products[i].productImage[0]%>" alt=''>
+                                </td>
+                                <td>
+                                  
+                                  <%if(products[i].isListed===false){%>
+                                    <button class="btn btn-danger" style="width: 60px;">
+                                      <a href="/admin/listProduct?id=<%=products[i]._id%>" class="text-white"
+                                        style="text-decoration: none;">List</a>
+                                    </button>
+                                    <%}else{%>
+                                      <button class="btn btn-success" style="width: 60px;">
+                                        <a href="/admin/unlistProduct?id=<%=products[i]._id%>" class="text-white"
+                                          style="text-decoration: none;">UnList</a>
+                                      </button>
+                                      <%}%>
+                                
+                                
+                                  <button class="btn btn-danger" style="width: 60px;">
+                                    <a href="/admin/geteditProduct/<%=products[i]._id%>" class="text-white"
+                                      style="text-decoration: none;">Edit</a>
+                                  </button>
+                                </td>
+                                <td>
+
+
+                                 
+                                    <button class="btn btn-danger delete-btn" onclick="softDeleteProduct(this.closest('tr'), '<%=products[i]._id%>','<%=products[i].productName%>')">Delete</button>
+                                  
+                                  
+                             
+                                  
+                                </td>
+
+                              </tr>
+                              <% }
+                            
+                            
+                            
+                            }else { %>
+                                <tr>
+                                  <td colspan="5">No products found</td>
+                                </tr>
+                                <% } %>
+
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+   <div class="container mt-3">
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+     <%for(let i=1;i<=totalPages;i++){%>
+      <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+      </li>
+      <%}%>
+      </ul>
+    </nav>
+    </div>
+ 
+
+
+
+    <%-include("../../views/partials/admin/footer")%> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      document.getElementById('form1').addEventListener('submit', function (e) {
+   console.log('Form submitted'); 
+   alert("hello")
+   //e.preventDefault()
+   
+   // Debug log
+});
+
+      // function confirmDelete() {
+      //     return confirm('Are you sure you want to delete this product?');
+      // }
+      function softDeleteProduct(row,productId,productName) {
+ 
+  alert(productId)
+  alert(productName)
+  alert("inside ejs")
+  //alert(nameField)
+  //console.log(categoryId)
+  console.log('Category ID:', productId);
+console.log('Name Field:', productName);
+
+
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`/admin/deleteProduct/${productId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        
+        body: JSON.stringify({_id:productId, name: productName})
+      })
+      .then(response => response.json())
+      .then(data => {
+        Swal.fire(
+          'Deleted!',
+          'Product has been deleted.',
+          'success'
+        );
+       
+        window.location.href = '/admin/products';
+      })
+      .catch(error => {
+        Swal.fire(
+          'Error!',
+          'An error occurred while deleting product.',
+          'error'
+        );
+      });
+    }
+  });
+}
+
+      </script>

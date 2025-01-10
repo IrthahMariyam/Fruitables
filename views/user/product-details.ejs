@@ -1,0 +1,300 @@
+ 
+ <style>
+    .zoom-result {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    top: 0;
+    left: 100%;
+    background-repeat: no-repeat;
+    border: 1px solid #ddd;
+    display: none;
+}
+
+.thumbnail {
+    transition: transform 0.2s;
+}
+
+.thumbnail:hover {
+    transform: scale(1.1);
+}
+ </style>
+ <%-include("../../views/partials/user/header")%>
+
+        <!-- Modal Search Start -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center">
+                        <div class="input-group w-75 mx-auto d-flex">
+                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Search End -->
+
+
+        <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">Shop Detail</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+                <li class="breadcrumb-item active text-white">Shop Detail</li>
+            </ol>
+        </div>
+        <!-- Single Page Header End -->
+
+
+        <!-- Single Product Start -->
+        <div class="container-fluid py-5 mt-5">
+            <div class="container py-5">
+                <div class="row g-4 mb-5">
+                    <div class="col-lg-8 col-xl-9">
+                        <div class="row g-4">
+
+
+
+                                <div class="col-lg-6">
+                                 <div class="border rounded position-relative">
+                                    <img src="<%=product.productImage[0] %>" alt="product Image" class="img-fluid rounded zoomable" id="productimagecontainer">
+                                    <div class="zoom-result"></div>
+                                 </div>
+                                 <div class="d-flex justify-content-start mt-3">
+                                 <% for(let i = 0; i < product.productImage.length; i++) { %>
+                                 <img src="<%= product.productImage[i] %>" class="thumbnail rounded border me-2" style="width: 70px; cursor: pointer;" onclick="changeMainImage('<%= product.productImage[i] %>')">
+                                 <% } %>
+                                </div>
+                        </div>
+
+
+
+
+
+
+                            
+                            <div class="col-lg-6">
+                                <h4 class="fw-bold mb-3"><%=product.productName%></h4>
+                                <p class="mb-3">Category:<%=category.name  %></p>
+                                <h5 class="fw-bold mb-3"><i class="fa fa-inr" aria-hidden="true"></i>₹ <%=product.salesPrice %>/kg</h5>
+                                <div class="d-flex mb-4">
+                              
+                              
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star text-secondary"></i>
+                                    <i class="fa fa-star"></i>
+                                </div>
+                                <p class="mb-4"><%=product.description%></p>
+                                
+                     
+                                <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                            </div>
+				<div class="col-lg-12">
+				Availability:<span class="in-stock text-success ml-5"><b><%=product.status %></b>
+                 
+                
+				</div>
+                  <div class="col-lg-12">
+                     <b><%=quantity %> </b>  Items in Stock</span>
+                    
+                       </div>
+    
+
+
+                            <div class="col-lg-12">
+                                <nav>
+                                    <div class="nav nav-tabs mb-3">
+                                        <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                            id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                            aria-controls="nav-about" aria-selected="true">Description</button>
+                                        <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                                            id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
+                                            aria-controls="nav-mission" aria-selected="false">Reviews</button>
+                                    </div>
+                                </nav>
+                                 <div class="tab-content mb-5">
+                                    <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                                        <p><%=product.description%> </p>
+                                        
+                                    </div>
+
+
+                                    <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
+                                        <div >
+                                            <%  if(product.review && product.review.length>0){  %>
+                                                <% product.review.forEach(function(review) { %>
+                                                <img src="img/avatar.jpg" class="img-fluid rounded-circle p-3" style="width: 100px; height: 100px;" alt="">
+                                               <div class="">
+                                                 <% let formattedDate = new Date(review.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }).replace(/ /g, '-'); %>
+
+                                                <p class="mb-2" style="font-size: 14px;"><%=formattedDate%></p>
+                                                <div class="d-flex justify-content-between">
+                                                    <h5><%=review.username%></h5>
+                                                    <div class="d-flex mb-3">
+                                                        <% for(let i = 0; i < (review.rating || 0); i++) { %>
+
+                                                  <i class="fa fa-star text-secondary"></i>
+                                                  <%}%>
+                                                    <%  if(review.rating <6){ %>
+                                                        <% for(let i=review.rating;i<6;i++){ %>
+                                                            <i class="fa fa-star"></i>
+                                                                <%}}%>
+                                                            </div>
+                                                        </div>
+                                                        <p class="text-dark"><%= review.text %></p>
+                                               </div>
+                                                <% }) %>
+                                                <%}else{%>
+                                                no reviews
+                                                <%}%>
+                                        </div>
+
+
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                            <form action="/productreview" method="post" class="review-form">
+                                <h4 class="mb-5 fw-bold">Leave a Reply</h4>
+                                <div class="row g-4">
+                                    <div class="col-lg-6">
+                                        <input type="hidden" name="productId" value="<%= product._id %>">
+                                        <div class="border-bottom rounded">
+                                            <input type="text" id="username" name="username" class="form-control border-0 me-4" placeholder="Your Name *" required>
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="col-lg-12">
+                                        <div class="border-bottom rounded my-4">
+                                            <textarea id="reviewText" name="reviewText" class="form-control border-0" cols="30" rows="8" placeholder="Your Review *" spellcheck="false" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="d-flex justify-content-between py-3 mb-5">
+                                            <div class="d-flex align-items-center">
+                                                <p class="mb-0 me-3">Please rate:</p>
+                                                <div class="d-flex align-items-center" style="font-size: 12px;">
+                                                       <select id="rating" name="rating" required>
+                                                        <option value="5">5 - Excellent</option>
+                                                        <option value="4">4 - Very Good</option>
+                                                        <option value="3">3 - Good</option>
+                                                        <option value="2">2 - Fair</option>
+                                                        <option value="1">1 - Poor</option>
+                                                      </select>
+                                                </div>
+                                            </div>
+                                           <button type="submit" class="btn border border-secondary text-primary rounded-pill px-4 py-3" > Post Comment</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>   
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-xl-3">
+                        <div class="row g-4 fruite">
+                            <div class="col-lg-12">
+                                <div class="input-group w-100 mx-auto d-flex mb-4">
+                                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                                </div>
+                                <div class="mb-4">
+                                    <h4>Categories</h4>
+                                    <ul class="list-unstyled fruite-categorie">
+                                        <%  for(let i=0;i<totalcategory.length;i++){ %>
+                                                    <li>
+                                                        <div class="d-flex justify-content-between fruite-name">
+                                                            <a href="/filter?category=<%=totalcategory._id%>"><i class="fas fa-apple-alt me-2"></i><%=totalcategory[i].name%></a>
+                                                           
+                                                        </div>
+                                                    </li>
+                                                   
+                                                     </li>
+                                           <%}%>
+                                             </ul>
+                                </div>
+                            </div>
+                        
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="position-relative">
+                                    <img src="img/banner-fruits.jpg" class="img-fluid w-100 rounded" alt="">
+                                    <div class="position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%);">
+                                        <h3 class="text-secondary fw-bold">Fresh <br> Fruits <br> Banner</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+			<!--Related products-->
+
+
+                <h1 class="fw-bold mb-0">Related products</h1>
+              
+              <div class="vegitable">
+                 <div class="owl-carousel vegetable-carousel justify-content-center">
+                   
+                    <% for(let i=0;i<totalProducts.length;i++){ %>
+                        <div class="border border-primary rounded position-relative vegetable-item">
+                            <div class="vegetable-img">
+                                <a href="/productDetails?id=<%=totalProducts[i]._id%>">
+                                <img src="<%= totalProducts[i].productImage[0] %>" class="img-fluid w-100 rounded-top" id="productimagecontainer"alt="">
+                            </a>
+                            </div>
+                            <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;"><%=category.name  %></div>
+                            <div class="p-2 pb-0 rounded-bottom">
+                                <h2><%=totalProducts[i].productName%></h2>
+                               
+                                <div class="d-flex justify-content-between flex-lg-wrap">
+                                    <p class="text-dark fs-5 fw-bold"><i class="fa fa-inr" aria-hidden="true"></i>₹ <%=totalProducts[i].salesPrice %> / kg</p>
+                                    <a href="#" class="btn border border-secondary rounded-pill px-3 py-1 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %> 
+                 </div>
+                </div>
+		
+       
+
+        <!-- Single Product End -->
+    
+ <%-include("../../views/partials/user/footer")%>
+ 
+ <script>
+// Switch Main Image on Thumbnail Hover
+function changeMainImage(imageUrl) {
+    const mainImage = document.querySelector('#productimagecontainer');
+    mainImage.src = imageUrl;
+}
+
+// Zoom Effect on Main Image
+document.querySelector('.zoomable').addEventListener('mousemove', function(e) {
+    const zoomResult = document.querySelector('.zoom-result');
+    const rect = this.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / this.width * 100;
+    const y = (e.clientY - rect.top) / this.height * 100;
+
+    zoomResult.style.backgroundImage = `url(${this.src})`;
+    zoomResult.style.backgroundPosition = `${x}% ${y}%`;
+    zoomResult.style.backgroundSize = `${this.width * 2}px ${this.height * 2}px`;
+    zoomResult.style.display = 'block';
+});
+
+document.querySelector('.zoomable').addEventListener('mouseleave', function() {
+    const zoomResult = document.querySelector('.zoom-result');
+    zoomResult.style.display = 'none';
+});
+
+ </script>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            
+        background-image: url("../img/bg1.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #81C408;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: #5e9e06;
+        }
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #81C408;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .google-btn:hover {
+            background-color: #5e9e06;
+        }
+        #error {
+            color: red;
+            font-size: 14px;
+        }
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .signup-link a {
+            color: #81C408;
+            text-decoration: none;
+        }
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm" method="post" action="/login">
+            <%if(locals.message && message.length>0){%>
+            <div id="error" class="alert alert-danger text-center">
+              <%=message%>
+            </div>
+            <% } %>
+            <div class="form-group">
+                 <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" name="email" placeholder="Enter email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" name="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        
+       <div ><center><br><a href="/auth/google" class="google-btn">Login with Google</a>
+        
+        </center>
+        </div>
+        <div class="signup-link">
+            Don't have an account? <a href="/signup">Sign Up</a>
+        </div>
+        <div class="signup-link">
+            Forgot Password? <a href="forgotpassword">Reset Password</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('form').addEventListener('submit', formValidate);
+        });
+
+        function formValidate(e) {
+            console.log("Validating login form");
+            e.preventDefault();
+
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            if (email === "" || password === "") {
+                alert("All fields are required.");
+                return false;
+            } else if (!validateEmail(email)) {
+                alert("Invalid email format.");
+                return false;
+            }
+
+            e.target.submit();
+            return true;
+        }
+
+        function validateEmail(email) {
+            var emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailReg.test(email);
+        }
+    </script>
+</body>
+</html>
