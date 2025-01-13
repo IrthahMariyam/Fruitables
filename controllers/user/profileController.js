@@ -23,12 +23,14 @@ const loadProfile=async (req, res) => {
     try {
        const id=req.params;
        console.log(id,"inside loadprofile params id value")
-        const user = req.session.user;
+        const user = req.session.user
         console.log(user);
         if (user) {
             const userData = await User.findOne({_id: user._id });
+           
+
             // const useraddress=await Address.findOne({userId:user._id})
-            const userAddress = await Address.findOne({userId:user._id }).populate('user._id');
+            const userAddress = await Address.find({userId:user._id }).populate('userId');
             res.locals.user = userData.name;
             console.log(userData,"userinside loadprofile")
             console.log(userAddress,"useraddressinside loadprofile")
@@ -76,83 +78,6 @@ const deleteAccount=async(req,res)=>{
     }
 }
 
-// const changePassword=async(req,res)=>{
-//     try {
-//         const { id } = req.params;
-//         const {userId,oldPassword,newPassword }=req.body;
-//         console.log("inside change Password",userId,oldPassword,newPassword);
-        
-//         const findUser = await User.findOne({ _id: userId, isAdmin: false });
-//         const userAddress = await Address.findOne({userId:userId }).populate('userId');
-//     if(findUser){
-//          const passwordMatch = await bcrypt.compare(oldPassword, findUser.password);
-//             if (!passwordMatch) {
-//               return res.render("profile", { message: "Incorrect old password",
-//                                                      user:findUser,
-//                                                      address:userAddress
-//                });
-//             }else{
-//                 const passwordHash = await securePassword(newPassword);
-//                 await User.updateOne(
-//                     { _id: userId },
-//                     { $set: { password: passwordHash } }
-//                   );
-//                   console.log("succes");
-//                   return res.render("profile", { message: "Incorrect old password",
-//                     user:findUser,
-//                     address:userAddress
-//                })
-//             }            
-
-        
-
-//     }else{
-//         console.log("userblocked")
-//     }
-        
-//     } catch (error) {
-//         res.status(500).json({ error: 'Internal server error' });
-//         console.log("not found", error.message);
-//     }
-// }
-// const changePassword = async (req, res) => {
-//     try {console.log("inside change password")
-//       const { userId, oldPassword, newPassword } = req.body;
-
-//       console.log("inside change Password", userId, oldPassword, newPassword);
-      
-//       const findUser = await User.findOne({ _id: userId, isAdmin: false });
-//       const userAddress = await Address.findOne({ userId: userId }).populate('userId');
-//       console.log("User found:", findUser);
-  
-//       if (findUser) {
-//         const passwordMatch = await bcrypt.compare(oldPassword, findUser.password);
-//         console.log("Password match:", passwordMatch);
-  
-//         if (!passwordMatch) {
-//           return res.status(400).json({ error: "Incorrect old password" });
-//         }
-  
-//         const passwordHash = await securePassword(newPassword);
-//         console.log("New password hash:", passwordHash);
-  
-//         await User.updateOne(
-//           { _id: userId },
-//           { $set: { password: passwordHash } }
-//         );
-//         console.log("Password updated successfully");
-  
-//         return res.status(200).json({ message: "Password changed successfully!" });
-//       } else {
-//         console.log("User not found or blocked");
-//         return res.status(400).json({ error: 'User not found or blocked' });
-//       }
-  
-//     } catch (error) {
-//       console.error("Change password error:", error);
-//       res.status(500).json({ error: 'Internal server error' });
-//     }
-//   };
 const changePassword = async (req, res) => {
     try {
       const { userId, oldPassword, newPassword } = req.body;
@@ -194,17 +119,39 @@ const changePassword = async (req, res) => {
     }
   };
   
-  const addAddress=async(req,res)=>{
-
-    try {
-        const address = new Address(req.body);
-        await address.save();
-        res.json({ message: 'Address added successfully!' });
-      } catch (error) {
-        res.status(500).json({ message: 'Error adding address!' });
-      }
+  
+    const addAddress = async (req, res) => {
+        try {console.log("added")
+            const { Id,name, landmark, district, state, pincode, phone } = req.body;
+            //const userId = req.user.id; // Assuming userAuth middleware sets `req.user`
+            console.log("req body",req.body);
+            const userData = await User.findOne({_id: Id ,isAdmin:false});
+            console.log(userData,"inside addddress")
+            if(userData){
+                const newAddress = new Address({
+                userId: Id,
+                name: name,
+                landmark: landmark,
+                district: district,
+                state: state,
+                pincode: pincode,
+                phone: phone
+            });
+    
+          const addres=  await newAddress.save();
+          if(addres)console.log("successfully added")
+            else
+        console.log("nothing added")
+            res.status(200).json({ message: 'Address added successfully' });
+        }else{
+            res.status(500).json({ error: 'User Blocked by Admin' });
+        }
+        } catch (error) {
+            console.error('Add Address Error:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
     };
-
+    
     const getAddress=async(req,res)=>{
         try {
             const address = await Address.findById(req.params.id);
@@ -223,15 +170,41 @@ const updateAddress=async(req,res)=>{
       }
     }
 
-const deleteAddress=async(req,res)=>{
-
+const deleteAddress = async (req, res) => {
     try {
-        await Address.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Address deleted successfully!' });
-      } catch (error) {
-        res.status(500).json({ message: 'Error deleting address!' });
+      const addressId = req.params.id;
+      const userId = req.session.user?._id;
+  
+      if (!userId) {
+        return res.redirect('/login'); // Redirect to login if session is missing
       }
+  
+      const user = await User.findOne({ _id: userId, isAdmin: false });
+  
+      if (!user) {
+        return res.render('home', { message: 'User blocked' });
+      }
+  
+      // Delete the address
+      const addressDelete = await Address.findByIdAndDelete(addressId);
+  
+      if (addressDelete) {
+        console.log('Address deleted successfully');
+      } else {
+        console.log('No such address found');
+      }
+  
+      // Fetch the updated address list
+      const updatedAddresses = await Address.find({ userId: userId });
+  
+      // Redirect back to the profile page
+      res.render('profile',{user:user,address:updatedAddresses});
+    } catch (error) {
+      console.error('Error deleting address:', error.message);
+      res.status(500).json({ message: 'Error deleting address!' });
     }
+  };
+  
 
 
 module.exports={
