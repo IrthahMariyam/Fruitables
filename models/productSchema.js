@@ -17,8 +17,8 @@ const productSchema=new Schema({
     },
     item:{
         type :String,
-        enum: ['Fruit', 'Vegetable'],
-         required: true
+        enum: ['Fruit', 'vegetable'],
+         
       
     },
     

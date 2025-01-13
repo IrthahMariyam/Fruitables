@@ -2,22 +2,20 @@ const express=require('express')
 const router=express.Router();
 const adminController=require("../controllers/admin/adminController")
 const {userAuth,adminAuth}=require('../middlewares/auth')
-const multer=require('multer');
+//const multer=require('multer');
 const path=require("path")
 // const storage=require('../helpers/multer')
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/images');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    }
-});
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, 'public/images');
+//     },
+//     filename: function (req, file, cb) {
+//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+//     }
+// });
 
-const uploads = multer({ storage: storage });
-
-
+//const uploads = multer({ storage: storage });
 
 router.get("/pageerror",adminController.pageerror)
 router.get("/login",adminController.loadLogin)

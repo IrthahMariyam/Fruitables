@@ -93,12 +93,14 @@
                                 <div class="col-lg-12">
                                     <div class="row g-4">
                                         <% for(let i=0;i<products.length;i++){ %>
-                                            <% console.log(products[i].item) %>
+                                           
                                         <div class="col-md-6 col-lg-4 col-xl-3">  
                                             <div class="rounded position-relative fruite-item">
+                                                <a href="/productDetails?id=<%=products[i]._id%>">
                                                 <div class="fruite-img">
                                                     <img src="<%=products[i].productImage[0]%>" class="img-fluid w-100 rounded-top" alt="">
                                                 </div>
+                                            </a>
                                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;"><%=products[i].category.name%></div>
                                                 <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                     <h4><%=products[i].productName%></h4>
@@ -125,21 +127,28 @@
                                             <% if(products[i].item && products[i].item==="Fruit"){%>
                                                
                                         <div class="col-md-6 col-lg-4 col-xl-3">
+                                            
                                             <div class="rounded position-relative fruite-item">
+                                                      
                                                 <div class="fruite-img">
+                                                    <a href="/productDetails?id=<%=products[i]._id%>"></a> 
                                                     <img src="<%=products[i].productImage[0]%>" class="img-fluid w-100 rounded-top" alt="">
+                                                    </a>
                                                 </div>
+                                          
                                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;"><%=products[i].category.name%></div>
                                                 <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                     <h4><%=products[i].productName%></h4>
-                                                    
+                                               
                                                     <div class="d-flex justify-content-between flex-lg-wrap">
                                                         <p class="text-dark fs-5 fw-bold mb-0">₹<%=products[i].salesPrice %>/ kg</p>
                                                         <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
                                                     </div>
                                                 </div>
                                             </div>
+                                        
                                         </div>
+                                  
                                         <%}}%>
                                     </div>
                                 </div>
@@ -233,15 +242,17 @@
         <!-- Vesitable Shop Start-->
         <div class="container-fluid vesitable py-5">
             <div class="container py-5">
-                <h1 class="mb-0">Fresh Organic Vegetables</h1>
+                <h1 class="mb-0">Fresh Organic Fruits and Vegetables</h1>
                 <div class="owl-carousel vegetable-carousel justify-content-center">
                     <%for(let i=0;i<products.length;i++){%>
-                        <%if(products[i].category.name==="Vegetable"){%>
+                        <%if((products[i].category.name==="Organic Vegetable") ||(products[i].category.name==="Organic Fruits")){%>
                      <div class="border border-primary rounded position-relative vesitable-item">
+                        <a href="/productDetails?id=<%=products[i]._id%>">
                         <div class="vesitable-img">
                             <img src="<%=products[i].productImage[0]%>" class="img-fluid w-100 rounded-top" alt="">
                         </div>
-                        <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">Vegetable</div>
+                        </a>
+                        <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px;">Organic</div>
                         <div class="p-4 rounded-bottom">
                              <h4><%=products[i].productName%></h4>
                                 <div class="d-flex justify-content-between flex-lg-wrap">

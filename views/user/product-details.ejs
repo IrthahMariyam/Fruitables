@@ -59,9 +59,6 @@
                 <div class="row g-4 mb-5">
                     <div class="col-lg-8 col-xl-9">
                         <div class="row g-4">
-
-
-
                                 <div class="col-lg-6">
                                  <div class="border rounded position-relative">
                                     <img src="<%=product.productImage[0] %>" alt="product Image" class="img-fluid rounded zoomable" id="productimagecontainer">
@@ -72,45 +69,47 @@
                                  <img src="<%= product.productImage[i] %>" class="thumbnail rounded border me-2" style="width: 70px; cursor: pointer;" onclick="changeMainImage('<%= product.productImage[i] %>')">
                                  <% } %>
                                 </div>
-                        </div>
-
-
-
-
-
-
-                            
+                                </div>
                             <div class="col-lg-6">
                                 <h4 class="fw-bold mb-3"><%=product.productName%></h4>
                                 <p class="mb-3">Category:<%=category.name  %></p>
                                 <h5 class="fw-bold mb-3"><i class="fa fa-inr" aria-hidden="true"></i>₹ <%=product.salesPrice %>/kg</h5>
-                                <div class="d-flex mb-4">
-                              
-                              
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star"></i>
+                                <div class="mb-3">
+                                    <%let size=product.review.length%>
+                                    <%if(size>0){%>
+                                    <%let sumofratings=0%>
+                                    <% for(let i = 0; i < size; i++) { %>
+
+                                        <% sumofratings+=product.review[i].rating||0%>
+                                    <%}%>
+                                        <%let avg=Math.round(sumofratings/size)%>
+                                        <%if(avg>0){%>
+                                            <%for(let i=0;i<avg;i++){%>
+                                        <i class="fa fa-star "style="color:#81C408"></i>
+                                        <%}%>
+                                          <%  if(avg <5){ %>
+                                              <% for(let i=avg;i<5;i++){ %>
+                                                  <i class="fa fa-star"></i>
+                                                      <%}}}else{%>
+                                                        no ratings yet..
+                                         <%}}%>
+                                                    
+                               </div>
+                               <p class="mb-4"><%=product.description%></p>  
+                                                                           
                                 </div>
-                                <p class="mb-4"><%=product.description%></p>
-                                
-                     
+                             
                                 <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
                             </div>
 				<div class="col-lg-12">
 				Availability:<span class="in-stock text-success ml-5"><b><%=product.status %></b>
-                 
                 
 				</div>
                   <div class="col-lg-12">
                      <b><%=quantity %> </b>  Items in Stock</span>
                     
                        </div>
-    
-
-
-                            <div class="col-lg-12">
+                             <div class="col-lg-12">
                                 <nav>
                                     <div class="nav nav-tabs mb-3">
                                         <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
@@ -140,12 +139,13 @@
                                                 <div class="d-flex justify-content-between">
                                                     <h5><%=review.username%></h5>
                                                     <div class="d-flex mb-3">
+                                                        
                                                         <% for(let i = 0; i < (review.rating || 0); i++) { %>
 
-                                                  <i class="fa fa-star text-secondary"></i>
+                                                  <i class="fa fa-star "style="color:#81C408"></i>
                                                   <%}%>
-                                                    <%  if(review.rating <6){ %>
-                                                        <% for(let i=review.rating;i<6;i++){ %>
+                                                    <%  if(review.rating <5){ %>
+                                                        <% for(let i=review.rating;i<5;i++){ %>
                                                             <i class="fa fa-star"></i>
                                                                 <%}}%>
                                                             </div>

@@ -1,34 +1,6 @@
 const User = require("../models/userSchema");
+const Address = require("../models/addressSchema");
 
-// const userAuth = async (req, res, next) => {
-//    //res.locals.user=req.session.user||null;
-//   if (req.session.user) {
-  
-//   await  User.findById(req.session.user)
-//       .then((data) => {
-//         if (data && !data.isBlocked) {
-//            res.locals.user=req.session.user;
-//            console.log("asdfafadfadfadsfdsfadfadsf")
-//            console.log(req.session.user)
-//            console.log("console",res.locals.user)
-//           res.render("home");
-          
-//           next();
-//         } else {
-//             res.locals.user=null;
-//           res.redirect("/login");
-//         }
-//       })
-//       .catch((_error) => {
-//         console.log("Error in user auth middelware");
-//         res.status(500).send("Internal server error");
-//       });
-//   } else {
-//    res.locals.user=null;
-//     res.redirect("/login");
-//   }
-
-// }
 const userAuth = async (req, res, next) => {
   try {console.log("inside userrauth start");
   
@@ -42,7 +14,8 @@ const userAuth = async (req, res, next) => {
         next(); 
       } else {
         res.locals.user = null; 
-        res.redirect("/login");
+        next();
+       // res.redirect("/login");
        
       }
     } else {

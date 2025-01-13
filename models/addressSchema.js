@@ -15,7 +15,7 @@ const addressSchema=new Schema({
             type:String,
             required:true,
         },
-        city:{
+        district:{
             type:String,
             required:true,
         },
@@ -27,11 +27,7 @@ const addressSchema=new Schema({
             type:String,
             required:true,
             },
-        country:{
-                type:String,
-                required:true,
-            },
-            pincode:{
+               pincode:{
                 type:Number,
                 required:true,
             },
