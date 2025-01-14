@@ -161,6 +161,8 @@
 </head>
 <body>
     <%- include("../../views/partials/user/header") %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <div class="main-container">
         <section class="shop-page container">
             <div class="shop-topbar">
@@ -196,7 +198,7 @@
                                 <h4><%= products[i].productName %></h4>
                                 <p><strike>₹<%= products[i].price %></strike> ₹<%= products[i].salesPrice %></p>
                             </a>
-                            <button class="add-to-cart-btn">Add to Cart</button>
+                            <button class="add-to-cart-btn" onclick="addToCart('<%= products[i]._id %>')">Add to Cart</button>
                         </div>
                     <% } %>
                 </main>
@@ -223,6 +225,40 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <%- include("../../views/partials/user/footer") %>
+    <script> 
+        function addToCart(productId) {
+            fetch('/cart/add', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ productId }),
+})
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.message) {
+      Swal.fire({
+        title: "Success",
+        text: "Successfully added to cart",
+        icon: "success",
+      }).then(() => {
+        // Wait for 2.5 seconds before reloading the page
+        setTimeout(() => {
+          window.location.reload();
+        }, 2500);
+      });
+    } else {
+      Swal.fire('Error', 'Failed to add product to cart', 'error');
+    }
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+    Swal.fire('Error', 'Something went wrong!', 'error');
+  });
+
+          }
+    </script>     
+
 </body>
 </html>
 

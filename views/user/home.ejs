@@ -92,7 +92,7 @@
                             <div class="row g-4">
                                 <div class="col-lg-12">
                                     <div class="row g-4">
-                                        <% for(let i=0;i<products.length;i++){ %>
+                                        <% for(let i=0;i<9;i++){ %>
                                            
                                         <div class="col-md-6 col-lg-4 col-xl-3">  
                                             <div class="rounded position-relative fruite-item">
@@ -100,16 +100,17 @@
                                                 <div class="fruite-img">
                                                     <img src="<%=products[i].productImage[0]%>" class="img-fluid w-100 rounded-top" alt="">
                                                 </div>
-                                            </a>
+                                           
                                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;"><%=products[i].category.name%></div>
                                                 <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                     <h4><%=products[i].productName%></h4>
-                                                    
+                                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> View More</a>
                                                     <div class="d-flex justify-content-between flex-lg-wrap">
                                                         <p class="text-dark fs-5 fw-bold mb-0">₹<%=products[i].salesPrice %>/ kg</p>
-                                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                       
                                                     </div>
                                                 </div>
+                                            </a>
                                             </div>
                                        </div>
                                        <%}%>
@@ -129,22 +130,23 @@
                                         <div class="col-md-6 col-lg-4 col-xl-3">
                                             
                                             <div class="rounded position-relative fruite-item">
-                                                      
+                                                <a href="/productDetails?id=<%=products[i]._id%>">
                                                 <div class="fruite-img">
-                                                    <a href="/productDetails?id=<%=products[i]._id%>"></a> 
+                                                   
                                                     <img src="<%=products[i].productImage[0]%>" class="img-fluid w-100 rounded-top" alt="">
-                                                    </a>
+                                                    
                                                 </div>
                                           
                                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;"><%=products[i].category.name%></div>
                                                 <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                     <h4><%=products[i].productName%></h4>
-                                               
+                                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> View More</a> 
                                                     <div class="d-flex justify-content-between flex-lg-wrap">
                                                         <p class="text-dark fs-5 fw-bold mb-0">₹<%=products[i].salesPrice %>/ kg</p>
-                                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                       
                                                     </div>
                                                 </div>
+                                            </a>
                                             </div>
                                         
                                         </div>
@@ -168,10 +170,10 @@
                                                 <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;"><%=products[i].category.name%></div>
                                                 <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                     <h4><%=products[i].productName%></h4>
-                                                   
+                                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> View More</a> 
                                                     <div class="d-flex justify-content-between flex-lg-wrap">
                                                         <p class="text-dark fs-5 fw-bold mb-0">₹<%=products[i].salesPrice %>/ kg</p>
-                                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                       
                                                     </div>
                                                 </div>
                                             </div>
@@ -257,7 +259,7 @@
                              <h4><%=products[i].productName%></h4>
                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                 <p class="text-dark fs-5 fw-bold mb-0">₹<%=products[i].salesPrice %>/ kg</p>
-                                <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                               
                                 </div>
                         </div>
                     </div>
@@ -343,7 +345,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <h4 class="mb-3">3.12 $</h4>
-                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -364,7 +366,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <h4 class="mb-3">3.12 $</h4>
-                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -385,7 +387,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <h4 class="mb-3">3.12 $</h4>
-                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -406,7 +408,8 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <h4 class="mb-3">3.12 $</h4>
-                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                   
+                                    
                                 </div>
                             </div>
                         </div>
@@ -427,7 +430,7 @@
                                         <i class="fas fa-star"></i>
                                     </div>
                                     <h4 class="mb-3">3.12 $</h4>
-                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                    <!-- <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> -->
                                 </div>
                             </div>
                         </div>
@@ -445,7 +448,7 @@
                                     <i class="fas fa-star"></i>
                                 </div>
                                 <h4 class="mb-3">3.12 $</h4>
-                                <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                <!-- <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> -->
                             </div>
                         </div>
                     </div>
@@ -462,7 +465,7 @@
                                     <i class="fas fa-star"></i>
                                 </div>
                                 <h4 class="mb-3">3.12 $</h4>
-                                <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                <!-- <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> -->
                             </div>
                         </div>
                     </div>
@@ -479,7 +482,7 @@
                                     <i class="fas fa-star"></i>
                                 </div>
                                 <h4 class="mb-3">3.12 $</h4>
-                                <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                <!-- <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a> -->
                             </div>
                         </div>
                     </div>
@@ -496,7 +499,7 @@
                                     <i class="fas fa-star"></i>
                                 </div>
                                 <h4 class="mb-3">3.12 $</h4>
-                                <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                <!-- <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> View More</a> -->
                             </div>
                         </div>
                     </div>
@@ -635,4 +638,34 @@
         <!-- Tastimonial End -->
 
 
-    <%-include("../../views/partials/user/footer")%>  
+    <%-include("../../views/partials/user/footer")%> 
+    <script> 
+    function addToCart(productId) {
+        fetch('/cart/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({productId }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message) {
+             
+     Swal.fire({
+    title: "Success",
+    text: "successfully added to cart",
+    icon: "success"
+  });
+  window.location.reload()
+            } else {
+              Swal.fire('Error', 'Failed to add product to cart', 'error');
+
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'Something went wrong!', 'error');
+          });
+      }
+</script>     

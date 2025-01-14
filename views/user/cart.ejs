@@ -37,6 +37,7 @@
         <div class="container-fluid py-5">
             <div class="container py-5">
                 <div class="table-responsive">
+                    <% if (cart.items.length > 0) { %>
                     <table class="table">
                         <thead>
                           <tr>
@@ -45,127 +46,69 @@
                             <th scope="col">Price</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Total</th>
+                            <!-- <th scope="col">Status</th> -->
                             <th scope="col">Handle</th>
                           </tr>
                         </thead>
                         <tbody>
+                            <% cart.items.forEach(item => { %>
                             <tr>
                                 <th scope="row">
                                     <div class="d-flex align-items-center">
-                                        <img src="img/vegetable-item-3.png" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                                        <img src="<%=item.productId.productImage[0]%>" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
                                     </div>
                                 </th>
                                 <td>
-                                    <p class="mb-0 mt-4">Big Banana</p>
+                                    <p class="mb-0 mt-4"><%=item.productId.productName%></p>
                                 </td>
                                 <td>
-                                    <p class="mb-0 mt-4">2.99 $</p>
+                                    <p class="mb-0 mt-4">₹<%= item.price.toFixed(2) %></p>
                                 </td>
                                 <td>
+                                    <p class="mb-0 mt-4"><%= item.quantity %></p>
+                                </td>
+                                
+                                    <td>
+                                        <p class="mb-0 mt-4">₹<%= item.totalPrice.toFixed(2) %></p>
+                                    </td>
+                                    <td>
                                     <div class="input-group quantity mt-4" style="width: 100px;">
                                         <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-minus rounded-circle bg-light border" >
+                                            <button class="btn btn-sm btn-minus rounded-circle bg-light border" onclick="updateQuantity('<%= item.productId._id %>', '<%= item.quantity - 1 %>')">
                                             <i class="fa fa-minus"></i>
                                             </button>
                                         </div>
-                                        <input type="text" class="form-control form-control-sm text-center border-0" value="1">
+                                       
                                         <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                            <button class="btn btn-sm btn-plus rounded-circle bg-light border" onclick="updateQuantity('<%= item.productId._id %>', '<%= item.quantity + 1 %>')">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </td>
+                                
                                 <td>
-                                    <p class="mb-0 mt-4">2.99 $</p>
-                                </td>
-                                <td>
-                                    <button class="btn btn-md rounded-circle bg-light border mt-4" >
+                                    <button class="btn btn-md rounded-circle bg-light border mt-4" onclick="removeFromCart('<%= item.productId._id %>')" >
                                         <i class="fa fa-times text-danger"></i>
                                     </button>
                                 </td>
                             
                             </tr>
-                            <tr>
-                                <th scope="row">
-                                    <div class="d-flex align-items-center">
-                                        <img src="img/vegetable-item-5.jpg" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="" alt="">
-                                    </div>
-                                </th>
-                                <td>
-                                    <p class="mb-0 mt-4">Potatoes</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 mt-4">2.99 $</p>
-                                </td>
-                                <td>
-                                    <div class="input-group quantity mt-4" style="width: 100px;">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-minus rounded-circle bg-light border" >
-                                            <i class="fa fa-minus"></i>
-                                            </button>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm text-center border-0" value="1">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0 mt-4">2.99 $</p>
-                                </td>
-                                <td>
-                                    <button class="btn btn-md rounded-circle bg-light border mt-4" >
-                                        <i class="fa fa-times text-danger"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">
-                                    <div class="d-flex align-items-center">
-                                        <img src="img/vegetable-item-2.jpg" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="" alt="">
-                                    </div>
-                                </th>
-                                <td>
-                                    <p class="mb-0 mt-4">Awesome Brocoli</p>
-                                </td>
-                                <td>
-                                    <p class="mb-0 mt-4">2.99 $</p>
-                                </td>
-                                <td>
-                                    <div class="input-group quantity mt-4" style="width: 100px;">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-minus rounded-circle bg-light border" >
-                                            <i class="fa fa-minus"></i>
-                                            </button>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm text-center border-0" value="1">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0 mt-4">2.99 $</p>
-                                </td>
-                                <td>
-                                    <button class="btn btn-md rounded-circle bg-light border mt-4" >
-                                        <i class="fa fa-times text-danger"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            <% }); %>
+                            
+                            
                         </tbody>
                     </table>
+                    <p>Total: ₹<%= cart.items.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(2) %></p>
+                     <% } else { %>
+                   <p>Your cart is empty.</p>
+                         <% } %>
                 </div>
-                <div class="mt-5">
+                <!-- <div class="mt-5">
                     <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
                     <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Apply Coupon</button>
-                </div>
-                <div class="row g-4 justify-content-end">
+                </div> -->
+                <!-- <div class="row g-4 justify-content-end">
                     <div class="col-8"></div>
                     <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
                         <div class="bg-light rounded">
@@ -190,8 +133,79 @@
                             <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Proceed Checkout</button>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
         <!-- Cart Page End -->
+
+
+        <script>
+            // Function to update quantity
+            // function updateQuantity(productId, quantity) {
+            //   if (quantity < 1) {
+            //     alert('Quantity cannot be less than 1');
+            //     return;
+            //   }
+            //   fetch('/cart/update', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ productId, quantity }),
+            //   }).then(() => location.reload());
+            // }
+        
+            // // Function to remove product from cart
+            // function removeFromCart(productId) {
+            //   fetch('/cart/remove', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ productId }),
+            //   }).then(() => location.reload());
+            // }
+
+            // Update Quantity Function
+function updateQuantity(productId, quantity) {
+  if (quantity < 1) {
+    alert('Quantity cannot be less than 1');
+    return;
+  }
+  fetch('/cart/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ productId, quantity }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((data) => {
+          alert(data.error || 'Failed to update cart');
+        });
+      }
+      location.reload();
+    })
+    .catch((error) => {
+      console.error('Error updating cart:', error);
+    });
+}
+
+// Remove Product From Cart
+function removeFromCart(productId) {
+  fetch('/cart/remove', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ productId }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((data) => {
+          alert(data.error || 'Failed to remove product from cart');
+        });
+      }
+      location.reload();
+    })
+    .catch((error) => {
+      console.error('Error removing product from cart:', error);
+    });
+}
+
+          </script>
         <%- include("../../views/partials/user/footer") %>
+       

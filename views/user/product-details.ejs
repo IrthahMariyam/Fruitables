@@ -20,6 +20,7 @@
 }
  </style>
  <%-include("../../views/partials/user/header")%>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <!-- Modal Search Start -->
         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -99,7 +100,7 @@
                                                                            
                                 </div>
                              
-                                <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary" onclick="addToCart('<%= product._id %>')"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
                             </div>
 				<div class="col-lg-12">
 				Availability:<span class="in-stock text-success ml-5"><b><%=product.status %></b>
@@ -296,5 +297,41 @@ document.querySelector('.zoomable').addEventListener('mouseleave', function() {
     const zoomResult = document.querySelector('.zoom-result');
     zoomResult.style.display = 'none';
 });
+
+
+
+        function addToCart(productId) {
+            fetch('/cart/add', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ productId }),
+})
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.message) {
+      Swal.fire({
+        title: "Success",
+        text: "Successfully added to cart",
+        icon: "success",
+      }).then(() => {
+        // Wait for 2.5 seconds before reloading the page
+        setTimeout(() => {
+          window.location.reload();
+        }, 2500);
+      });
+    } else {
+      Swal.fire('Error', 'Failed to add product to cart', 'error');
+    }
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+    Swal.fire('Error', 'Something went wrong!', 'error');
+  });
+
+          }
+    
+
 
  </script>

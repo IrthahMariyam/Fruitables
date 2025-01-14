@@ -3,6 +3,7 @@ const router=express.Router()
 const {userAuth,adminAuth}=require('../middlewares/auth')
 const userController=require('../controllers/user/userController')
 const profileController=require('../controllers/user/profileController')
+const cartController=require('../controllers/user/cartController')
 const passport = require('passport')
 //const { userAuth } = require('../middlewares/auth')
 const User = require('../models/userSchema')
@@ -63,6 +64,11 @@ router.get("/getAddress/:id",userAuth,profileController.getAddress)
 router.post("/updateAddress/:id",userAuth,profileController.updateAddress)
 router.post("/deleteAddress/:id",userAuth,profileController.deleteAddress)
 
+//cart routes
+router.get('/getcart',userAuth,cartController.getCartPage)
+router.post("/cart/add",userAuth,cartController.addToCart);
+router.post('/cart/update', userAuth, cartController.updateCartQuantity);
+router.post('/cart/remove', userAuth, cartController.removeFromCart);
 
 
 module.exports=router;

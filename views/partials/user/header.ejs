@@ -66,7 +66,7 @@
               <a href="/home" class="nav-item nav-link active">Home</a>
               <a href="/shop" class="nav-item nav-link">Shop</a>
 
-              <!-- <a href="/logout" class="nav-item nav-link active">Logout</a>                       -->
+              
               <%console.log(locals.user)%> 
               <% if (locals.user!=null) { %>
               <a href="/userProfile/<%=user._id%>" class="nav-item nav-link active">Profile</a>
@@ -90,7 +90,7 @@
                     style="font-size: 38px; color: red"
                   ></i>
                 </a>
-                <a href="#" class="position-relative me-4 my-auto">
+                <a href="/getcart" class="position-relative me-4 my-auto">
                   <i class="fa fa-shopping-bag fa-2x"></i>
                   <span
                     class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
