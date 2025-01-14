@@ -1,5 +1,5 @@
-   
-    <style>
+<head>
+<style>
       .card-green {
         background-color: #ADD8E6;
       }
@@ -126,7 +126,7 @@
       transform: scaleX(1);
      }
      </style>
-
+</head>
 
 
 
@@ -242,8 +242,7 @@
                                     <div class="d-flex justify-content-between">
                                       <!-- Edit Button -->
                                       <button
-                                        class="btn btn-primary btn-sm"
-                                        onclick="openEditAddressModal('<%= address._id %>')">
+                                        class="btn btn-primary w-30" onclick="openEditAddressModal('<%= address._id %>')">
                                         Edit
                                       </button>
                                       <!-- Delete Button -->
@@ -414,7 +413,7 @@
       <div class="modal-body">
         <form id="addressForm">
       <input type="hidden" id="userId" name="userId">
-      
+      <input type="hidden" id="addressId" name="addressId">
 
           <div class="mb-3">
             <label for="name" class="form-label">Name</label>
@@ -434,7 +433,7 @@
           </div>
           <div class="mb-3">
             <label for="pincode" class="form-label">Pincode</label>
-            <input type="text" class="form-control" id="pincode" placeholder="Enter pincode" required>
+            <input type="tel"  pattern="[0-9]{6}" class="form-control" id="pincode" placeholder="Enter pincode" required>
           </div>
           <div class="mb-3">
             <label for="phone" class="form-label">Phone</label>
@@ -447,7 +446,48 @@
   </div>
 </div>
 
+<!-- edit -->
+<div class="modal fade" id="editaddressModal" tabindex="-1" aria-labelledby="editaddressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editaddressModalLabel">Edit Address</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editaddressForm">
+          <input  id="addressId1" name="addressId">
 
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name1" placeholder="Enter name" required>
+          </div>
+          <div class="mb-3">
+            <label for="landmark" class="form-label">Landmark</label>
+            <input type="text" class="form-control" id="landmark1" placeholder="Enter landmark"required>
+          </div>
+          <div class="mb-3">
+            <label for="district" class="form-label">District</label>
+            <input type="text" class="form-control" id="district" placeholder="Enter district" required>
+          </div>
+          <div class="mb-3">
+            <label for="state" class="form-label">State</label>
+            <input type="text" class="form-control" id="state1" placeholder="Enter state" required>
+          </div>
+          <div class="mb-3">
+            <label for="pincode" class="form-label">Pincode</label>
+            <input type="tel" pattern="[0-9]{6}" class="form-control" id="pincode1" placeholder="Enter pincode" required>
+          </div>
+          <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="phone1" placeholder="Enter phone number" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Edit Address</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 
  
@@ -598,25 +638,8 @@
     new bootstrap.Modal(document.getElementById('addressModal')).show();
   }
 
-  // Open modal for editing address
-  function openEditAddressModal(addressId) {
-    fetch(`/getAddress/${addressId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        
-        document.getElementById('name').value = data.name;
-        document.getElementById('landmark').value = data.landmark;
-        document.getElementById('District').value = data.District;
-        document.getElementById('state').value = data.state;
-        document.getElementById('pincode').value = data.pincode;
-        document.getElementById('phone').value = data.phone;
-        document.getElementById('addressModalLabel').textContent = 'Edit Address';
-        new bootstrap.Modal(document.getElementById('addressModal')).show();
-      })
-      .catch((err) => console.error(err));
-  }
-
-  // Submit form for Add/Edit
+  
+  // Submit form for Add
   document.getElementById('addressForm').addEventListener('submit', function (e) {
   e.preventDefault(); // Prevent form submission
   
@@ -657,18 +680,9 @@ alert(userId)
 
   // Prepare API call details
 
-  alert("inside")
+  //alert("inside")
 
-  const bod = {
-    userId:userId,
-    name: name,
-    landmark: landmark,
-    district: district,
-    state: state,
-    pincode: pincode,
-    phone: phone,
-  };
-  alert(userId,name,landmark,district,state,pincode,phone)
+ // alert(userId,name,landmark,district,state,pincode,phone)
  
   // Make API call
   fetch('/addAddress', {
@@ -723,7 +737,107 @@ alert(userId)
     }
   }
 
-  
+
+// Open modal for editing an address
+function openEditAddressModal(addressId) {
+  console.log(addressId,"edit addres modal")
+   fetch(`/getAddress/${addressId}`,
+   {method:'GET', 
+   headers: {
+          'Content-Type': 'application/json'
+        },})
+    .then((res) => res.json())
+    .then((data) => {
+      // Populate form fields with address data
+   alert(data.name);
+  //  alert(data.landmark);
+  //  alert(data.district);
+  //  alert(data.state);
+  //  alert(data.pincode);
+  //  alert(data.phone);
+  //  alert(addressId);
+
+      document.getElementById('addressId1').value = addressId;
+      document.getElementById('name1').value=data.name;
+      document.getElementById('landmark1').value = data.landmark;
+      document.getElementById('district').value = data.district;
+      document.getElementById('state1').value = data.state;
+      document.getElementById('pincode1').value = data.pincode;
+      document.getElementById('phone1').value = data.phone;
+      new bootstrap.Modal(document.getElementById('editaddressModal')).show();
+    })
+    .catch((err) => console.error('Error fetching address:', err));
+}
+
+// Handle form submission
+document.getElementById('editaddressForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  // Get form data
+ 
+  const addressId = document.getElementById('addressId1').value.trim();
+  const name = document.getElementById('name1').value.trim();
+  const landmark = document.getElementById('landmark1').value.trim();
+  const district = document.getElementById('district').value.trim();
+  const state = document.getElementById('state1').value.trim();
+  const pincode = document.getElementById('pincode1').value.trim();
+  const phone = document.getElementById('phone1').value.trim();
+  console.log("edited entries===============================")
+console.log(addressId)
+
+alert(addressId)
+console.log(landmark)
+console.log(district)
+console.log(state)
+console.log(pincode)
+alert(phone)
+  // Validate inputs
+  const validIndianPattern = /^[6-9]\d{9}$/;
+  const invalidPattern = /^(.)\1{9}$/;
+
+  if (!name || !landmark || !district || !state || !pincode || !phone) {
+    alert('Please fill all fields!');
+    return;
+  }
+  if (invalidPattern.test(phone)) {
+    alert('Phone number cannot be all the same digit.');
+    return;
+  }
+  if (!validIndianPattern.test(phone)) {
+    alert('Enter a valid Indian phone number.');
+    return;
+  }
+
+
+
+  // Send API request
+  fetch( `/updateAddress/${addressId}`, {
+    method: 'POST', 
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+     
+       name: name,
+        landmark: landmark,
+        district: district,
+        state: state,
+        pincode: pincode,
+        phone: phone
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      Swal.fire('Success!', 'Address updated successfully.', 'success');
+      window.location.reload(); // Reload page to reflect changes
+    })
+    .catch((err) => {
+      Swal.fire('Error!', 'An error occurred while saving the address.', 'error');
+      console.error('Error saving address:', err);
+    });
+});
+
+
+
+
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>

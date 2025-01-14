@@ -59,8 +59,8 @@ router.get("/userProfile/:userId",userAuth,profileController.loadProfile)
 router.post("/deleteAccount/:userId",userAuth,profileController.deleteAccount)
 router.post("/changePassword/:userId",userAuth,profileController.changePassword)
 router.post("/addAddress",userAuth,profileController.addAddress)
-router.get("getAddress/:id",userAuth,profileController.getAddress)
-router.put("updateAddress/:id",userAuth,profileController.updateAddress)
+router.get("/getAddress/:id",userAuth,profileController.getAddress)
+router.post("/updateAddress/:id",userAuth,profileController.updateAddress)
 router.post("/deleteAddress/:id",userAuth,profileController.deleteAddress)
 
 

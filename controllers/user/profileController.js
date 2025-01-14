@@ -121,7 +121,8 @@ const changePassword = async (req, res) => {
   
   
     const addAddress = async (req, res) => {
-        try {console.log("added")
+        try {
+            //console.log("added")
             const { Id,name, landmark, district, state, pincode, phone } = req.body;
             //const userId = req.user.id; // Assuming userAuth middleware sets `req.user`
             console.log("req body",req.body);
@@ -153,23 +154,68 @@ const changePassword = async (req, res) => {
     };
     
     const getAddress=async(req,res)=>{
-        try {
+        try {console.log("inside getaddress")
+         
             const address = await Address.findById(req.params.id);
+            console.log(address)
             res.json(address);
           } catch (error) {
             res.status(500).json({ message: 'Error fetching address!' });
           }
          }
-const updateAddress=async(req,res)=>{
 
+const updateAddress = async (req, res) => {
     try {
-        await Address.findByIdAndUpdate(req.params.id, req.body);
-        res.json({ message: 'Address updated successfully!' });
-      } catch (error) {
-        res.status(500).json({ message: 'Error updating address!' });
+      // Extract ID from params and fields from body
+      const { id } = req.params;
+      const { name, landmark, district, state, pincode, phone } = req.body;
+  
+      console.log("Request Body:", req.body);
+      console.log("Address ID:", id);
+  
+      // Find the old address by ID
+      const oldAddress = await Address.findById(id);
+  
+      if (!oldAddress) {
+        return res.status(404).json({ error: 'Address not found' });
       }
+  
+      console.log("Old Address:", oldAddress);
+  
+      // Create the updated address object
+      const newAddress = {
+        userId: oldAddress.userId,
+        name,
+        landmark,
+        district,
+        state,
+        pincode,
+        phone,
+      };
+  
+      // Check if the user is valid and not an admin
+      const userData = await User.findOne({ _id: oldAddress.userId, isAdmin: false });
+  
+      if (!userData) {
+        return res.status(403).json({ error: 'User blocked by admin' });
+      }
+  
+      // Update the address
+      const updatedAddress = await Address.findByIdAndUpdate(id, newAddress, { new: true });
+  
+      if (updatedAddress) {
+        console.log("Address successfully updated:", updatedAddress);
+        return res.status(200).json({ message: 'Address updated successfully', updatedAddress });
+      } else {
+        console.log("Failed to update address");
+        return res.status(500).json({ error: 'Failed to update address' });
+      }
+    } catch (error) {
+      console.error("Error updating address:", error);
+      return res.status(500).json({ message: 'Error updating address!', error });
     }
-
+  };
+  
 const deleteAddress = async (req, res) => {
     try {
       const addressId = req.params.id;
