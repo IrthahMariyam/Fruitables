@@ -16,7 +16,7 @@ const loadHomepage = async (req, res) => {
     //const categoryIds=categories.map((category)=>category._id.toString())
     const products = await Product.find({
       isListed: true,
-      quantity: { $gt: 0 },
+    //   stock: { $gt: 0 },
     })
       .sort({ createdOn: -1 })
       .populate("category");
@@ -27,13 +27,13 @@ const loadHomepage = async (req, res) => {
      if (user) {
       const userData = await User.findOne({ _id: user._id });
       //res.locals.name = userData.name;
-      console.log(user, "user");
-      console.log(userData, "userData");
-      console.log("session name", req.session.user.name);
+    //   console.log(user, "user");
+    //   console.log(userData, "userData");
+    //   console.log("session name", req.session.user.name);
 
-      console.log("session data", req.session.user);
+    //   console.log("session data", req.session.user);
       res.locals.user = userData.name;
-      console.log("locals data", res.locals.user);
+    //   console.log("locals data", res.locals.user);
       res.render("home", { user: userData,
          name: req.session.user.name,
          products: products,
@@ -98,7 +98,7 @@ const loadShopping = async (req, res) => {
     const products = await Product.find({
       isListed: true,
       category: { $in: categoryIds },
-      quantity: { $gt: 0 },
+    //   stock: { $gt: 0 },
     })
       .sort({ createdOn: -1 })
       .skip(skip)
@@ -106,7 +106,7 @@ const loadShopping = async (req, res) => {
     const totalProducts = await Product.countDocuments({
       isListed: true,
       category: { $in: categoryIds },
-      quantity: { $gt: 0 },
+    //   stock: { $gt: 0 },
     });
     // console.log(totalProducts,"total products")
     const totalPages = Math.ceil(totalProducts / limit);
@@ -422,89 +422,88 @@ const getProfilePage = async (req, res) => {
     res.render("profile", { user: userData.name, loggedIn: false });
   } catch (error) {
     console.log("Error for retrieve profile data", error);
-    res.redirect("/pageNotFound");
+    res.redirect("/page-404");
   }
 };
+
 const filterProduct = async (req, res) => {
-  try {
-    const user = req.session.user;
-    console.log("inside filter", user);
-    const category = req.query.category;
-    const findCategory = category
-      ? await Category.findOne({ _id: category })
-      : null;
-
-    const query = {
-      isDeleted: false,
-      quantity: { $gt: 0 },
-    };
-
-    if (findCategory) {
-      query.category = findCategory._id;
-    }
-
-    let findProducts = await Product.find(query).lean();
-    const categories = await Category.find({ isListed: true });
-    const limit = 4;
-    const page = parseInt(req.query.page) || 1;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const totalPages = Math.ceil(findProducts.length / limit);
-    let currentProduct = findProducts.slice(startIndex, endIndex);
-
-    let userData = null;
-    if (user) {
-      userData = await User.findOne({ _id: user });
-      if (userData) {
-        userData = await User.findOne({ _id: user });
-        if (userData) {
-          const searchEntry = {
-            category: findCategory ? findCategoty._id : null,
-            searchedOn: new Date(),
-          };
-          userData.searchHistory.push(searchEntry);
-          await userData.save();
-        }
+    try {
+      const userId = req.session.user ? req.session.user._id : null;
+      const category = req.query.category;
+  
+      const findCategory = category ? await Category.findOne({ _id: category }) : null;
+  
+      const query = {
+        isDeleted: false,
+      
+        // stock: { $gt: 0 },
+      };
+  
+      if (findCategory) {
+        query.category = findCategory._id;
       }
+  
+      const findProducts = await Product.find(query).lean();
+  
+      const limit = 4;
+      const page = parseInt(req.query.page) || 1;
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const totalPages = Math.ceil(findProducts.length / limit);
+      const currentProduct = findProducts.slice(startIndex, endIndex);
+  
+      let userData = null;
+      if (userId) {
+        userData = await User.findById(userId);
+  
+        // if (userData && findCategory) {
+        //   const searchEntry = {
+        //     category: findCategory._id,
+        //     searchedOn: new Date(),
+        //   };
+  
+        //   userData.searchHistory.push(searchEntry);
+        //   await userData.save();
+        // }
+      }
+  
+      const categories = await Category.find({ isListed: true });
+      res.render("shop", {
+         user: userData,
+        products: currentProduct,
+        category: categories,
+        totalPages,
+        page,
+        selectedCategory: category || null,
+      });
+    } catch (error) {
+      console.error("Error in filterProduct:", error);
+  
+      
+      res.status(500).render("page-404", { error: "An error occurred while filtering products." });
+    
     }
-
-    req.session.filterProducts = currentProduct;
-
-    res.render("shop", {
-      user: userData,
-      products: currentProduct,
-      category: categories,
-      totalPages,
-      page,
-      selectedCategory: category || null,
-    });
-    console.log("out of shop");
-  } catch (error) {
-    console.error(error);
-    res.status(500).render("errorPage"); // Render an error page
-  }
-};
+  };
+  
+  
 const productDetails = async (req, res) => {
   try {
-    console.log("inside detail page");
+  //  console.log("inside detail page");
     const userId = req.session.user;
-    console.log(
-      userId,
-      "userid in product data starttedd first in product details"
-    );
+    // console.log(  userId,  "userid in product data started first in product details");
     if (userId) {
       const userData = await User.findById(userId);
-      console.log(userData, "userdata in product details");
+      //console.log(userData, "userdata in product details");
     } else {
       userData = null;
     }
     const productId = req.query.id;
     const product = await Product.findById(productId).populate("category");
 
-    console.log("products", product);
-    console.log("ended lProducts");
+    // console.log("products", product);
+    // console.log("ended lProducts");
     const findCategory = product.category;
-    console.log(findCategory, "finded ategory");
+    // console.log(findCategory, "finded ategory");
 
     //const totalProducts=await Product.findById(findCategory._id).populate('category')
     const totalProducts = await Product.find({
@@ -514,19 +513,19 @@ const productDetails = async (req, res) => {
       category: findCategory._id,
     }).populate("category");
     const totalcategory = await Category.find({});
-    console.log("totalcount=", totalProcount);
-    console.log("totalProducts", totalProducts);
+    // console.log("totalcount=", totalProcount);
+    // console.log("totalProducts", totalProducts);
     const categoryOffer = findCategory?.categoryOffer || 0;
-    console.log(categoryOffer, "category");
+    // console.log(categoryOffer, "category");
     const productOffer = product.productOffer || 0;
-    console.log(productOffer, "prduc ofer");
+    // console.log(productOffer, "prduc ofer");
     const totalOffer = categoryOffer + productOffer;
-    console.log(totalOffer, "finded");
+    // console.log(totalOffer, "finded");
 
     res.render("product-details", {
       user: userData,
       product: product,
-      quantity: product.quantity,
+      stock: product.stock,
       totalOffer: totalOffer,
       category: findCategory,
       totalProducts: totalProducts,
@@ -542,9 +541,9 @@ const productDetails = async (req, res) => {
 
 const productReview = async (req, res) => {
   const { productId, username, rating, reviewText } = req.body;
-  console.log(req.body, "product review");
-  console.log(productId, username, rating, reviewText);
-  console.log("inside object");
+//   console.log(req.body, "product review");
+//   console.log(productId, username, rating, reviewText);
+//   console.log("inside object");
   try {
     // Find product and push new review to its array
     await Product.findByIdAndUpdate(productId, {
@@ -632,9 +631,217 @@ const deleteAccount=async(req,res)=>{
 }
 
 
+const getFilteredProducts = async (req, res) => {
+    try {
+        const { keyword, sortBy, minPrice, maxPrice, inStock } = req.query;
+    
+        const filters = {};
+    
+        if (keyword) {
+          filters.name = { $regex: keyword, $options: 'i' };
+        }
+        if (minPrice != null || maxPrice != null) {
+          filters.price = {};
+          if (minPrice != null) filters.price.$gte = Number(minPrice);
+          if (maxPrice != null) filters.price.$lte = Number(maxPrice);
+        }
+        if (inStock !== undefined) {
+          filters.stock = { $gt: 0 };
+        }
+    
+        let sortOption = {};
+        switch (sortBy) {
+          case 'popularity':
+            sortOption = { popularity: -1 };
+            break;
+          case 'priceAsc':
+            sortOption = { price: 1 };
+            break;
+          case 'priceDesc':
+            sortOption = { price: -1 };
+            break;
+          case 'averageRatings':
+            sortOption = { averageRating: -1 };
+            break;
+          case 'featured':
+            sortOption = { featured: 1 };
+            break;
+          case 'newArrivals':
+            sortOption = { createdAt: -1 };
+            break;
+          case 'aToZ':
+            sortOption = { name: 1 };
+            break;
+          case 'zToA':
+            sortOption = { name: -1 };
+            break;
+          default:
+            sortOption = { createdAt: -1 };
+        }
+    
+        const products = await Product.find(filters).sort(sortOption);
+        res.json(products);
+      } catch (error) {
+        console.error('Search error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    
+  };
+const searchProducts = async (req, res) => {
+
+    try {
+      const { query } = req.query;
+      const categories = await Category.find({ isListed: true });
+      const categoryIds = categories.map((category) => category._id.toString());
+      const page = parseInt(req.query.page) || 1;
+      const limit = 9;
+      const skip = (page - 1) * limit;
+      const products = await Product.find({
+        isDeleted: false,
+        productName: { $regex: query, $options: 'i' } // Case-insensitive regex search
+      }).lean()     
+      
+        .sort({ createdOn: -1 })
+        .skip(skip)
+        .limit(limit);
+      const totalProducts = await Product.countDocuments({
+        isListed: true,
+        category: { $in: categoryIds },
+      //   stock: { $gt: 0 },
+      });
+      // console.log(totalProducts,"total products")
+      const totalPages = Math.ceil(totalProducts / limit);
+  
+      const categoryWithIds = categories.map((category) => ({
+        _id: category._id,
+        name: category.name,
+      }));
+     
 
 
+  
+      // If no query provided, return all products
+      
+      if (!query) {
+        const product = await Product.find({ isDeleted: false }).lean();
+        return res.render("shop", {
+        
+          products: product,
+          category: categoryWithIds,
+          totalProducts: totalProducts,
+          page: page,
+          totalPages: totalPages,
+        });
+  
+      }
+  
+      // Perform a case-insensitive search
+      
+    
+      res.render('shop', { products:products , 
+        category: categoryWithIds,
+        totalProducts: totalProducts,
+          page: page,
+          totalPages: totalPages,  });
+    } catch (error) {
+      console.error('Error in searchProducts:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+  
+  
+  const searchAndSortProducts = async (req, res) => {
+    try {
+      const { keyword, sortBy, page = 1 } = req.query;
+  const category=await await Category.find({});
+      // Base query for products
+      const query = { isDeleted: false };
+      //const categories = await Category.find({});
+  
+      // If a keyword is provided, perform a case-insensitive search
+      if (keyword) {
+        query.productName = { $regex: new RegExp(keyword, "i") };
+      }
+  
+      // Sorting logic
+      let sort = {};
+      switch (sortBy) {
+        case "priceAsc":
+          sort.price = 1; // Sort by price low to high
+          break;
+        case "priceDesc":
+          sort.price = -1; // Sort by price high to low
+          break;
+        case "instock":
+          query.stock = { $gt: 0 }; // Filter for products in stock
+          break;
+        case "newArrivals":
+          sort.createdOn = -1; // Newest products first
+          break;
+        case "featured":
+          sort.isFeatured = -1; // Featured products
+          break;
+        case "popularity":
+          sort.popularity = -1; // Most popular products
+          break;
+        case "averageRatings":
+          sort.averageRating = -1; // Highest-rated products
+          break;
+        case "aToZ":
+          sort.productName = 1; // Alphabetical order (A to Z)
+          break;
+        case "zToA":
+          sort.productName = -1; // Reverse alphabetical order (Z to A)
+          break;
+        default:
+          sort = {}; // Default sorting (no specific order)
+      }
+  
+      // Pagination setup
+      const limit = 9;
+      const skip = (page - 1) * limit;
+  
+      // Fetch filtered and sorted products with pagination
+      const products = await Product.find(query)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean();
+  
+      // Count total products for pagination
+      const totalProducts = await Product.countDocuments(query);
+      const totalPages = Math.ceil(totalProducts / limit);
+  
+      res.status(200).render("shop", {
+        products,
+        sortBy: sortBy || "default", // Pass default if no sortBy is provided
+        keyword: keyword || "", // Pass empty string if no keyword is provided
+        totalProducts,
+        category:category,
+        page: parseInt(page),
+        totalPages,
+      });
+    } catch (error) {
+      console.error("Error in searchAndSortProducts:", error);
+      res.status(500).json({ error: "Failed to fetch products." });
+    }
+  
+  
+  
+      // res.status(200).render("shop", {
+      //   products,
+      //   sortBy: sortBy || "default", // Pass default if no sortBy is provided
+      //   keyword: keyword || "", // Pass empty string if no keyword is provided
+      //   totalProducts,
+      //   category,
+      //   page: parseInt(page),
+      //   totalPages,
+      // });
+   
+  };
+  
 
+  
 
 
 module.exports = {
@@ -658,7 +865,9 @@ module.exports = {
   filterProduct,
   productDetails,
   productReview,
-
+  getFilteredProducts,
+  searchProducts,
+  searchAndSortProducts,
 
 
   loadProfile,

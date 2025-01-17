@@ -74,8 +74,8 @@
                                 <input type="text" name="salePrice" class="form-control border" value="<%= product.salesPrice %>">
                             </div>
                             <div class="col-lg-4">
-                                <label class="form-label text-white">Quantity</label>
-                                <input type="text" name="quantity" class="form-control border" value="<%= product.quantity %>">
+                                <label class="form-label text-white">Stock</label>
+                                <input type="text" name="stock" class="form-control border" value="<%= product.stock %>">
                             </div>
                         </div>
 
@@ -338,7 +338,7 @@ document.getElementById('form1').onsubmit = async function (event) {
     const regularPrice = document.querySelector('[name="regularPrice"]').value;
     const salePrice = document.querySelector('[name="salePrice"]').value;
 
-    const quantity = document.querySelector('[name="quantity"]').value;
+    const stock = document.querySelector('[name="stock"]').value;
     const color = document.querySelector('[name="color"]').value;
    
     const Status = document.querySelector('[name="Available"]').value;
@@ -357,7 +357,7 @@ document.getElementById('form1').onsubmit = async function (event) {
         description: description,
         regularPrice: regularPrice,
         salePrice: salePrice,
-        quantity: quantity,
+        stock: stock,
         color: color,
         category: category,
         item:selectedValue,

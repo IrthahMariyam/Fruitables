@@ -360,7 +360,7 @@ const addProducts = async (req, res) => {
         //console.log("addProducts route",req.body);
 
         const products = req.body;
-        console.log('Received product:', products);
+       // console.log('Received product:', products);
 
         if(!products.productName){
             return res.status(400).json({ message: "Product name not recived. Try with another name." });
@@ -401,7 +401,7 @@ const addProducts = async (req, res) => {
             price: products.regularPrice,
             salesPrice: products.salePrice,
             createdOn: new Date(),
-            quantity: products.quantity,
+            stock: products.stock,
             color: products.color,
             productImage: req.body.images, // Store image paths
             status:products.Available,
@@ -496,7 +496,7 @@ const postEditProduct = async (req, res) => {
             description: updatedData.description,
             price: updatedData.regularPrice,
             salesPrice: updatedData.salePrice,
-            quantity: updatedData.quantity,
+            stock: updatedData.stock,
             color: updatedData.color,
             status: updatedData.Available,
             category: category._id,

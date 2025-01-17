@@ -70,9 +70,9 @@
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-4">
-                                    <label class="form-label text-white">Quantity</label>
-                                    <input name="quantity" type="text" class="form-control border">
-                                    <div id="quantity-error" class="error-message"></div>
+                                    <label class="form-label text-white">Stock</label>
+                                    <input name="stock" type="text" class="form-control border">
+                                    <div id="stock" class="error-message"></div>
                                 </div>
                             </div>
                         </div>
@@ -139,6 +139,8 @@
                             <div id="Available-error" class="error-message"></div>
                         </div>
                         </div>
+
+                        <!-- image claudinary -->
                         <div class="row">
                         <div class="col-lg-4">
                         <div class="mb-4">
@@ -159,6 +161,7 @@
                         </div>
                         </div>
                         </div>
+                         <!-- image claudinary -->
                         <div>
                             <button class="btn btn-md btn-primary" type="submit">Publish</button>
                         </div>
@@ -317,7 +320,7 @@ document.getElementById('productForm').onsubmit = async function (event) {
     const description = document.getElementById('descriptionid').value;
     const regularPrice = document.querySelector('[name="regularPrice"]').value;
     const salePrice = document.querySelector('[name="salePrice"]').value;
-    const quantity = document.querySelector('[name="quantity"]').value;
+    const stock = document.querySelector('[name="stock"]').value;
     const color = document.querySelector('[name="color"]').value;
     const Status = document.querySelector('[name="Available"]').value;
     const category = document.getElementById('category').value;
@@ -332,7 +335,7 @@ document.getElementById('productForm').onsubmit = async function (event) {
         description: description,
         regularPrice: regularPrice,
         salePrice: salePrice,
-        quantity: quantity,
+        stock: stock,
         color: color,
         category: category,
         item:selectedValue,

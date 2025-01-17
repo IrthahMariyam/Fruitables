@@ -17,7 +17,7 @@ const productSchema=new Schema({
     },
     item:{
         type :String,
-        enum: ['Fruit', 'vegetable'],
+        enum: ['Fruit', 'Vegetable'],
          
       
     },
@@ -37,7 +37,7 @@ const productSchema=new Schema({
     color:{
        type:String, 
     },
-    quantity:{
+    stock:{
         type:Number,
         default:0,
     },
@@ -73,6 +73,11 @@ const productSchema=new Schema({
             type:Date
         },
     }],
+
+    isFeatured: { type: Boolean, default: false },
+  popularity: { type: Number, default: 0 },
+  averageRating: { type: Number, default: 0 },
+  createdOn: { type: Date, default: Date.now },
   });
 
     

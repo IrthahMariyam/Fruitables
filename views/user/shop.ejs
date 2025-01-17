@@ -139,23 +139,22 @@
             background-color: #007bff;
             color: #fff;
         }
-/* Add your existing styles here */
- /* Add a smooth transition effect to the product card */ 
+
  .product-card { position: relative; /* Ensure the card is positioned relatively */ 
   overflow: hidden; /* Hide any overflowing content */ 
   transition: transform 0.3s ease, 
-  box-shadow 0.3s ease; } /* Slight zoom and shadow effect on hover */
-   .product-card:hover { 
-    transform: translateY(-10px);
-     box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
-     } /* Add a smooth transition effect to the product image */
-      .product-card img { 
-        transition: transform 0.5s ease; /* Smooth transition for the image */
-         border-radius: 10px 10px 0 0; /* Rounded corners for the top of the image */
-         } /* Slight zoom effect on the image */
-          .product-card:hover img {
-             transform: scale(1.3); /* Zoom in the image */ 
-            }
+  box-shadow 0.3s ease; } 
+.product-card:hover { 
+ transform: translateY(-10px);
+ box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
+ } /* Add a smooth transition effect to the product image */
+.product-card img { 
+ transition: transform 0.5s ease; /* Smooth transition for the image */
+border-radius: 10px 10px 0 0; /* Rounded corners for the top of the image */
+ } /* Slight zoom effect on the image */
+ .product-card:hover img {
+transform: scale(1.3); /* Zoom in the image */ 
+ }
 
     </style>
 </head>
@@ -167,7 +166,7 @@
         <section class="shop-page container">
             <div class="shop-topbar">
                 <div class="search-bar">
-                    <form action="" method="POST" class="search-form">
+                    <form action="/search" method="get" class="search-form">
                         <input type="text" name="query" placeholder="Search items..." class="search-input" />
                         <button type="submit" class="search-button">Search</button>
                     </form>
@@ -188,7 +187,36 @@
                             <% } %>
                         </ul>
                     </div>
+                    <div>
+                    <div class="filter-section">
+                        
+                          <form action="/sortproduct" method="get">
+                           
+                            <!-- Sort Dropdown -->
+                             <div>
+                            <label for="sortBy">Sort By:</label>
+                            <select id="sortBy" name="sortBy">
+                             <option value="default">Default</option>
+                             <option value="instock">In Stock</option>
+                              <option value="newArrivals">New Arrivals</option>
+                              <!-- <option value="featured">Featured</option> -->
+                              <option value="popularity">Popularity</option>
+                              <option value="averageRatings">Average Ratings</option>
+                              <option value="priceAsc">Low  to High Price</option>
+                              <option value="priceDesc">High  to Low Price</option>
+                              <option value="aToZ">Name: A to Z</option>
+                              <option value="zToA">Name: Z to A</option>
+                            </select>
+                        </div>
+                            <!-- Submit Button -->
+                             
+                             <div class="text-center"style="margin-top: 10px;">
+                            <button type="submit"  class="search-button">Search</button>
+                        </div>
+                          </form>
+                       </div>
                 </aside>
+                
                 <main class="product-grid">
                     <% for(let i=0; i<products.length; i++) { %>
                       <%console.log(products.length)%>
@@ -198,7 +226,11 @@
                                 <h4><%= products[i].productName %></h4>
                                 <p><strike>₹<%= products[i].price %></strike> ₹<%= products[i].salesPrice %></p>
                             </a>
+                            <% if (products[i].stock > 0) { %>
                             <button class="add-to-cart-btn" onclick="addToCart('<%= products[i]._id %>')">Add to Cart</button>
+                            <% } else { %>
+                                <button class="btn btn-secondary" disabled>Out of Stock</button>
+                                <% } %>
                         </div>
                     <% } %>
                 </main>
@@ -257,6 +289,23 @@
   });
 
           }
+
+
+          function updatePriceRange(value) {
+    document.getElementById('minPrice').value = 0;
+    document.getElementById('maxPrice').value = value;
+  }
+
+  
+                            // Function to update price range display
+                            function updatePriceRangeDisplay(value) {
+                              const maxPrice = document.getElementById("maxPrice");
+                              const display = document.getElementById("priceRangeDisplay");
+                              maxPrice.value = value;
+                              display.textContent = value;
+                            }
+                          
+                          
     </script>     
 
 </body>

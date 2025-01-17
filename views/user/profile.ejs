@@ -174,19 +174,20 @@
                             <i class="fi-rs-shopping-bag mr-10"></i>Orders
                           </a>
                         </li>
-                        <li class="nav-item">
-                          <a class="nav-link" data-bs-toggle="tab" href="#track-orders" role="tab">
-                            <i class="fi-rs-shopping-cart-check mr-10"></i>My Order
-                          </a>
-                        </li>
+                       
                         <li class="nav-item">
                           <a class="nav-link active" href="/home" role="tab">
                             <i class="fi-rs-settings-sliders mr-10"></i>Wishlist
                           </a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" data-bs-toggle="tab" href="#wallet-history" role="tab">
+                          <a class="nav-link" data-bs-toggle="tab" href="#track-orders" role="tab">
                             <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" data-bs-toggle="tab" href="#wallet-history" role="tab">
+                            <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet History
                           </a>
                         </li>
                         <li class="nav-item">
@@ -456,7 +457,7 @@
       </div>
       <div class="modal-body">
         <form id="editaddressForm">
-          <input  id="addressId1" name="addressId">
+          <input type="hidden" id="addressId1" name="addressId">
 
           <div class="mb-3">
             <label for="name" class="form-label">Name</label>
@@ -730,7 +731,7 @@ alert(userId)
       })
         .then((res) => res.json())
         .then((data) => {
-          alert(data.message);
+         // alert(data.message);
           window.location.reload();
         })
         .catch((err) => console.error(err));
@@ -749,7 +750,7 @@ function openEditAddressModal(addressId) {
     .then((res) => res.json())
     .then((data) => {
       // Populate form fields with address data
-   alert(data.name);
+   //alert(data.name);
   //  alert(data.landmark);
   //  alert(data.district);
   //  alert(data.state);
@@ -782,15 +783,15 @@ document.getElementById('editaddressForm').addEventListener('submit', function (
   const state = document.getElementById('state1').value.trim();
   const pincode = document.getElementById('pincode1').value.trim();
   const phone = document.getElementById('phone1').value.trim();
-  console.log("edited entries===============================")
-console.log(addressId)
+ // console.log("edited entries===============================")
+//console.log(addressId)
 
-alert(addressId)
-console.log(landmark)
-console.log(district)
-console.log(state)
-console.log(pincode)
-alert(phone)
+//alert(addressId)
+// console.log(landmark)
+// console.log(district)
+// console.log(state)
+// console.log(pincode)
+//alert(phone)
   // Validate inputs
   const validIndianPattern = /^[6-9]\d{9}$/;
   const invalidPattern = /^(.)\1{9}$/;

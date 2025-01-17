@@ -8,7 +8,7 @@ const passport = require('passport')
 //const { userAuth } = require('../middlewares/auth')
 const User = require('../models/userSchema')
 const Address = require('../models/addressSchema')
-//const profileController=require('../controllers/user/profileController')
+
 
 
 
@@ -45,12 +45,14 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
 
 router.get('/login',userController.loadLogin)
 router.post('/login',userController.userlogin)
-// router.get('/userProfile',userController.getProfilePage)
+
 
 router.get('/logout',userController.logout)
 
-
+//router.get('/products',userController.getFilteredProducts)
+router.get('/search',userController.searchProducts);
 router.get('/filter',userController.filterProduct)
+router.get('/sortproduct',userController.searchAndSortProducts)
 router.get("/productDetails",userController.productDetails)
 router.post('/productreview',userController.productReview)
 
@@ -69,7 +71,8 @@ router.get('/getcart',userAuth,cartController.getCartPage)
 router.post("/cart/add",userAuth,cartController.addToCart);
 router.post('/cart/update', userAuth, cartController.updateCartQuantity);
 router.post('/cart/remove', userAuth, cartController.removeFromCart);
-
+router.get('/getcheckout',userAuth,cartController.getCheckoutPage);
+router.post('/placeorder',userAuth,cartController.placeOrder)
 
 module.exports=router;
 

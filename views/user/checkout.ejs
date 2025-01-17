@@ -1,0 +1,372 @@
+<%- include("../../views/partials/user/header") %> 
+
+        <!-- Modal Search Start -->
+        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center">
+                        <div class="input-group w-75 mx-auto d-flex">
+                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Search End -->
+
+
+        <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">Checkout</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="/home">home</a></li>
+                <li class="breadcrumb-item"><a href="/shop">shop</a></li>
+                <li class="breadcrumb-item active text-white">Checkout</li>
+            </ol>
+        </div>
+        <!-- Single Page Header End -->
+
+
+        <!-- Checkout Page Start -->
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+                <h1 class="mb-4">Billing details</h1>
+                <form action="#" id="checkout-form">
+                    <div class="row g-5">
+                        <div class="col-md-12 col-lg-6 col-xl-7">
+                            <div class="row">
+                                <div class="col-md-12 col-lg-6">
+                                    <div class="form-item w-100">
+                                        <input type="hidden" class="form-control" id="addressId" value="<%= address._id %>">
+                                        <label class="form-label my-6">Name<sup>*</sup></label>
+                                        <input type="text" class="form-control" id="name" value="<%= address.name %>" readonly>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                            <!-- <div class="form-item">
+                                <label class="form-label my-3">Company Name<sup>*</sup></label>
+                                <input type="text" class="form-control">
+                            </div> -->
+                            <div class="form-item">
+                                <label class="form-label my-3">Landmark <sup>*</sup></label>
+                                <input type="text" class="form-control" placeholder="House Number Street Name" required id="landmark" readonly>
+                            </div>
+                            <div class="form-item">
+                                <label class="form-label my-3">Town/City<sup>*</sup></label>
+                                <input type="text" class="form-control" id="city"  required readonly>
+                            </div>
+                            <div class="form-item">
+                                <label class="form-label my-3">State<sup>*</sup></label>
+                                <input type="text" class="form-control" id="state" required readonly>
+                            </div>
+                            <div class="form-item">
+                                <label class="form-label my-3">Postcode<sup>*</sup></label>
+                                <input type="text" class="form-control" id="postcode" required readonly>
+                            </div>
+                            <div class="form-item">
+                                <label class="form-label my-3">Mobile<sup>*</sup></label>
+                                <input type="tel" class="form-control" id="mobile" required readonly>
+                            </div>
+                            <!-- <div class="form-item">
+                                <label class="form-label my-3">Email Address<sup>*</sup></label>
+                                <input type="email" class="form-control" id="email" value="<%= address.email %>" required>
+                            </div> -->
+                            <!-- <div class="form-check my-3">
+                                <input type="checkbox" class="form-check-input" id="Account-1" name="Accounts" value="Accounts">
+                                <label class="form-check-label" for="Account-1">Create an account?</label>
+                            </div> -->
+                            <hr>
+                            <div class="form-check my-3">
+                                <input class="form-check-input" type="checkbox" id="ship-different-address" name="Address" >
+                                <label class="form-check-label" for="Address-1">Ship to a different address?</label>
+                            </div>
+                             <div class="form-item">
+                                <div id="additional-addresses">
+                                    <h3>Select a Different Address</h3>
+                                    <% address.forEach(function (addr, index) { %>
+                                        <div>
+                                            <input
+                                                type="radio"
+                                                name="address"
+                                                id="address-<%= index %>"
+                                                value="<%= addr._id %>"
+                                                <%= index === 0 ? "checked" : "" %>
+                                            >
+                                            <label for="address-<%= index %>">
+                                                <%= addr.name %>, <%= addr.landmark %>, <%= addr.district %>, <%= addr.pincode %>,<%= addr.state%>,<%=addr.phone%>
+                                            </label>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-md-12 col-lg-6 col-xl-5">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Products</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% cart.items.forEach(item => { %>
+                                        <tr>
+                                            <th scope="row">
+                                                <div class="d-flex align-items-center mt-2">
+                                                    <img src="<%=item.productId.productImage[0]%>" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
+                                                </div>
+                                            </th>
+                                           
+                                            <td class="py-5"><%=item.productId.productName%></td>
+                                            <td class="py-5">₹<%= item.price.toFixed(2) %></td>
+                                            <td class="py-5"><%= item.quantity %></td>
+                                            <td class="py-5">₹<%= item.totalPrice.toFixed(2) %></td>
+                                            <td><input type="hidden" id="productid" value="<%=item.productId._id%>"></td>
+                                        </tr>
+                                        <% }); %>
+                                       
+                                        
+                                        <tr>
+                                            <th scope="row">
+                                            </th>
+                                            <td class="py-5"></td>
+                                            <td class="py-5"></td>
+                                            <td class="py-5">
+                                                <p class="mb-0 text-dark py-3">Subtotal</p>
+                                            </td>
+                                            <td class="py-5">
+                                                <div class="py-3 border-bottom border-top">
+                                                    <p class="mb-0 text-dark"> ₹<%=total%></p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">
+                                            </th>
+                                            <td class="py-3">
+                                                <p class="mb-0 text-dark py-4">Shipping Charge:       ₹ 100</p>
+                                            </td>
+                                            
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">
+                                            </th>
+                                            <td class="py-5">
+                                                <p class="mb-0 text-dark text-uppercase py-3">TOTAL</p>
+                                            </td>
+                                            <td class="py-5"></td>
+                                            <td class="py-5"></td>
+                                            <td class="py-5">
+                                                <div class="py-3 border-bottom border-top">
+                                                    <p class="mb-0 text-dark"> ₹<%=total + 100 %></p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                           
+                           
+                            <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                <div class="col-12">
+                                    <div class="form-check text-start my-3">
+                                        <input type="checkbox" class="form-check-input bg-primary border-0" id="Onlinepayment" name="paymentMethod" value="Online Payment">
+                                        <label class="form-check-label" for="Delivery-1">Online Payment(via Razorpay)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                <div class="col-12">
+                                    <div class="form-check text-start my-3">
+                                        <input type="checkbox" class="form-check-input bg-primary border-0" id="paymentMethodCOD" name="paymentMethod" value="Cash on Delivery">
+                                        <label class="form-check-label" for="paymentMethodCOD">Cash on Delivery</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-4 text-center align-items-center justify-content-center pt-4">
+                                <button type="button" id="placeorder" name="placeorder"class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary" >Place Order</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Checkout Page End -->
+
+        <%- include("../../views/partials/user/footer") %>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+    document.addEventListener("DOMContentLoaded", function () {
+            const shipDifferentCheckbox = document.getElementById("ship-different-address");
+            const addressRadios = document.querySelectorAll("input[name='address']");
+            const addressFields = {
+                addressId: document.getElementById("addressId"),
+                name: document.getElementById("name"),
+                landmark: document.getElementById("landmark"),
+                district: document.getElementById("city"),
+                postcode: document.getElementById("postcode"),
+                mobile: document.getElementById("mobile"),
+                state: document.getElementById("state"),
+            };
+
+            // Load default address
+            function loadDefaultAddress() {
+                const defaultAddress = JSON.parse('<%- JSON.stringify(address[0]) %>');
+                updateAddressFields(defaultAddress);
+            }
+
+            // Update address fields with given address data
+            function updateAddressFields(address) {
+                addressFields.addressId.value = address._id || "";
+                addressFields.name.value = address.name || "";
+                addressFields.landmark.value = address.landmark || "";
+                addressFields.district.value = address.district || "";
+                addressFields.postcode.value = address.pincode || "";
+                addressFields.mobile.value = address.phone || "";
+                addressFields.state.value = address.state || "";
+            }
+
+            // Clear address fields
+            function clearAddressFields() {
+                Object.values(addressFields).forEach(field => field.value = "");
+            }
+
+            // Handle address radio button change
+            document.querySelector("body").addEventListener("change", function (event) {
+                if (event.target.name === 'address') {
+                    const selectedAddress = JSON.parse('<%- JSON.stringify(address) %>').find(addr => addr._id === event.target.value);
+                    if (selectedAddress) updateAddressFields(selectedAddress);
+                }
+            });
+
+            // Handle ship to different address checkbox
+            shipDifferentCheckbox.addEventListener("change", function () {
+                this.checked ? clearAddressFields() : loadDefaultAddress();
+            });
+
+            // Extract product details from the table
+            function getProductDetails() {
+                const productRows = document.querySelectorAll("table tbody tr");
+                const products = [];
+                productRows.forEach(row => {
+                    const _id=document.getElementById('productid').value;
+                    const productName = row.querySelector("td:nth-child(2)")?.textContent.trim();
+                    const price = row.querySelector("td:nth-child(3)")?.textContent.replace("₹", "").trim();
+                    const quantity = row.querySelector("td:nth-child(4)")?.textContent.trim();
+                    const totalPrice = row.querySelector("td:nth-child(5)")?.textContent.replace("₹", "").trim();
+                    // alert(_id);
+                    // alert(productName)
+                    // alert(price)
+                    // alert(quantity)
+                    // alert(totalPrice)
+                    // console.log("productName",productName)
+                    // console.log("price:" ,parseFloat(price))
+                    // console.log("quantity",parseInt(quantity))
+                    // console.log("totalPrice",parseFloat(totalPrice))
+                    if (productName && price && quantity && totalPrice) {
+                        products.push({
+                            _id,
+                            productName,
+                            price: parseFloat(price),
+                            quantity: parseInt(quantity, 10),
+                            totalPrice: parseFloat(totalPrice),
+                        });
+                    }console.log(products,"products")
+                });
+                return products;
+            }
+
+            // Handle place order button
+                document.getElementById("placeorder").addEventListener("click", function () {
+                const paymentCheckboxes = document.querySelectorAll('input[name="paymentMethod"]:checked');
+                const selectedPaymentMethod = Array.from(paymentCheckboxes).map(checkbox => checkbox.value)[0];
+
+                if (!selectedPaymentMethod) {
+                    Swal.fire({
+                        title: "Payment Method Required",
+                        text: "Please select a payment method to proceed.",
+                        icon: "warning",
+                    });
+                    return;
+                }
+
+                const selectedAddressId = document.querySelector("input[name='address']:checked").value;
+
+                const address = {
+                    addressId: selectedAddressId,
+                    name: addressFields.name.value.trim(),
+                    landmark: addressFields.landmark.value.trim(),
+                    district: addressFields.district.value.trim(),
+                    state: addressFields.state.value.trim(),
+                    pincode: addressFields.postcode.value.trim(),
+                    phone: addressFields.mobile.value.trim(),
+                };
+
+                const orderData = {
+                    address:selectedAddressId,
+                    paymentMethod: selectedPaymentMethod,
+                    orderedItems: getProductDetails(), // Include product details
+                };
+             console.log(orderData,"ejs")
+                // Validate required fields
+                if (!Object.values(orderData).every(Boolean) || !orderData.orderedItems.length) {
+                    Swal.fire({
+                        title: "Incomplete Details",
+                        text: "Please fill all required fields and ensure products are present in the cart.",
+                        icon: "warning",
+                    });
+                    return;
+                }
+
+                // Submit order
+                fetch("/placeorder", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(orderData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: "Order Placed!",
+                            text: "Your order was placed successfully.",
+                            icon: "success",
+                        }).then(() => (window.location.href = "/shop"));
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: data.error || "Failed to place order.",
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error placing order:", error);
+                    Swal.fire({
+                        title: "Error",
+                        text: "Something went wrong. Please try again.",
+                        icon: "error",
+                    });
+                });
+            });
+
+            // Initialize with the default address
+            loadDefaultAddress();
+        });
+
+</script>
+
+        
+        
+        
+        

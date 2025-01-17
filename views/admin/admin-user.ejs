@@ -45,7 +45,7 @@
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Phone</th>
+                    
                     <th>Listed</th>
                     <!-- <th>Actions</th> -->
                   </tr>
@@ -57,7 +57,7 @@
                   <tr>
                  <td><%=users[i].name%></td>
                   <td><%=users[i].email%></td>
-               
+                 
                  <td><%if(users[i].isBlocked===false){%>
                   
                   <button class="btn btn-danger delete-btn"name="blockuser" onclick="blockUser(this.closest('tr'), '<%=users[i]._id%>','<%=users[i].name%>')">Block</button>
