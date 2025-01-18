@@ -15,7 +15,12 @@ const orderSchema = new Schema({
     addressId:{
         type: Schema.Types.ObjectId,
         ref:"Address",
-        required:true
+        required:true,
+    },
+    userId:{
+        type: Schema.Types.ObjectId,
+        ref:"User",
+        required:true,
     },
     
     invoiceDate: { type: Date, default: Date.now },

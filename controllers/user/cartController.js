@@ -295,7 +295,8 @@ const placeOrder = async (req, res) => {
           totalPrice,
           finalAmount,
           addressId:address,
-          status: "Pending",
+          userId:addid.userId,
+          status: "Processing",
           paymentMethod,
       });
       await order.save();

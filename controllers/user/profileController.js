@@ -2,6 +2,7 @@ const User = require("../../models/userSchema");
 const Address = require("../../models/addressSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
+const Order = require("../../models/orderSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -21,25 +22,31 @@ const securePassword = async (password) => {
 
 const loadProfile=async (req, res) => {
     try {
-       const id=req.params;
+       const id=req.params.userId;
        console.log(id,"inside loadprofile params id value")
         const user = req.session.user
         console.log(user);
         if (user) {
             const userData = await User.findOne({_id: user._id });
-           
-
-            // const useraddress=await Address.findOne({userId:user._id})
+            const orders = await Order.find({ userId: user._id}) // Fetch user's orders
+            .sort({ createdOn: -1 })
+            .populate('orderedItems.product') // Populate product details
+            .populate('addressId');
+            console.log("Orders fetched:", orders);
             const userAddress = await Address.find({userId:user._id }).populate('userId');
             res.locals.user = userData.name;
-            console.log(userData,"userinside loadprofile")
-            console.log(userAddress,"useraddressinside loadprofile")
+
+
+          //  console.log(userData,"userinside loadprofile")
+          //   console.log(userAddress,"useraddressinside loadprofile")
           //  console.log("session name", req.session.user.name);
-            console.log("locals data", res.locals.user);
-            console.log("session data", req.session.user);
+          //  console.log("locals data", res.locals.user);
+          //   console.log("session data", req.session.user);
+
             if(userData){
                 res.render("profile",{user:userData,
                              address:userAddress,
+                             orders:orders
             })
             }else{
                 res.status(500).send("USER BLOCKED BY ADMIN");
@@ -54,6 +61,8 @@ const loadProfile=async (req, res) => {
         console.log("not found", error.message);
     }
 }
+
+
 const deleteAccount=async(req,res)=>{
     try 
         {
@@ -251,7 +260,119 @@ const deleteAddress = async (req, res) => {
     }
   };
   
+// const history=async (req,res) => {
+//   try {
+//     // Fetch the logged-in user's orders
+//     const orders = await Order.find({ userId: req.session._id })
+//         .populate("orderedItems.product")
+//         .populate("address")
+//         .sort({ createdOn: -1 });
 
+//     // Render the template and pass the orders
+//     res.render("orders/history", { orders });
+// } catch (err) {
+//     console.error("Error fetching orders:", err);
+//     res.status(500).send("Internal Server Error");
+// }
+// }
+const history=async (req,res) => 
+{try {
+  const userId = req.session.user._id; // Get the logged-in user's ID
+  const orders = await Order.find({ userId })
+    .populate('orderedItems.product')
+    .populate('addressId')
+    .sort({ createdOn: -1 });
+
+  res.json(orders); // Return orders as JSON
+} catch (err) {
+  console.error('Error fetching order history:', err);
+  res.status(500).json({ error: 'Failed to fetch order history' });
+}}
+
+  const orderHistory=async(req,res)=>{
+    try {
+      console.log("inside history+++++++++", req.session.user._id)
+      const orders = await Order.find({ userId:req.session.user._id })
+          .populate("orderedItems.product")
+          .populate("addressId")
+          .sort({ createdOn: -1 });
+
+          res.render("orders/history", { orders });
+  } catch (err) {
+      console.error("Error fetching orders:", err);
+      res.status(500).send("Internal Server Error");
+  }
+  }
+
+
+
+  const cancelOrder=async(req,res)=>{
+//     try { console.log("inside history+++++++++", req.params.id)
+//       const order = await Order.findById(req.params.id).populate("orderedItems.product");
+// console.log(order,"11111111111111111111")
+//       if (!order || order.user.toString() !== req.user._id.toString() || order.status !== "Processing") {
+//           return res.status(400).send("Cannot cancel this order.");
+//       }
+
+//       // Update stock
+//       for (const item of order.orderedItems) {
+//           const product = await Product.findById(item.product._id);
+//           if (product) {
+//               product.stock += item.quantity;
+//               await product.save();
+//           }
+//       }
+
+//       // Update order status
+//       order.status = "Cancelled";
+//       await order.save();
+
+//       res.redirect("/orders/history");
+//   } catch (err) {
+//       console.error("Error canceling order:", err);
+//       res.status(500).send("Internal Server Error");
+//   }
+
+  try {
+    const orderId = req.params.id; // Ensure you are getting the order ID
+    const userId=req.session.user._id
+    if (!orderId) {
+      return res.status(400).send('Order ID is required');
+    }
+
+    // Fetch the order
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+
+    // Check if the order can be canceled
+    if (order.status !== 'Processing') {
+      return res.status(400).send('Only processing orders can be canceled');
+    }
+
+    // Update stock for each ordered item
+    for (const item of order.orderedItems) {
+      const product = await Product.findById(item.product);
+      if (product) {
+        product.stock += item.quantity; // Restock the canceled items
+        await product.save();
+      }
+    }
+
+    // Update order status
+    order.status = 'Cancelled';
+    await order.save();
+
+    res.redirect('/userProfile/userId/#orders-history'); // Adjust based on your tab structure
+  } catch (err) {
+    console.error('Error canceling order:', err);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+  
 
 module.exports={
 
@@ -261,6 +382,9 @@ changePassword,
 addAddress,
 getAddress,
 updateAddress,
-deleteAddress
+deleteAddress,
+orderHistory,
+cancelOrder,
+history,
 
 }

@@ -164,16 +164,20 @@
                         </li>
 
                         <li class="nav-item">
-                          <a class="nav-link" data-bs-toggle="modal" data-bs-target="#changePasswordModal" >
+                          <a class="nav-link active" data-bs-toggle="modal" data-bs-target="#changePasswordModal" >
                             <i class="fi-rs-marker mr-10"></i>Change Password
                           </a>
                         </li>
                        
-                        <li>
-                          <a class="nav-link" data-bs-toggle="tab" href="#orders" role="tab">
-                            <i class="fi-rs-shopping-bag mr-10"></i>Orders
-                          </a>
-                        </li>
+                       
+                          <!-- Other tabs -->
+                          <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#orders-history" role="tab">
+                              <i class="fi-rs-shopping-cart-check mr-10"></i>Order History
+                            </a>
+                          </li>
+                      
+                        
                        
                         <li class="nav-item">
                           <a class="nav-link active" href="/home" role="tab">
@@ -267,30 +271,51 @@
                       </div>
       
                       <!-- Orders Tab -->
-                      <div class="tab-pane fade" id="orders" role="tabpanel">
-                        <div class="card">
-                          <div class="card-header">
-                            <h5 class="mb-0">Your Orders</h5>
-                          </div>
-                          <div class="card-body">
-                            <table class="table">
-                              <thead>
-                                <tr>
-                                  <th>Order</th>
-                                  <th>Status</th>
-                                  <th>Total</th>
-                                  <th>Actions</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td colspan="4" class="text-center">No orders found.</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
+                     <!-- Orders History Tab -->
+<div class="tab-pane fade" id="orders-history" role="tabpanel">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Order History</h5>
+    </div>
+    <div class="card-body">
+      <% if (orders.length === 0) { %>
+        <p class="text-center">No orders found.</p>
+      <% } else { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% orders.forEach(order => { %>
+              <tr>
+                <td><%= order._id %></td>
+                <td><%= order.createdOn.toLocaleDateString() %></td>
+                <td><%= order.status %></td>
+                <td>₹<%= order.finalAmount.toFixed(2) %></td>
+                <td>
+                  <% if (order.status === "Processing") { %>
+                    <form action="/orders/cancel/<%= order._id %>" method="POST" style="display: inline;">
+                      <button class="btn btn-danger btn-sm">Cancel</button>
+                    </form>
+                  <% } else { %>
+                    <span class="text-muted">Cancelled</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+</div>
+
       
                       <!-- Wallet Tab -->
                       <div class="tab-pane fade" id="track-orders" role="tabpanel">
@@ -783,15 +808,7 @@ document.getElementById('editaddressForm').addEventListener('submit', function (
   const state = document.getElementById('state1').value.trim();
   const pincode = document.getElementById('pincode1').value.trim();
   const phone = document.getElementById('phone1').value.trim();
- // console.log("edited entries===============================")
-//console.log(addressId)
-
-//alert(addressId)
-// console.log(landmark)
-// console.log(district)
-// console.log(state)
-// console.log(pincode)
-//alert(phone)
+ 
   // Validate inputs
   const validIndianPattern = /^[6-9]\d{9}$/;
   const invalidPattern = /^(.)\1{9}$/;
@@ -837,6 +854,40 @@ document.getElementById('editaddressForm').addEventListener('submit', function (
 });
 
 
+
+// On tab click
+document.querySelector('[href="#orders-history"]').addEventListener('click', async () => {
+  try {
+    const response = await fetch('/orders/api/history'); // API endpoint to fetch order history
+    const orders = await response.json();
+
+    const tableBody = document.querySelector('#orders-history tbody');
+    tableBody.innerHTML = ''; // Clear existing rows
+
+    if (orders.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No orders found.</td></tr>';
+    } else {
+      orders.forEach(order => {
+        const row = `
+          <tr>
+            <td>${order._id}</td>
+            <td>${new Date(order.createdOn).toLocaleDateString()}</td>
+            <td>${order.status}</td>
+            <td>$${order.finalAmount.toFixed(2)}</td>
+            <td>
+              ${order.status === 'Pending' ? `
+                <form action="/orders/cancel/${order._id}" method="POST">
+                  <button class="btn btn-danger btn-sm">Cancel</button>
+                </form>` : 'N/A'}
+            </td>
+          </tr>`;
+        tableBody.innerHTML += row;
+      });
+    }
+  } catch (err) {
+    console.error('Error fetching order history:', err);
+  }
+});
 
 
 </script>
