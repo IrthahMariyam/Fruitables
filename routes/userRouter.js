@@ -59,16 +59,18 @@ router.post('/productreview',userController.productReview)
 
 //profile routes
 router.get("/userProfile/:userId",userAuth,profileController.loadProfile)
+router.get('/getprofileDetail/:userId',userAuth,profileController.getProfileDetail)
+router.post('/updateDetail/:userId',userAuth,profileController.updateProfileDetail)
 router.post("/deleteAccount/:userId",userAuth,profileController.deleteAccount)
 router.post("/changePassword/:userId",userAuth,profileController.changePassword)
 router.post("/addAddress",userAuth,profileController.addAddress)
 router.get("/getAddress/:id",userAuth,profileController.getAddress)
 router.post("/updateAddress/:id",userAuth,profileController.updateAddress)
-router.post("/deleteAddress/:id",userAuth,profileController.deleteAddress)
+router.post("/deleteAddress/:addressId",userAuth,profileController.deleteAddress)
 router.get('/api/history',userAuth,profileController.history)
 router.get("/orders/history",userAuth,profileController.orderHistory)
 router.post('/orders/cancel/:id',userAuth,profileController.cancelOrder)
-
+router.get('/viewOrderDetails/:orderId',userAuth,profileController.getOrderDetails)
 //cart routes
 router.get('/getcart',userAuth,cartController.getCartPage)
 router.post("/cart/add",userAuth,cartController.addToCart);

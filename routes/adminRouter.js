@@ -57,4 +57,14 @@ router.post("/deleteProduct/:id",adminAuth,adminController.deleteProduct)
 
 
 
+// Order Management
+router.get('/orders', adminController.listOrders);
+router.post('/orders/update-status/:orderId', adminController.updateOrderStatus);
+router.post('/orders/cancel/:id', adminController.cancelOrder);
+router.get('/getorderdetails/:orderid',adminAuth,adminController.getordedetailspage)
+
+// Inventory Management
+router.get('/inventory', adminController.listInventory);
+router.post('/inventory/update-stock', adminController.updateStock);
+
 module.exports=router;

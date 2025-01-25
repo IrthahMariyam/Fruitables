@@ -38,57 +38,11 @@
                 <h1 class="mb-4">Billing details</h1>
                 <form action="#" id="checkout-form">
                     <div class="row g-5">
+                        
                         <div class="col-md-12 col-lg-6 col-xl-7">
-                            <div class="row">
-                                <div class="col-md-12 col-lg-6">
-                                    <div class="form-item w-100">
-                                        <input type="hidden" class="form-control" id="addressId" value="<%= address._id %>">
-                                        <label class="form-label my-6">Name<sup>*</sup></label>
-                                        <input type="text" class="form-control" id="name" value="<%= address.name %>" readonly>
-                                    </div>
-                                </div>
-                               
-                            </div>
-                            <!-- <div class="form-item">
-                                <label class="form-label my-3">Company Name<sup>*</sup></label>
-                                <input type="text" class="form-control">
-                            </div> -->
                             <div class="form-item">
-                                <label class="form-label my-3">Landmark <sup>*</sup></label>
-                                <input type="text" class="form-control" placeholder="House Number Street Name" required id="landmark" readonly>
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Town/City<sup>*</sup></label>
-                                <input type="text" class="form-control" id="city"  required readonly>
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">State<sup>*</sup></label>
-                                <input type="text" class="form-control" id="state" required readonly>
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Postcode<sup>*</sup></label>
-                                <input type="text" class="form-control" id="postcode" required readonly>
-                            </div>
-                            <div class="form-item">
-                                <label class="form-label my-3">Mobile<sup>*</sup></label>
-                                <input type="tel" class="form-control" id="mobile" required readonly>
-                            </div>
-                            <!-- <div class="form-item">
-                                <label class="form-label my-3">Email Address<sup>*</sup></label>
-                                <input type="email" class="form-control" id="email" value="<%= address.email %>" required>
-                            </div> -->
-                            <!-- <div class="form-check my-3">
-                                <input type="checkbox" class="form-check-input" id="Account-1" name="Accounts" value="Accounts">
-                                <label class="form-check-label" for="Account-1">Create an account?</label>
-                            </div> -->
-                            <hr>
-                            <div class="form-check my-3">
-                                <input class="form-check-input" type="checkbox" id="ship-different-address" name="Address" >
-                                <label class="form-check-label" for="Address-1">Ship to a different address?</label>
-                            </div>
-                             <div class="form-item">
                                 <div id="additional-addresses">
-                                    <h3>Select a Different Address</h3>
+                                    <h3>Select a  Address</h3>
                                     <% address.forEach(function (addr, index) { %>
                                         <div>
                                             <input
@@ -104,11 +58,62 @@
                                         </div>
                                     <% }); %>
                                 </div>
-                            </div> 
+                            </div>
+                        
+
+                        
+                            <div class="row">
+                                <div class="col-md-12 col-lg-6"><br>
+                                    <div class="form-item w-100">
+                                        <input type="hidden" class="form-control" id="addressId" value="<%= address._id %>">
+                                        <label class="form-label my-6">Name<sup>*</sup></label>
+                                        <input type="text" class="form-control" id="name" value="<%= address.name %>" >
+                                    </div>
+                                </div>
+                               
+                            </div>
+                            <!-- <div class="form-item">
+                                <label class="form-label my-3">Company Name<sup>*</sup></label>
+                                <input type="text" class="form-control">
+                            </div> -->
+                            <div class="form-item">
+                                <label class="form-label my-3">Landmark <sup>*</sup></label>
+                                <input type="text" class="form-control" placeholder="House Number Street Name" required id="landmark" >
+                            </div>
+                            <div class="form-item">
+                                <label class="form-label my-3">Town/City<sup>*</sup></label>
+                                <input type="text" class="form-control" id="city"  required >
+                            </div>
+                            <div class="form-item">
+                                <label class="form-label my-3">State<sup>*</sup></label>
+                                <input type="text" class="form-control" id="state" required >
+                            </div>
+                            <div class="form-item">
+                                <label class="form-label my-3">Postcode<sup>*</sup></label>
+                                <input type="text" class="form-control" id="postcode" required >
+                            </div>
+                            <div class="form-item">
+                                <label class="form-label my-3">Mobile<sup>*</sup></label>
+                                <input type="tel" class="form-control" id="mobile" required >
+                            </div>
+                            <!-- <div class="form-item">
+                                <label class="form-label my-3">Email Address<sup>*</sup></label>
+                                <input type="email" class="form-control" id="email" value="<%= address.email %>" required>
+                            </div> -->
+                            <!-- <div class="form-check my-3">
+                                <input type="checkbox" class="form-check-input" id="Account-1" name="Accounts" value="Accounts">
+                                <label class="form-check-label" for="Account-1">Create an account?</label>
+                            </div> -->
+                            <hr>
+                            <div class="form-check my-3">
+                                <input class="form-check-input" type="checkbox" id="ship-different-address" name="Address" >
+                                <label class="form-check-label" for="Address-1">Ship to a different address?</label>
+                            </div>
+                            
                         </div>
                         <div class="col-md-12 col-lg-6 col-xl-5">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table text-center">
                                     <thead>
                                         <tr>
                                             <th scope="col">Products</th>
@@ -119,7 +124,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <% cart.items.forEach(item => { %>
+                                        <% carts.items.forEach(item => { %>
                                         <tr>
                                             <th scope="row">
                                                 <div class="d-flex align-items-center mt-2">
@@ -141,7 +146,7 @@
                                             </th>
                                             <td class="py-5"></td>
                                             <td class="py-5"></td>
-                                            <td class="py-5">
+                                            <td class="py-3">
                                                 <p class="mb-0 text-dark py-3">Subtotal</p>
                                             </td>
                                             <td class="py-5">
@@ -153,8 +158,8 @@
                                         <tr>
                                             <th scope="row">
                                             </th>
-                                            <td class="py-3">
-                                                <p class="mb-0 text-dark py-4">Shipping Charge:       ₹ 100</p>
+                                            <td class="py-2 w-100 " colspan=5 >
+                                                <p class="mb-0 text-dark py-1">Shipping Charge:       ₹ 100</p>
                                             </td>
                                             
                                         </tr>
@@ -300,10 +305,10 @@
                     return;
                 }
 
-                const selectedAddressId = document.querySelector("input[name='address']:checked").value;
-
+                const selectedAddressId = document.querySelector("input[name='address']:checked").value||null
+           
                 const address = {
-                    addressId: selectedAddressId,
+                    
                     name: addressFields.name.value.trim(),
                     landmark: addressFields.landmark.value.trim(),
                     district: addressFields.district.value.trim(),
@@ -311,9 +316,24 @@
                     pincode: addressFields.postcode.value.trim(),
                     phone: addressFields.mobile.value.trim(),
                 };
+                const validIndianPattern = /^[6-9]\d{9}$/;
+  const invalidPattern = /^(.)\1{9}$/;
 
+  if (!address.name || !address.landmark || !address.district || !address.state || !address.pincode || !address.phone) {
+    alert('Please fill all fields!');
+    return;
+  }
+  if (invalidPattern.test(address.phone)) {
+    alert('Phone number cannot be all the same digit');
+    return;
+  }
+  if (!validIndianPattern.test(address.phone)) {
+    alert('Enter a valid Indian phone number');
+    return;
+  }
                 const orderData = {
-                    address:selectedAddressId,
+                   // addressId: selectedAddressId,
+                    address:address,
                     paymentMethod: selectedPaymentMethod,
                     orderedItems: getProductDetails(), // Include product details
                 };

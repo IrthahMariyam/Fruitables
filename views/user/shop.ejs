@@ -259,6 +259,7 @@ transform: scale(1.3); /* Zoom in the image */
     <%- include("../../views/partials/user/footer") %>
     <script> 
         function addToCart(productId) {
+            const cartitem=document.getElementById('cartitems')
             fetch('/cart/add', {
   method: 'POST',
   headers: {
@@ -275,12 +276,20 @@ transform: scale(1.3); /* Zoom in the image */
         icon: "success",
       }).then(() => {
         // Wait for 2.5 seconds before reloading the page
-        setTimeout(() => {
-          window.location.reload();
-        }, 2500);
-      });
+        // setTimeout(() => {
+        //   window.location.reload();
+        //   cartitem.innerHTML=parseInt(cartitem.value.trim())+1
+        // }, 1000);
+        if (data.cartitemcount !== undefined) {
+          // Get the cart badge element
+          const cartItemBadge = document.getElementById('cartitems');
+
+          // Update the badge count with the new total
+          cartItemBadge.textContent = data.cartitemcount;
+        }
+    });
     } else {
-      Swal.fire('Error', 'Failed to add product to cart', 'error');
+      Swal.fire('Error', data.error, 'error');
     }
   })
   .catch((error) => {

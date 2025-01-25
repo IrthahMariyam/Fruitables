@@ -6,9 +6,7 @@
     <title>Edit Product</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
     <style>
-        .error-message {
-            color: red;
-        }
+       
         .thumbnails-container {
             display: flex;
             overflow-x: auto;
@@ -26,8 +24,180 @@
             border: none;
             cursor: pointer;
         }
-    </style>
+        body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f5f7;
+    color: #333;
+    padding: 20px;
+    margin: 0;
+    margin-top: 20px;
+}
 
+.content-main {
+    background-color:black;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    color:wheat;
+    margin-top: 50px;
+    
+}
+
+/* Title styling */
+.content-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    margin-top:50px;
+    margin-left: 50px;
+    
+}
+
+/* Form section styling */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.mb-4 {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-control {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    color: #333;
+    width: 100%;
+}
+
+.form-control:focus {
+    border-color: #81C408;
+    box-shadow: 0 0 5px rgba(129, 196, 8, 0.5);
+}
+
+/* Error message styling */
+.error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Button styling */
+button[type="submit"] {
+    background-color: #81C408;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Select dropdown styling */
+.select-dropdown {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    background-color: #fff;
+}
+
+/* Radio buttons and labels styling */
+.form-check-input {
+    margin-right: 10px;
+}
+
+.form-check-label {
+    font-size: 14px;
+    color: #555;
+}
+
+/* Image uploader styling */
+#upload {
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+#cropperContainers {
+    margin-top: 10px;
+}
+
+#cropperContainer1 {
+    display: none;
+    margin-top: 20px;
+}
+
+#saveButton1 {
+    margin-top: 10px;
+    background-color: #81C408;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#saveButton1:hover {
+    background-color: #0056b3;
+}
+
+/* Flex layout for row elements */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.col-lg-4 {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Thumbnails container */
+.thumbnails-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.thumbnail {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Card styles */
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    padding: 20px;
+}
+    </style>
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+    
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
@@ -36,34 +206,37 @@
 
 </head>
 <body>
-   
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> 
 
 <%- include("../../views/partials/admin/header") %>
 
-<section class="content-main" >
-    <div class="row">
+<section class="content-main">
+    <div class="row" >
         <div class="col-9">
-            <div class="content-header">
-                <h2 class="content-title">Edit Product</h2>
+            <div class="content-header ">
+                <h2  class="card-title text-center">Edit Product</h2>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="card mb-4">
-                <div class="card-body">
+
+        <div class="col-lg-12">
+                <div class="card mb-8">
+                    <div class="card-body">
                     
                     <form  id="form1" name="form">
+                        
                         <input type="hidden" name="productId" id="productId"value="<%= product._id %>">
-
-                        <div class="mb-4">
+                        <div class="row">
+                        <div class="mb-8">
                             <label for="product_name" class="form-label text-white">Product Name</label>
                             <input type="text" name="productName" class="form-control border" id="product_name" value="<%= product.productName %>">
                         </div>
-
-                        <div class="mb-4">
-                            <label class="form-label text-white">Full description</label>
-                            <textarea name="description" class="form-control border" rows="4" id="descriptionid"><%= product.description %></textarea>
                         </div>
-
+                        <div class="row">
+                        <div class="mb-8">
+                            <label class="form-label text-white">Full description</label>
+                            <textarea name="description" class="form-control border" rows="10" id="descriptionid"><%= product.description %></textarea>
+                        </div>
+                        </div>
                         <div class="row">
                             <div class="col-lg-4">
                                 <label class="form-label text-white">Regular price</label>
@@ -77,17 +250,18 @@
                                 <label class="form-label text-white">Stock</label>
                                 <input type="text" name="stock" class="form-control border" value="<%= product.stock %>">
                             </div>
-                        </div>
-
-                        <div class="row">
                             <div class="col-lg-4">
                                 <label class="form-label text-white">Color</label>
                                 <input type="text" name="color" class="form-control border" value="<%= product.color %>">
                             </div>
                         </div>
+
+                        <div class="row">
+                            
+                        </div>
                        
                         <div class="row">
-                            <div class="col-lg-4">
+                            <div class="col-lg-2">
                               <div class="mb-4">
                                 <label class="form-label text-white">Item</label>
                               </div>
@@ -110,7 +284,7 @@
                             </div>
                           </div>
                           
-
+                          <div class="row">
 
                         <div class="mb-4">
                             <label class="form-label text-white">Category</label>
@@ -120,8 +294,8 @@
                                 <% }) %>
                             </select>
                         </div>
-
-
+                          </div>
+                          <div class="row">
                         <div class="mb-4">
                             <label class="form-label text-white">Status</label>
                             <select name="Available" class="form-select border">
@@ -130,7 +304,7 @@
                                 <option value="Removed" <%= product.status === 'Removed' ? 'selected' : '' %>>Removed</option>
                             </select>
                         </div>
-
+                          </div>
                         <!-- Existing Images -->
                         <div class="mb-4">
                             <label class="form-label text-white">Existing Images</label>
@@ -351,7 +525,7 @@ document.getElementById('form1').onsubmit = async function (event) {
     if (radio.checked) {
          selectedValue = radio.value;
           break; } }
-          alert(selectedValue)
+         // alert(selectedValue)
     const data = {
         productName: productName,
         description: description,

@@ -17,7 +17,7 @@ const productSchema=new Schema({
     },
     item:{
         type :String,
-        enum: ['Fruit', 'Vegetable'],
+        enum: ['Fruit', 'Vegetable','vegetable'],
          
       
     },

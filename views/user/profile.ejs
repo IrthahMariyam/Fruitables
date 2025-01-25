@@ -1,7 +1,7 @@
 <head>
 <style>
       .card-green {
-        background-color: #ADD8E6;
+        background-color:  #81C408;
       }
       .main {
         padding: 30px 0;
@@ -32,6 +32,7 @@
      
       .card {
          border-radius: 10px;
+         
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         margin-bottom: 20px;
       }
@@ -39,7 +40,6 @@
      
       .card-header {
         background-color: #81C408;
-        color: white;
         border-radius: 10px 10px 0 0;
       }
      
@@ -213,16 +213,20 @@
                     <div class="tab-content dashboard-content">
                       <!-- User Profile Tab -->
                       <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
-                        <div class="card card-green" style="margin-top: 40px;">
-                          <div class="card-header">
+                        <div class="card card-green" id="userprofile"style="margin-top: 40px;">
+                          <div class="card-header text-center "style="background-color:  #81C408">
                             <h5 class="mb-0">User Profile</h5>
-                          </div>
-                          <div class="card-body " style="margin-left: 40px;">
-                            <p><strong>Name:</strong> <%= user.name %></p>
-                            <p><strong>Phone:</strong> <%= user.phone %></p>
-                            <p><strong>Email:</strong> <%= user.email %></p>
-                            
-                          </div>
+                           </div>
+                           <div class="card-body " style="margin-left: 40px;">
+                           
+                            <p id="username"> <Strong>Name: </Strong><%= user.name %></p>
+                            <p id="userphone"><Strong>Phone:</Strong><%= user.phone %></p>
+                            <p id="useremail"><Strong>Email:</Strong><%= user.email %></p>
+                           </div>
+                           <div class="text-center " style="margin-bottom: 30px;">
+                            <button class="btn btn-primary w-70" onclick="openEditDetails('<%= user._id %>')">Edit</button>
+    
+                            </div>
                       </div>
       
                       <!-- Address Tab -->
@@ -251,12 +255,13 @@
                                         Edit
                                       </button>
                                       <!-- Delete Button -->
-                                      <form
+                                      <button  class="btn btn-danger btn-sm" onclick="deleteaddress('<%= address._id %>')">Delete</button>
+                                      <!-- <form
                                         action="/deleteAddress/<%= address._id %>"
                                         method="POST"
                                         onsubmit="return confirm('Are you sure you want to delete this address?');">
                                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                      </form>
+                                      </form> -->
                                     </div>
                                   </div>
                                 </div>
@@ -278,7 +283,7 @@
       <h5 class="mb-0">Order History</h5>
     </div>
     <div class="card-body">
-      <% if (orders.length === 0) { %>
+      <% if (orders && orders.length === 0) { %>
         <p class="text-center">No orders found.</p>
       <% } else { %>
         <table class="table">
@@ -298,15 +303,8 @@
                 <td><%= order.createdOn.toLocaleDateString() %></td>
                 <td><%= order.status %></td>
                 <td>₹<%= order.finalAmount.toFixed(2) %></td>
-                <td>
-                  <% if (order.status === "Processing") { %>
-                    <form action="/orders/cancel/<%= order._id %>" method="POST" style="display: inline;">
-                      <button class="btn btn-danger btn-sm">Cancel</button>
-                    </form>
-                  <% } else { %>
-                    <span class="text-muted">Cancelled</span>
-                  <% } %>
-                </td>
+                
+                <td colspan="2">  <a href="/viewOrderDetails/<%= order._id %>" class="btn border border-secondary rounded-pill px-3 text-primary"> View More</a></td>
               </tr>
             <% }); %>
           </tbody>
@@ -443,27 +441,27 @@
 
           <div class="mb-3">
             <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" placeholder="Enter name" required>
+            <input type="text" class="form-control" id="name" placeholder="Enter name" >
           </div>
           <div class="mb-3">
             <label for="landmark" class="form-label">Landmark</label>
-            <input type="text" class="form-control" id="landmark" placeholder="Enter landmark" required>
+            <input type="text" class="form-control" id="landmark" placeholder="Enter landmark" >
           </div>
           <div class="mb-3">
             <label for="District" class="form-label">District</label>
-            <input type="text" class="form-control" id="District" placeholder="Enter district" required>
+            <input type="text" class="form-control" id="District" placeholder="Enter district">
           </div>
           <div class="mb-3">
             <label for="state" class="form-label">State</label>
-            <input type="text" class="form-control" id="state" placeholder="Enter state" required>
+            <input type="text" class="form-control" id="state" placeholder="Enter state" >
           </div>
           <div class="mb-3">
             <label for="pincode" class="form-label">Pincode</label>
-            <input type="tel"  pattern="[0-9]{6}" class="form-control" id="pincode" placeholder="Enter pincode" required>
+            <input type="tel"  pattern="[0-9]{6}" class="form-control" id="pincode" placeholder="Enter pincode" >
           </div>
           <div class="mb-3">
             <label for="phone" class="form-label">Phone</label>
-            <input type="text" class="form-control" id="phone" placeholder="Enter phone number" required>
+            <input type="text" class="form-control" id="phone" placeholder="Enter phone number" >
           </div>
           <button type="submit" class="btn btn-primary">Save Address</button>
         </form>
@@ -486,27 +484,27 @@
 
           <div class="mb-3">
             <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name1" placeholder="Enter name" required>
+            <input type="text" class="form-control" id="name1" placeholder="Enter name" >
           </div>
           <div class="mb-3">
             <label for="landmark" class="form-label">Landmark</label>
-            <input type="text" class="form-control" id="landmark1" placeholder="Enter landmark"required>
+            <input type="text" class="form-control" id="landmark1" placeholder="Enter landmark">
           </div>
           <div class="mb-3">
             <label for="district" class="form-label">District</label>
-            <input type="text" class="form-control" id="district" placeholder="Enter district" required>
+            <input type="text" class="form-control" id="district" placeholder="Enter district" >
           </div>
           <div class="mb-3">
             <label for="state" class="form-label">State</label>
-            <input type="text" class="form-control" id="state1" placeholder="Enter state" required>
+            <input type="text" class="form-control" id="state1" placeholder="Enter state" >
           </div>
           <div class="mb-3">
             <label for="pincode" class="form-label">Pincode</label>
-            <input type="tel" pattern="[0-9]{6}" class="form-control" id="pincode1" placeholder="Enter pincode" required>
+            <input type="tel" pattern="[0-9]{6}" class="form-control" id="pincode1" placeholder="Enter pincode" >
           </div>
           <div class="mb-3">
             <label for="phone" class="form-label">Phone</label>
-            <input type="text" class="form-control" id="phone1" placeholder="Enter phone number" required>
+            <input type="text" class="form-control" id="phone1" placeholder="Enter phone number" >
           </div>
           <button type="submit" class="btn btn-primary">Edit Address</button>
         </form>
@@ -517,7 +515,36 @@
 
 
  
+<div class="modal fade" id="editDetailModal" tabindex="-1" aria-labelledby="editDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editDetailModalLabel">Edit Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editDetailForm">
+          <input type="hidden" id="profileid" name="userid">
 
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="profilename" placeholder="Enter name" >
+          </div>
+          
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="profileemail" placeholder="Enter emailid" >
+          </div>
+          <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="profilephone" placeholder="Enter phone number" >
+          </div>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- JavaScript Libraries -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -532,7 +559,7 @@
 
    function handleDeleteAccount(userId,user) {
     //alert("dsfadsfasdf")
-    console.log("Inside delete:", userId);
+    //console.log("Inside delete:", userId);
 
     Swal.fire({
       title: 'Are you sure?',
@@ -649,20 +676,22 @@
 });
 
 
+
+
  // Open modal for adding address
- function openAddAddressModal(userId) {
+function openAddAddressModal(userId) {
     document.getElementById('addressForm').reset();
     const userIdInput = document.getElementById('userId');
-  if (userIdInput) {
+   if (userIdInput) {
     userIdInput.value = userId; // Set the user ID in the hidden input
     console.log('User ID set in modal:', userId);
-  } else {
+   } else {
     console.error('Hidden input for user ID not found.');
-  }
+   }
  
     document.getElementById('addressModalLabel').textContent = 'Add Address';
     new bootstrap.Modal(document.getElementById('addressModal')).show();
-  }
+   }
 
   
   // Submit form for Add
@@ -670,10 +699,10 @@
   e.preventDefault(); // Prevent form submission
   
   // Retrieve form values
-  alert("inssidsg")
+ // alert("inssidsg")
   const name = document.getElementById('name').value.trim();
-const userId=document.getElementById('userId').value.trim()
-alert(userId)
+  const userId=document.getElementById('userId').value.trim()
+//alert(userId)
   console.log(name)
   const landmark = document.getElementById('landmark').value.trim();
   console.log(landmark)
@@ -749,24 +778,48 @@ alert(userId)
 
 
   // Delete address
-  function deleteAddress(addressId) {
-    if (confirm('Are you sure you want to delete this address?')) {
+  function deleteaddress(addressId) {
+   // alert(addressId)
+    // if (confirm('Are you sure you want to delete this address?')) {
+      Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, Delete Account!'
+    }).then((result) => {
+      if (result.isConfirmed) {
       fetch(`/deleteAddress/${addressId}`, {
-        method: 'DELETE',
+        method: 'POST',
       })
         .then((res) => res.json())
         .then((data) => {
+          Swal.fire(
+            'Deleted!',
+            'Your account has been deleted.',
+            'success'
+          );
          // alert(data.message);
           window.location.reload();
         })
-        .catch((err) => console.error(err));
-    }
+        .catch((err) => {console.error(err)
+        Swal.fire(
+            'Error!',
+            'An error occurred while deleting your account.',
+            'error'
+          );})
+        }
+    })
+
   }
+
 
 
 // Open modal for editing an address
 function openEditAddressModal(addressId) {
-  console.log(addressId,"edit addres modal")
+  //console.log(addressId,"edit addres modal")
    fetch(`/getAddress/${addressId}`,
    {method:'GET', 
    headers: {
@@ -818,11 +871,11 @@ document.getElementById('editaddressForm').addEventListener('submit', function (
     return;
   }
   if (invalidPattern.test(phone)) {
-    alert('Phone number cannot be all the same digit.');
+    alert('Phone number cannot be all the same digit');
     return;
   }
   if (!validIndianPattern.test(phone)) {
-    alert('Enter a valid Indian phone number.');
+    alert('Enter a valid Indian phone number');
     return;
   }
 
@@ -880,6 +933,7 @@ document.querySelector('[href="#orders-history"]').addEventListener('click', asy
                   <button class="btn btn-danger btn-sm">Cancel</button>
                 </form>` : 'N/A'}
             </td>
+            <td></td>
           </tr>`;
         tableBody.innerHTML += row;
       });
@@ -890,6 +944,120 @@ document.querySelector('[href="#orders-history"]').addEventListener('click', asy
 });
 
 
+
+ function openEditDetails(userId) {
+ // console.log(userId,"edit details modal")
+ // alert(userId)
+   fetch(`/getprofileDetail/${userId}`,
+   {
+    method:'GET', 
+    headers: {
+          'Content-Type': 'application/json'
+            },})
+    .then((res) => res.json())
+    .then((data) => {
+    //alert("dfdfdsfffffffffffffffffffff")
+      // console.log("inside recieve",data)
+     //  alert(data.phone)
+       const num=data._id.toString()
+     //  alert(num)
+        document.getElementById('profileid').value=num
+        document.getElementById('profilename').value=data.name
+        document.getElementById('profilephone').value=data.phone
+        document.getElementById('profileemail').value=data.email
+         
+      new bootstrap.Modal(document.getElementById('editDetailModal')).show();
+    })
+     .catch((err) => console.error('Error fetching details:', err));
+}
+
+// Handle form submission
+  document.getElementById('editDetailForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  
+  //console.log(document.getElementById('profilename').value)
+  const username=document.getElementById('profilename').value
+  const userphone = document.getElementById('profilephone').value
+  const useremail = document.getElementById('profileemail').value
+  const userId=document.getElementById('profileid').value
+ // alert(userId)
+//console.log(userId,"this is id")
+
+
+  // Get form data
+ 
+  //const userId = document.getElementById('userid').value.trim();
+  
+ 
+  // Validate inputs
+  const validIndianPattern = /^[6-9]\d{9}$/;
+  const invalidPattern = /^(.)\1{9}$/;
+  const emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!username || !userphone || !useremail) {
+    alert('Please fill all fields!');
+    return false;
+  }
+  if (invalidPattern.test(userphone)) {
+    alert('Phone number cannot be all the same digit.');
+    return false;
+  }
+  if (!validIndianPattern.test(userphone)) {
+    alert('Enter a valid Indian phone number.');
+    return false;
+  }
+  if(! emailReg.test(useremail) ){
+       
+    alert('Enter a valid emailId');
+    return false;
+      }
+
+
+else{
+  // Send API request
+  fetch( `/updateDetail/${userId}`, {
+    method: 'POST', 
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+     
+       name: username,
+        email: useremail,
+        phone: userphone,
+        
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      Swal.fire('Success!', 'Details updated successfully.', 'success')
+     
+    window.location.reload(); // Reload page to reflect changes
+    //   const userProfileTab = document.getElementById('userprofile'); // Replace with the actual ID of your user profile tab
+ 
+    //   if (userProfileTab) {
+    //    // alert(data.name)
+    //       //alert(data.email)
+    //     //alert(data.phone)
+    //         //document.getElementById('username').innerHTML=data.name
+    //     //document.getElementById('userphone').innerHTML=data.phone
+    //     //document.getElementById('useremail').innerHTML=data.email
+    //    ` <p>Name: ${data.name}</p>
+    //     <p>Email: ${data.email}</p>
+    //     <p>Phone: ${data.phone}</p>
+    //   `;
+    // }
+  
+    })
+    .catch((err) => {
+      Swal.fire('Error!', 'An error occurred while saving the Details.', 'error');
+      console.error('Error saving address:', err);
+    });
+  }
+});
+
+
+
+
+
+
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
@@ -897,6 +1065,4 @@ document.querySelector('[href="#orders-history"]').addEventListener('click', asy
 </body>
 
 </html>
-
-
 

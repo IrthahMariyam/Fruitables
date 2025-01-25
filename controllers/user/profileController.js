@@ -3,6 +3,7 @@ const Address = require("../../models/addressSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Order = require("../../models/orderSchema");
+const Cart = require("../../models/cartSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -28,15 +29,17 @@ const loadProfile=async (req, res) => {
         console.log(user);
         if (user) {
             const userData = await User.findOne({_id: user._id });
+            const cartitem=await Cart.findOne({userId:user._id})
             const orders = await Order.find({ userId: user._id}) // Fetch user's orders
             .sort({ createdOn: -1 })
-            .populate('orderedItems.product') // Populate product details
-            .populate('addressId');
+            .populate('orderedItems.productId') // Populate product details
+            
             console.log("Orders fetched:", orders);
             const userAddress = await Address.find({userId:user._id }).populate('userId');
             res.locals.user = userData.name;
-
-
+          
+          
+           
           //  console.log(userData,"userinside loadprofile")
           //   console.log(userAddress,"useraddressinside loadprofile")
           //  console.log("session name", req.session.user.name);
@@ -44,9 +47,11 @@ const loadProfile=async (req, res) => {
           //   console.log("session data", req.session.user);
 
             if(userData){
+              const cartitem=await Cart.findOne({userId:userData._id})
                 res.render("profile",{user:userData,
                              address:userAddress,
-                             orders:orders
+                             orders:orders,
+                             cart:cartitem
             })
             }else{
                 res.status(500).send("USER BLOCKED BY ADMIN");
@@ -136,6 +141,7 @@ const changePassword = async (req, res) => {
             //const userId = req.user.id; // Assuming userAuth middleware sets `req.user`
             console.log("req body",req.body);
             const userData = await User.findOne({_id: Id ,isAdmin:false});
+            const cartitem=await Cart.findOne({userId:Id})
             console.log(userData,"inside addddress")
             if(userData){
                 const newAddress = new Address({
@@ -145,7 +151,8 @@ const changePassword = async (req, res) => {
                 district: district,
                 state: state,
                 pincode: pincode,
-                phone: phone
+                phone: phone,
+                cart:cartitem
             });
     
           const addres=  await newAddress.save();
@@ -163,7 +170,8 @@ const changePassword = async (req, res) => {
     };
     
     const getAddress=async(req,res)=>{
-        try {console.log("inside getaddress")
+        try {
+          console.log("inside getaddress")
          
             const address = await Address.findById(req.params.id);
             console.log(address)
@@ -227,22 +235,24 @@ const updateAddress = async (req, res) => {
   
 const deleteAddress = async (req, res) => {
     try {
-      const addressId = req.params.id;
+      const addressid = req.params.addressId;
       const userId = req.session.user?._id;
-  
+  //console.log(addressid,"addressidddddd")
+  //console.log(userId,"userid")
+  //console.log(req.params,"params request")
       if (!userId) {
         return res.redirect('/login'); // Redirect to login if session is missing
       }
   
       const user = await User.findOne({ _id: userId, isAdmin: false });
-  
+ // console.log("userrr",user)
       if (!user) {
-        return res.render('home', { message: 'User blocked' });
+        return res.redirect('/home');
       }
   
       // Delete the address
-      const addressDelete = await Address.findByIdAndDelete(addressId);
-  
+      const addressDelete = await Address.findByIdAndDelete(addressid);
+    // console.log("addreddDelete",addressDelete)
       if (addressDelete) {
         console.log('Address deleted successfully');
       } else {
@@ -251,9 +261,12 @@ const deleteAddress = async (req, res) => {
   
       // Fetch the updated address list
       const updatedAddresses = await Address.find({ userId: userId });
-  
+  console.log("updatedAddresses",updatedAddresses)
       // Redirect back to the profile page
-      res.render('profile',{user:user,address:updatedAddresses});
+
+      return res.status(200).json({ message: 'Address updated successfully', updatedAddresses });
+
+     // res.render('profile',{user:user,address:updatedAddresses});
     } catch (error) {
       console.error('Error deleting address:', error.message);
       res.status(500).json({ message: 'Error deleting address!' });
@@ -278,9 +291,9 @@ const deleteAddress = async (req, res) => {
 const history=async (req,res) => 
 {try {
   const userId = req.session.user._id; // Get the logged-in user's ID
+  const cartitem=await Cart.findOne({userId:userId})
   const orders = await Order.find({ userId })
-    .populate('orderedItems.product')
-    .populate('addressId')
+    .populate('orderedItems.productId')
     .sort({ createdOn: -1 });
 
   res.json(orders); // Return orders as JSON
@@ -291,13 +304,12 @@ const history=async (req,res) =>
 
   const orderHistory=async(req,res)=>{
     try {
-      console.log("inside history+++++++++", req.session.user._id)
+      //console.log("inside history+++++++++", req.session.user._id)
       const orders = await Order.find({ userId:req.session.user._id })
-          .populate("orderedItems.product")
-          .populate("addressId")
+          .populate("orderedItems.productId")
           .sort({ createdOn: -1 });
-
-          res.render("orders/history", { orders });
+          const cartitem=await Cart.findOne({userId:req.session.user._id})
+          res.render("orders/history", { orders ,cart:cartitem});
   } catch (err) {
       console.error("Error fetching orders:", err);
       res.status(500).send("Internal Server Error");
@@ -307,76 +319,160 @@ const history=async (req,res) =>
 
 
   const cancelOrder=async(req,res)=>{
-//     try { console.log("inside history+++++++++", req.params.id)
-//       const order = await Order.findById(req.params.id).populate("orderedItems.product");
-// console.log(order,"11111111111111111111")
-//       if (!order || order.user.toString() !== req.user._id.toString() || order.status !== "Processing") {
-//           return res.status(400).send("Cannot cancel this order.");
+//   try {console.log(req.params,"cancel orderrrrrrr")
+//     const orderId = req.params.id; // Ensure you are getting the order ID
+//     const userId=req.session.user._id
+//     if (!orderId) {
+//       return res.status(400).send('Order ID is required');
+//     }
+
+//     // Fetch the order
+//     const order = await Order.findById(orderId);
+//     if (!order) {
+//       return res.status(404).send('Order not found');
+//     }
+
+//     // Check if the order can be canceled
+//     if (order.status !== 'Processing') {
+//       return res.status(400).send('Only processing orders can be canceled');
+//     }
+
+//     // Update stock for each ordered item
+//     for (const item of order.orderedItems) {
+//       const product = await Product.findById(item.product);
+//       if (product) {
+//         product.stock += item.quantity; // Restock the canceled items
+//         await product.save();
 //       }
+//     }
 
-//       // Update stock
-//       for (const item of order.orderedItems) {
-//           const product = await Product.findById(item.product._id);
-//           if (product) {
-//               product.stock += item.quantity;
-//               await product.save();
-//           }
-//       }
-
-//       // Update order status
-//       order.status = "Cancelled";
-//       await order.save();
-
-//       res.redirect("/orders/history");
+//     // Update order status
+//     order.status = 'Cancelled';
+//     await order.save();
+// //res.redirect('/home')
+//     //res.redirect('/userProfile/userId/#orders-history'); // Adjust based on your tab structure
+//   res.status(200).json("order cancelled successsfully")
 //   } catch (err) {
-//       console.error("Error canceling order:", err);
-//       res.status(500).send("Internal Server Error");
+//     console.error('Error canceling order:', err);
+//     res.status(500).send('Internal Server Error');
 //   }
+try {
+  const { id } = req.params;
+  const { cancelReason, status } = req.body;
+  
+ // const cartitem = await Cart.findOne({userId:id})
 
-  try {
-    const orderId = req.params.id; // Ensure you are getting the order ID
-    const userId=req.session.user._id
-    if (!orderId) {
-      return res.status(400).send('Order ID is required');
-    }
-
-    // Fetch the order
-    const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).send('Order not found');
-    }
-
-    // Check if the order can be canceled
-    if (order.status !== 'Processing') {
-      return res.status(400).send('Only processing orders can be canceled');
-    }
-
-    // Update stock for each ordered item
-    for (const item of order.orderedItems) {
-      const product = await Product.findById(item.product);
-      if (product) {
-        product.stock += item.quantity; // Restock the canceled items
-        await product.save();
-      }
-    }
-
-    // Update order status
-    order.status = 'Cancelled';
-    await order.save();
-
-    res.redirect('/userProfile/userId/#orders-history'); // Adjust based on your tab structure
-  } catch (err) {
-    console.error('Error canceling order:', err);
-    res.status(500).send('Internal Server Error');
+  // Ensure the request body contains the required fields
+  if (!cancelReason || !status) {
+    return res.status(400).json({ message: 'Invalid request data' });
   }
+
+  const updatedOrder = await Order.findByIdAndUpdate(id, {
+    cancelReason,
+    status,
+  }, { new: true });
+
+  if (!updatedOrder) {
+    return res.status(404).json({ message: 'Order not found' });
+  }
+
+  res.json({ message: 'Order cancelled successfully', order: updatedOrder });
+} catch (error) {
+  console.error('Error cancelling order:', error);
+  res.status(500).json({ message: 'Server error', error });
+}
 };
 
 
+const getProfileDetail=async(req,res)=>{
+  try{
+  console.log("inside getDetail")
+
+  console.log(req.params)
+  const profile = await User.findById(req.params.userId);
+  console.log(profile)
+  res.json(profile);
+} catch (error) {
+  res.status(500).json({ message: 'Error fetching data!' });
+}
+}
+
+  const updateProfileDetail=async(req,res)=>{
+    try {
+      // Extract ID from params and fields from body
+    //  console.log("updatedddd")
+     // console.log(req.params)
+    //  const { Id} = req.params.userId;
+      const { name, email, phone } = req.body;
+ // console.log(name,email,phone)
+  //console.log(req.params.userId)
+   //   console.log("Request Body:", req.body);
+     // console.log("Address ID:", Id);
+  
+      // Find the old 
+      const oldData = await User.findById(req.params.userId);
+  
+      if (!oldData) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+     // console.log("Old Data:", oldData);
+  
+      // Create the updated 
+      const newData = {
+        
+        name:name,
+        email:email,
+        phone:phone
+      };
+  
+     
+      // Update 
+      const updated = await User.findByIdAndUpdate(req.params.userId, newData, { new: true });
+      const cartitem=await Cart.findOne({userId:req.params.userId})
+      if (updated) {
+        console.log("successfully updated:", updated);
+        return res.status(200).json({ userId:updated._id,name:updated.name,email:updated.email,phone:updated.phone,cart:cartitem });
+      } else {
+        console.log("Failed to update details");
+        return res.status(500).json({ error: 'Failed to update details' });
+      }
+    } catch (error) {
+      console.error("Error updating :", error);
+      return res.status(500).json({ message: 'Error updating !', error });
+    }
+
+  }
+  const getOrderDetails = async (req, res) => {
+    try {
+      const orderId = req.params.orderId; // Ensure `orderId` is the correct field name in your route
+      if (!orderId) {
+        return res.redirect('/page-404'); // Handle missing orderId
+      }
+      
+      // Fetch the order and populate references
+      const order = await Order.findById(orderId)
+        .populate('orderedItems.productId')
+        .sort({ createdOn: -1 });
+        const cartitem=await Cart.findOne({userId:req.session.user._id})
+      if (order) {
+        console.log(order); // Debugging: Check the full order object
+        res.render('orderDetails', { order,cart:cartitem});
+      } else {
+        res.redirect('/page-404'); // Handle order not found
+      }
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      return res.status(500).json({ message: 'Error updating!', error });
+    }
+  };
   
 
 module.exports={
 
 loadProfile,
+getProfileDetail,
+updateProfileDetail,
 deleteAccount,
 changePassword,
 addAddress,
@@ -386,5 +482,6 @@ deleteAddress,
 orderHistory,
 cancelOrder,
 history,
+getOrderDetails,
 
 }

@@ -1,0 +1,50 @@
+<%- include("../../views/partials/admin/header") %> 
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title text-center">Stock Management</h2>
+            <div class="table-responsive">
+              <table class="table table-hover" border="1">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% products.forEach(product => { %>
+                <tr>
+                    <td><%= product.productName %></td>
+                    <td><%= product.stock %></td>
+                    <td>
+                        <form action="/admin/inventory/update-stock" method="POST">
+                            <input type="hidden" name="productId" value="<%= product._id %>">
+                            <input type="number" name="stock" value="<%= product.stock %>">
+                            <button type="submit">Update Stock</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+<%for(let i=1;i<=totalPages;i++){%>
+<li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
+   <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+</li>
+<%}%>
+</ul>
+
+</div>
+

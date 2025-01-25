@@ -38,10 +38,7 @@ const userSchema=new Schema({
         type:Boolean,
         default:false,
     },
-    cart:[{
-        type:Schema.Types.ObjectId,
-        ref:"Cart",
-    }],
+    
     wallet:{
         type:Number,
         default:0,
@@ -50,10 +47,7 @@ const userSchema=new Schema({
         type:Schema.Types.ObjectId,
         ref:"Whishlist"
     }],
-    oderHistory:[{
-        type:Schema.Types.ObjectId,
-        ref:"Order"
-    }],
+   
     createdOn:{
         type:Date,
         default:Date.now,

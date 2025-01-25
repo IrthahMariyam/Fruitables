@@ -320,10 +320,14 @@ document.querySelector('.zoomable').addEventListener('mouseleave', function() {
         text: "Successfully added to cart",
         icon: "success",
       }).then(() => {
-        // Wait for 2.5 seconds before reloading the page
-        setTimeout(() => {
-          window.location.reload();
-        }, 2500);
+        
+        if (data.cartitemcount !== undefined) {
+          // Get the cart badge element
+          const cartItemBadge = document.getElementById('cartitems');
+
+          // Update the badge count with the new total
+          cartItemBadge.textContent = data.cartitemcount;
+        }
       });
     } else {
       Swal.fire('Error', 'Failed to add product to cart', 'error');

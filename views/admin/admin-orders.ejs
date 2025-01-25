@@ -1,0 +1,125 @@
+<%- include("../../views/partials/admin/header") %> 
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title text-center">Order Details</h2>
+            <div class="table-responsive">
+              <table class="table table-hover" border="1">
+                <thead>
+                  <tr>    
+                    <th>Order ID</th>
+                    <th>User</th>
+                   
+                    <th>Total Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orders.forEach(order => { %>
+                <tr>
+                    <td><%= order._id %></td>
+                    <td><%= order.userId.name %></td>
+                   
+                   
+                    <td>₹<%= order.finalAmount.toFixed(2) %></td>
+                    <td><%= order.paymentMethod %></td>
+                    <td><%= order.status %></td>
+                    <td>
+                        <a href="/admin/getorderdetails/<%=order._id%>" style="text-decoration: none;"><button class="btn"style="background-color:#81C408">View More</button></a>
+                      
+                        <!-- <form action="/admin/orders/update-status" method="POST">
+                            <input type="hidden" name="orderId" value="<%= order._id %>">
+                            <select name="status">
+                                <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                                <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            </select>
+                            <button type="submit">Update</button>
+                        </form>
+                        <% if (order.status === 'Pending') { %>
+                        <form action="/admin/orders/cancel/<%= order._id %>" method="POST">
+                            <button type="submit">Cancel Order</button>
+                        </form>
+                        <% } %> -->
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+              </table> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+    <%for(let i=1;i<=totalPages;i++){%>
+     <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
+         <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+     </li>
+     <%}%>
+     </ul>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  
+function blockUser(row,userId,userName) {
+ const buttonlabel=document.querySelector('[name=blockuser]')
+ const currentText = button.innerHTML === "Blocked" ? "Blocked" : "Unblocked";
+ alert(userId)
+    alert(userName)
+  console.log('Category ID:', userId);
+console.log('Name Field:', userName);
+
+
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, Block user!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`/admin/blockUser/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        
+        body: JSON.stringify({_id:userId, name: userName})
+      })
+      .then(response => response.json())
+      .then(data => {
+        Swal.fire(
+          'Blocked!',
+          'User has been deleted.',
+          'success'
+        );
+        button.innerHTML = currentText === "Blocked" ? "Unblocked" : "Blocked";
+       // row.style.opacity = '0.5';  // Visual feedback (dim the row)
+        //window.location.href = '/admin/user';
+      })
+      .catch(error => {
+        Swal.fire(
+          'Error!',
+          'An error occurred while blocking user.',
+          'error'
+        );
+      });
+    }
+  });
+}
+</script>
+   

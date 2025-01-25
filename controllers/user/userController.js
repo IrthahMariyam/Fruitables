@@ -2,6 +2,7 @@ const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
+const Cart = require("../../models/cartSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
@@ -12,6 +13,7 @@ const session = require("express-session");
 const loadHomepage = async (req, res) => {
   try {
     const limit = 9;
+    let cartitem
     const category = await Category.find({ isListed: true });
     //const categoryIds=categories.map((category)=>category._id.toString())
     const products = await Product.find({
@@ -20,24 +22,31 @@ const loadHomepage = async (req, res) => {
     })
       .sort({ createdOn: -1 })
       .populate("category");
+    
      // console.log(category)
      // console.log(products)
      const user = req.session.user;
 
      if (user) {
       const userData = await User.findOne({ _id: user._id });
-      //res.locals.name = userData.name;
-    //   console.log(user, "user");
-    //   console.log(userData, "userData");
-    //   console.log("session name", req.session.user.name);
+      res.locals.name = userData.name;
+      // console.log(user, "user");
+      // console.log(userData, "userData");
+      // console.log("session name", req.session.user.name);
 
-    //   console.log("session data", req.session.user);
+      // console.log("session data", req.session.user);
       res.locals.user = userData.name;
-    //   console.log("locals data", res.locals.user);
+      
+     // console.log("locals data", res.locals.user);
+     cartitem=await Cart.findOne({userId:userData._id})
+    
+    
+    //console.log("cart items==================",cartitem)
       res.render("home", { user: userData,
          name: req.session.user.name,
          products: products,
          category: category,
+       cart:cartitem
          });
      } else {
       //  res.locals.name = 'Guest';
@@ -46,6 +55,7 @@ const loadHomepage = async (req, res) => {
         name: false,
         products: products,
         category: category,
+        
       });
     }
   } catch (error) {
@@ -76,20 +86,9 @@ const loadSignup = async (req, res) => {
 const loadShopping = async (req, res) => {
   try {
     const user = req.session.user;
-    let UserData;
+    let UserData, cartitem;
     console.log(user, "user in shop page in session");
-    if (user) {
-       userData = await User.findOne({ _id: user._id });
-      console.log(userData, "userData in shop fun");
-      //const userData=await User.findOne({_id:user.id})
-      res.locals.user = userData.name; 
-      console.log(userData.name);
-      //res.render("shop",{user:userData,username:req.session.user})
-    } else {
-      res.locals.user = null;
-     userData=null;
-      // res.render('shop',{user:'Guest',name:false})
-    }
+   
     const categories = await Category.find({ isListed: true });
     const categoryIds = categories.map((category) => category._id.toString());
     const page = parseInt(req.query.page) || 1;
@@ -115,6 +114,27 @@ const loadShopping = async (req, res) => {
       _id: category._id,
       name: category.name,
     }));
+
+    if (user) {
+      userData = await User.findOne({ _id: user._id });
+      cartitem=await Cart.findOne({userId:user._id})
+     console.log(userData, "userData in shop fun");
+     //const userData=await User.findOne({_id:user.id})
+     res.locals.user = userData.name; 
+     console.log(userData.name);
+     //res.render("shop",{user:userData,username:req.session.user})
+     res.render("shop", {
+      user: userData,
+      products: products,
+      category: categoryWithIds,
+      totalProducts: totalProducts,
+      page: page,
+      totalPages: totalPages,
+      cart:cartitem
+    });
+   } else {
+     res.locals.user = null;
+    userData=null;
     res.render("shop", {
       user: userData,
       products: products,
@@ -122,7 +142,18 @@ const loadShopping = async (req, res) => {
       totalProducts: totalProducts,
       page: page,
       totalPages: totalPages,
+      
     });
+  }
+    // res.render("shop", {
+    //   user: userData,
+    //   products: products,
+    //   category: categoryWithIds,
+    //   totalProducts: totalProducts,
+    //   page: page,
+    //   totalPages: totalPages,
+    //   cart:cartitem.items
+    // });
   } catch (error) {
     res.status(500).send("server error");
     console.log("not found", error.message);
@@ -307,8 +338,8 @@ const userlogin = async (req, res) => {
     console.log("inside userLogin", req.session.user);
 
     req.session.user = findUser;
-    console.log("inside loginfindUser", findUser);
-    console.log("inside loginfindUsersession", req.session.user);
+    //console.log("inside loginfindUser", findUser);
+    //console.log("inside loginfindUsersession", req.session.user);
     res.redirect("/");
   } catch (error) {
     console.error("login error", error);
@@ -417,9 +448,10 @@ const postNewPassword = async (req, res) => {
 const getProfilePage = async (req, res) => {
   try {
     const userId = req.session.user._id;
-    console.log(userId);
+    //console.log(userId);
     const userData = await User.findById({ _id: userId });
-    res.render("profile", { user: userData.name, loggedIn: false });
+    const cartitem=await Cart.findOne({userId:userId})
+    res.render("profile", { user: userData.name,cart:cartitem});
   } catch (error) {
     console.log("Error for retrieve profile data", error);
     res.redirect("/page-404");
@@ -427,10 +459,12 @@ const getProfilePage = async (req, res) => {
 };
 
 const filterProduct = async (req, res) => {
+
+
     try {
       const userId = req.session.user ? req.session.user._id : null;
       const category = req.query.category;
-  
+     
       const findCategory = category ? await Category.findOne({ _id: category }) : null;
   
       const query = {
@@ -451,11 +485,11 @@ const filterProduct = async (req, res) => {
       const endIndex = startIndex + limit;
       const totalPages = Math.ceil(findProducts.length / limit);
       const currentProduct = findProducts.slice(startIndex, endIndex);
-  
+      const categories = await Category.find({ isListed: true });
       let userData = null;
       if (userId) {
         userData = await User.findById(userId);
-  
+        const cartitem=await Cart.findOne({userId:userId})
         // if (userData && findCategory) {
         //   const searchEntry = {
         //     category: findCategory._id,
@@ -465,9 +499,8 @@ const filterProduct = async (req, res) => {
         //   userData.searchHistory.push(searchEntry);
         //   await userData.save();
         // }
-      }
-  
-      const categories = await Category.find({ isListed: true });
+            
+      
       res.render("shop", {
          user: userData,
         products: currentProduct,
@@ -475,7 +508,20 @@ const filterProduct = async (req, res) => {
         totalPages,
         page,
         selectedCategory: category || null,
+        cart:cartitem
       });
+    }
+    else{
+    res.render("shop", {
+      user: userData,
+     products: currentProduct,
+     category: categories,
+     totalPages,
+     page,
+     selectedCategory: category || null,
+   
+   });
+  }
     } catch (error) {
       console.error("Error in filterProduct:", error);
   
@@ -491,12 +537,7 @@ const productDetails = async (req, res) => {
   //  console.log("inside detail page");
     const userId = req.session.user;
     // console.log(  userId,  "userid in product data started first in product details");
-    if (userId) {
-      const userData = await User.findById(userId);
-      //console.log(userData, "userdata in product details");
-    } else {
-      userData = null;
-    }
+   
     const productId = req.query.id;
     const product = await Product.findById(productId).populate("category");
 
@@ -521,17 +562,46 @@ const productDetails = async (req, res) => {
     // console.log(productOffer, "prduc ofer");
     const totalOffer = categoryOffer + productOffer;
     // console.log(totalOffer, "finded");
-
-    res.render("product-details", {
-      user: userData,
-      product: product,
-      stock: product.stock,
-      totalOffer: totalOffer,
-      category: findCategory,
-      totalProducts: totalProducts,
-      totalProcount: totalProcount,
-      totalcategory: totalcategory,
-    });
+    if (userId) {
+      const userData = await User.findById(userId);
+     let  cartitem=await Cart.findOne({userId:userId})
+      //console.log(userData, "userdata in product details");
+      res.render("product-details", {
+        user: userData,
+        product: product,
+        stock: product.stock,
+        totalOffer: totalOffer,
+        category: findCategory,
+        totalProducts: totalProducts,
+        totalProcount: totalProcount,
+        totalcategory: totalcategory,
+        cart:cartitem,
+      });
+    } else {
+      userData = null;
+      res.render("product-details", {
+        user: userData,
+        product: product,
+        stock: product.stock,
+        totalOffer: totalOffer,
+        category: findCategory,
+        totalProducts: totalProducts,
+        totalProcount: totalProcount,
+        totalcategory: totalcategory,
+        // cart:cartitem.items,
+      });
+    }
+    // res.render("product-details", {
+    //   user: userData,
+    //   product: product,
+    //   stock: product.stock,
+    //   totalOffer: totalOffer,
+    //   category: findCategory,
+    //   totalProducts: totalProducts,
+    //   totalProcount: totalProcount,
+    //   totalcategory: totalcategory,
+    //   cart:cartitem.items,
+    // });
   } catch (error) {
     console.error("Error for fetching product details", error.stack);
     res.redirect("/pageNotFound");
@@ -576,22 +646,24 @@ const productReview = async (req, res) => {
 const loadProfile=async (req, res) => {
     try {
        const id=req.params;
-       console.log(id,"inside loadprofile params id value")
+       //console.log(id,"inside loadprofile params id value")
         const user = req.session.user;
-        console.log(user);
+       // console.log(user);
         if (user) {
             const userData = await User.findOne({_id: user._id });
+            const cartitem=await Cart.findOne({userId:userData._id})
             // const useraddress=await Address.findOne({userId:user._id})
             const userAddress = await Address.findOne({userId:user._id }).populate('user._id');
             res.locals.user = userData.name;
-            console.log(userData,"userinside loadprofile")
-            console.log(userAddress,"useraddressinside loadprofile")
+           // console.log(userData,"userinside loadprofile")
+            //console.log(userAddress,"useraddressinside loadprofile")
           //  console.log("session name", req.session.user.name);
             console.log("locals data", res.locals.user);
             console.log("session data", req.session.user);
             if(userData){
                 res.render("profile",{user:userData,
                              address:userAddress,
+                             cart:cartitem
             })
             }else{
                 res.status(500).send("USER BLOCKED BY ADMIN");
@@ -615,6 +687,7 @@ const deleteAccount=async(req,res)=>{
              console.log(user);
              if (user) {
                  const userData = await User.findOne({_id: user._id });
+                 const cartitem=await Cart.findOne({userId:userData._id})
                  if (userData) {
                     const blockUser = await User.updateOne({ _id:user._id }, { $set: { isBlocked: true } });
                     res.status(200).json({ message: 'Deleted successfully' });
@@ -690,6 +763,8 @@ const getFilteredProducts = async (req, res) => {
 const searchProducts = async (req, res) => {
 
     try {
+      const id=req.session.user._id;
+      //console.log(id,"===============================")
       const { query } = req.query;
       const categories = await Category.find({ isListed: true });
       const categoryIds = categories.map((category) => category._id.toString());
@@ -734,21 +809,34 @@ const searchProducts = async (req, res) => {
         });
   
       }
-  
-      // Perform a case-insensitive search
-      
-    
+      const user = req.session.user;
+      console.log(user);
+      if (user) {
+          const userData = await User.findOne({_id:id });
+          const cartitem=await Cart.findOne({userId:userData._id})
+        
+      res.render('shop', { products:products , 
+        category: categoryWithIds,
+        totalProducts: totalProducts,
+          page: page,
+          totalPages: totalPages,
+        cart:cartitem  });
+    }else{
       res.render('shop', { products:products , 
         category: categoryWithIds,
         totalProducts: totalProducts,
           page: page,
           totalPages: totalPages,  });
-    } catch (error) {
+    } 
+  }
+    catch (error) {
       console.error('Error in searchProducts:', error);
       res.status(500).send('Internal Server Error');
     }
   };
   
+
+
   
   const searchAndSortProducts = async (req, res) => {
     try {
@@ -811,33 +899,39 @@ const searchProducts = async (req, res) => {
       // Count total products for pagination
       const totalProducts = await Product.countDocuments(query);
       const totalPages = Math.ceil(totalProducts / limit);
-  
-      res.status(200).render("shop", {
-        products,
-        sortBy: sortBy || "default", // Pass default if no sortBy is provided
-        keyword: keyword || "", // Pass empty string if no keyword is provided
-        totalProducts,
-        category:category,
-        page: parseInt(page),
-        totalPages,
-      });
+      const id = req.session.user;
+      console.log(req.session.user,"===============================")
+      if(id){
+        const userData = await User.findOne({_id:id._id });
+        const cartitem=await Cart.findOne({userId:req.session.user._id})
+        res.status(200).render("shop", {
+          products,
+          sortBy: sortBy || "default", // Pass default if no sortBy is provided
+          keyword: keyword || "", // Pass empty string if no keyword is provided
+          totalProducts,
+          category:category,
+          page: parseInt(page),
+          totalPages,
+          cart:cartitem,
+        });
+      }else
+      {
+        res.status(200).render("shop", {
+          products,
+          sortBy: sortBy || "default", // Pass default if no sortBy is provided
+          keyword: keyword || "", // Pass empty string if no keyword is provided
+          totalProducts,
+          category:category,
+          page: parseInt(page),
+          totalPages,
+        });
+      }
+     
     } catch (error) {
       console.error("Error in searchAndSortProducts:", error);
       res.status(500).json({ error: "Failed to fetch products." });
     }
   
-  
-  
-      // res.status(200).render("shop", {
-      //   products,
-      //   sortBy: sortBy || "default", // Pass default if no sortBy is provided
-      //   keyword: keyword || "", // Pass empty string if no keyword is provided
-      //   totalProducts,
-      //   category,
-      //   page: parseInt(page),
-      //   totalPages,
-      // });
-   
   };
   
 

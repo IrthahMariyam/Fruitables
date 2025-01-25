@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Order Details</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Container */
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Card Styles */
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    /* Product Card */
+    .product-card {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    .product-card:last-child {
+      border-bottom: none;
+    }
+
+    .product-card img {
+      height: 80px;
+      width: 80px;
+      margin-right: 15px;
+      border-radius: 4px;
+    }
+
+    .product-details {
+      flex-grow: 1;
+    }
+
+    .product-details h4 {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      text-align: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-danger {
+      background-color: #c82333;
+      color: #fff;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    .btn-info {
+      background-color: #17a2b8;
+      color: #fff;
+    }
+
+    .btn-warning {
+      background-color: #ffc107;
+      color: #fff;
+    }
+
+    .btn:hover {
+      opacity: 0.8;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: #fff;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+    <script>
+       const orderId = "<%= order._id %>";
+    </script>
+
+  <div class="container">
+    <h1>Order Details</h1>
+    <a href="/admin/orders">Back to Orders</a>
+    
+    <!-- Order Information -->
+    <div class="card">
+      <p id="ordersId"><strong>ORDER ID:</strong> <%= order._id %></p>
+      <p><strong>Status:</strong> <%= order.status %></p>
+      <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+    </div>
+
+    <!-- Product Details -->
+    <div class="card">
+      <div class="card-header">Product Details</div>
+
+      <% order.orderedItems.forEach((item) => { %>
+        <%let it=item.productId %>
+        <div class="product-card">
+       
+          <img src="<%= it.productImage[0] %>" alt="Product Image">
+          <div class="product-details">
+            <h4><%=it.productName %></h4>
+            <p>Quantity: <%= item.quantity %></p>
+            <p>Price: ₹<%= item.price %></p>
+          </div>
+        </div>
+      <%  }); %>
+    </div>
+
+    <!-- Price Details -->
+    <div class="card">
+      <div class="card-header">Price Details</div>
+      <p>Total Price: ₹<%= order.totalPrice %></p>
+      <p>Discount: ₹<%= order.discount %></p>
+      <p>Shipping Charge: ₹100</p>
+      <p><strong>Payable Amount:</strong> ₹<%= order.finalAmount %></p>
+    </div>
+
+    <!-- Shipping Address -->
+    <div class="card">
+      <div class="card-header">Shipping Details</div>
+      <p>Name: <%= order.address.name %></p>
+      <p>Address: <%= order.address.landmark %>, 
+        <%= order.address.district %>,
+         <%= order.address.state %> 
+          <%= order.address.pincode %></p>
+      <p>Contact: <%= order.address.phone %></p>
+    </div>
+    <% if(order.status=="Cancelled") {%>
+      <div class="card">
+        <div class="card-header">Cancel Reason</div>
+    <p><%=order.cancelReason%></p>
+    </div>
+    <%}%>
+    <!-- Status Change Section for Admin -->
+    <div class="card">
+      <div class="card-header">Update Order Status</div>
+      <form id="statusForm">
+        <label for="orderStatus">Choose Status:</label>
+        <select id="orderStatus" name="status" class="form-control">
+          <option value="Pending" <%= order.status === "Pending" ? 'selected' : '' %>>Pending</option>
+          <option value="Processing" <%= order.status === "Processing" ? 'selected' : '' %>>Processing</option>
+          <option value="Shipping" <%= order.status === "Shipping" ? 'selected' : '' %>>Shipping</option>
+          <option value="Delivered" <%= order.status === "Delivered" ? 'selected' : '' %>>Delivered</option>
+          <option value="Cancelled" <%= order.status === "Cancelled" ? 'selected' : '' %>>Cancelled</option>
+        </select>
+        <div style="margin-top: 10px; text-align: center;">
+          <button type="submit" class="btn btn-success">Update Status</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const statusForm = document.getElementById("statusForm");
+    statusForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+//alert(orderId)
+      const selectedStatus = document.getElementById("orderStatus").value;
+      // const orderId=document.getElementById('ordersId').value
+      // alert(oderId)
+      // Send request to update the order status
+      fetch(`/admin/orders/update-status/${orderId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: selectedStatus,
+        }),
+      })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to update status");
+        return res.json();
+      })
+      .then((data) => {
+        Swal.fire('Success!', `Order status updated to ${selectedStatus}.`, 'success');
+        window.location.href = '/admin/orders';  // Reload the page to reflect changes
+      })
+      .catch((err) => {
+        Swal.fire('Error!', 'Failed to update the order status.', 'error');
+        console.error(err);
+      });
+    });
+  </script>
+
+</body>
+</html>

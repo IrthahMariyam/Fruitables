@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Details</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Container */
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Card Styles */
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    /* Product Card */
+    .product-card {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    .product-card:last-child {
+      border-bottom: none;
+    }
+
+    .product-card img {
+      height: 80px;
+      width: 80px;
+      margin-right: 15px;
+      border-radius: 4px;
+    }
+
+    .product-details {
+      flex-grow: 1;
+    }
+
+    .product-details h4 {
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      text-align: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-danger {
+      background-color: #81C408;
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    /* Cancellation Reason Section */
+    .cancellation-reason-container {
+      padding: 15px;
+      border: 1px solid #ddd;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .cancellation-reason-container h3 {
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .cancellation-reason-container input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: #fff;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+    <script>
+       const orderId = "<%= order._id %>";
+    </script>
+
+  <div class="container">
+    <h1 style="background-color: #81C408;">Order Details</h1>
+    <a href="/home">Home</a>
+    <!-- Order Information -->
+    <div class="card">
+      <p id="ordersId"><strong>ORDER ID:</strong> <%= order._id %></p>
+      <p><strong>Status:</strong><%= order.status %></p>
+      <p><strong>Payment Method : </strong><%= order.paymentMethod %></p>
+    </div>
+
+    <!-- Product Details -->
+    <div class="card">
+      <div class="card-header">Product Details</div>
+     
+      <% order.orderedItems.forEach((item) => { %>
+        <div class="product-card">
+          <img src="<%= item.productId.productImage[0] %>" alt="Product Image">
+          <div class="product-details">
+            <h4><%= item.productId.productName %></h4>
+            <p>Quantity: <%= item.quantity %></p>
+            <p>Price: ₹<%= item.price %></p>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <!-- Price Details -->
+    <div class="card">
+      <div class="card-header">Price Details</div>
+      <p>Total Price: ₹<%= order.totalPrice %></p>
+      <p>Discount: ₹<%= order.discount %></p>
+      <p>Shipping Charge: ₹100</p>
+      <p><strong>Payable Amount:</strong> ₹<%= order.finalAmount %></p>
+    </div>
+
+    <!-- Shipping Address -->
+    <div class="card">
+      <div class="card-header">Shipping Details</div>
+      <p>Name: <%= order.address.name %></p>
+      <p>Address: <%= order.address.landmark %>, <%= order.address.district %>, <%= order.address.state %> - <%= order.address.pincode %></p>
+      <p>Contact: <%= order.address.phone %></p>
+    </div>
+<% if(order.status=="Cancelled") {%>
+  <div class="card">
+    <div class="card-header">Cancel Reason</div>
+<p><%=order.cancelReason%></p>
+</div>
+<%}%>
+    <!-- Cancellation Section -->
+     <% if(order.status == "Processing"){ %>
+    <div style="text-align: center;">
+      <button id="button-cancel" class="btn btn-danger">Cancel Order</button>
+    </div>
+
+    <div id="reasondiv" class="cancellation-reason-container">
+      <h3>Reason for Cancellation</h3>
+      <input type="text" id="cancellation-reason" placeholder="Enter reason for cancellation">
+      <div style="text-align: center;">
+        <button id="go-back" class="btn btn-secondary">Go Back</button>
+        <button id="cancel-order"class="btn btn-danger"  >Submit</button>
+      </div>
+    </div>
+  </div>
+
+ <%}%>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    
+  //  const orderid=document.getElementById('ordersId')
+  //  const id=orderid.value.toString()
+    const buttonCancel = document.getElementById('button-cancel');
+    const buttonGoBack = document.getElementById('go-back');
+    const buttonCancelOrder = document.getElementById('cancel-order');
+    const cancelReason = document.getElementById('reasondiv');
+    const reason=document.getElementById('cancellation-reason')
+
+    buttonCancel.addEventListener('click', () => {
+      cancelReason.style.display = 'block';
+      buttonCancel.style.display = 'none';
+    });
+
+    buttonGoBack.addEventListener('click', () => {
+      cancelReason.style.display = 'none';
+      buttonCancel.style.display = 'block';
+    });
+    buttonCancelOrder.addEventListener('click', () => {
+  if (reason.value.trim() === "") {
+    alert("Please fill the reason");
+    return false
+  } //alert(reason.value)
+    //alert(orderId)
+    fetch(`/orders/cancel/${orderId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        cancelReason: reason.value.trim(), // Use reason.value here
+        status: "Cancelled",
+      }),
+    })
+    .then((res) => {
+  if (!res.ok) throw new Error("Failed to cancel order");
+  return res.json();
+})
+.then((data) => {
+  Swal.fire('Cancelled!', 'Order cancelled successfully.', 'success');
+  setTimeout(() => location.reload(), 1500);
+})
+.catch((err) => {
+  Swal.fire('Error!', 'Failed to cancel the order.', 'error');
+  console.error(err);
+});
+  
+});
+  </script>
+
+</body>
+</html>
