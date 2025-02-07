@@ -68,8 +68,6 @@
               <a href="/home" class="nav-item nav-link active">Home</a>
               <a href="/shop" class="nav-item nav-link">Shop</a>
 
-              
-             
               <% if (locals.user!=null) { %>
               <a href="/userProfile/<%=user._id%>" class="nav-item nav-link active">Profile</a>
               <a href="/logout" class="nav-item nav-link active">Logout</a>
@@ -86,7 +84,7 @@
                 >
                   <i class="fas fa-search text-primary"></i>
                 </button>
-                <a href="#" class="position-relative me-4 my-auto">
+                <a href="getWishlist" class="position-relative me-4 my-auto">
                   <i
                     class="fa fa-heart"
                     style="font-size: 38px; color: red"
@@ -104,12 +102,7 @@
                     </span>
                     <%}%>
                 </a>
-                    <!-- <a href="#" class="my-auto">
-                   <i class="fas fa-user fa-2x"></i><br>
-                   <% if (locals.user!=null) { %>
-                    <%=locals.user.name %>
-                    <% console.log(locals.user) }%>
-                   </a> -->
+                   
               </div>
             </div>
           </div>

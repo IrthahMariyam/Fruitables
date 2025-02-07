@@ -288,100 +288,66 @@ const deleteAddress = async (req, res) => {
 //     res.status(500).send("Internal Server Error");
 // }
 // }
-const history=async (req,res) => 
-{try {
-  const userId = req.session.user._id; // Get the logged-in user's ID
-  const cartitem=await Cart.findOne({userId:userId})
-  const orders = await Order.find({ userId })
-    .populate('orderedItems.productId')
-    .sort({ createdOn: -1 });
-
-  res.json(orders); // Return orders as JSON
-} catch (err) {
-  console.error('Error fetching order history:', err);
-  res.status(500).json({ error: 'Failed to fetch order history' });
-}}
-
-  const orderHistory=async(req,res)=>{
-    try {
-      //console.log("inside history+++++++++", req.session.user._id)
-      const orders = await Order.find({ userId:req.session.user._id })
-          .populate("orderedItems.productId")
-          .sort({ createdOn: -1 });
-          const cartitem=await Cart.findOne({userId:req.session.user._id})
-          res.render("orders/history", { orders ,cart:cartitem});
-  } catch (err) {
-      console.error("Error fetching orders:", err);
-      res.status(500).send("Internal Server Error");
-  }
-  }
 
 
+// const history=async (req,res) => 
+// {try {
+//   const userId = req.session.user._id; // Get the logged-in user's ID
+//   const cartitem=await Cart.findOne({userId:userId})
+//   const orders = await Order.find({ userId })
+//     .populate('orderedItems.productId')
+//     .sort({ createdOn: -1 });
 
-  const cancelOrder=async(req,res)=>{
-//   try {console.log(req.params,"cancel orderrrrrrr")
-//     const orderId = req.params.id; // Ensure you are getting the order ID
-//     const userId=req.session.user._id
-//     if (!orderId) {
-//       return res.status(400).send('Order ID is required');
-//     }
+//   res.json(orders); // Return orders as JSON
+// } catch (err) {
+//   console.error('Error fetching order history:', err);
+//   res.status(500).json({ error: 'Failed to fetch order history' });
+// }}
 
-//     // Fetch the order
-//     const order = await Order.findById(orderId);
-//     if (!order) {
-//       return res.status(404).send('Order not found');
-//     }
-
-//     // Check if the order can be canceled
-//     if (order.status !== 'Processing') {
-//       return res.status(400).send('Only processing orders can be canceled');
-//     }
-
-//     // Update stock for each ordered item
-//     for (const item of order.orderedItems) {
-//       const product = await Product.findById(item.product);
-//       if (product) {
-//         product.stock += item.quantity; // Restock the canceled items
-//         await product.save();
-//       }
-//     }
-
-//     // Update order status
-//     order.status = 'Cancelled';
-//     await order.save();
-// //res.redirect('/home')
-//     //res.redirect('/userProfile/userId/#orders-history'); // Adjust based on your tab structure
-//   res.status(200).json("order cancelled successsfully")
+//   const orderHistory=async(req,res)=>{
+//     try {
+//       //console.log("inside history+++++++++", req.session.user._id)
+//       const orders = await Order.find({ userId:req.session.user._id })
+//           .populate("orderedItems.productId")
+//           .sort({ createdOn: -1 });
+//           const cartitem=await Cart.findOne({userId:req.session.user._id})
+//           res.render("orders/history", { orders ,cart:cartitem});
 //   } catch (err) {
-//     console.error('Error canceling order:', err);
-//     res.status(500).send('Internal Server Error');
+//       console.error("Error fetching orders:", err);
+//       res.status(500).send("Internal Server Error");
 //   }
-try {
-  const { id } = req.params;
-  const { cancelReason, status } = req.body;
+//   }
+
+
+
+//   const cancelOrder=async(req,res)=>{
+
+// try {
+//   const { id } = req.params;
+//   const { cancelReason, status } = req.body;
   
- // const cartitem = await Cart.findOne({userId:id})
+//  // const cartitem = await Cart.findOne({userId:id})
 
-  // Ensure the request body contains the required fields
-  if (!cancelReason || !status) {
-    return res.status(400).json({ message: 'Invalid request data' });
-  }
+//   // Ensure the request body contains the required fields
+//   if (!cancelReason || !status) {
+//     return res.status(400).json({ message: 'Invalid request data' });
+//   }
 
-  const updatedOrder = await Order.findByIdAndUpdate(id, {
-    cancelReason,
-    status,
-  }, { new: true });
+//   const updatedOrder = await Order.findByIdAndUpdate(id, {
+//     cancelReason,
+//     status,
+//   }, { new: true });
 
-  if (!updatedOrder) {
-    return res.status(404).json({ message: 'Order not found' });
-  }
+//   if (!updatedOrder) {
+//     return res.status(404).json({ message: 'Order not found' });
+//   }
 
-  res.json({ message: 'Order cancelled successfully', order: updatedOrder });
-} catch (error) {
-  console.error('Error cancelling order:', error);
-  res.status(500).json({ message: 'Server error', error });
-}
-};
+//   res.json({ message: 'Order cancelled successfully', order: updatedOrder });
+// } catch (error) {
+//   console.error('Error cancelling order:', error);
+//   res.status(500).json({ message: 'Server error', error });
+// }
+// };
 
 
 const getProfileDetail=async(req,res)=>{
@@ -403,7 +369,7 @@ const getProfileDetail=async(req,res)=>{
     //  console.log("updatedddd")
      // console.log(req.params)
     //  const { Id} = req.params.userId;
-      const { name, email, phone } = req.body;
+      const { name, phone } = req.body;
  // console.log(name,email,phone)
   //console.log(req.params.userId)
    //   console.log("Request Body:", req.body);
@@ -422,7 +388,7 @@ const getProfileDetail=async(req,res)=>{
       const newData = {
         
         name:name,
-        email:email,
+        
         phone:phone
       };
   
@@ -432,6 +398,7 @@ const getProfileDetail=async(req,res)=>{
       const cartitem=await Cart.findOne({userId:req.params.userId})
       if (updated) {
         console.log("successfully updated:", updated);
+   
         return res.status(200).json({ userId:updated._id,name:updated.name,email:updated.email,phone:updated.phone,cart:cartitem });
       } else {
         console.log("Failed to update details");
@@ -442,30 +409,33 @@ const getProfileDetail=async(req,res)=>{
       return res.status(500).json({ message: 'Error updating !', error });
     }
 
+
   }
-  const getOrderDetails = async (req, res) => {
-    try {
-      const orderId = req.params.orderId; // Ensure `orderId` is the correct field name in your route
-      if (!orderId) {
-        return res.redirect('/page-404'); // Handle missing orderId
-      }
+
+ 
+  // const getOrderDetails = async (req, res) => {
+  //   try {
+  //     const orderId = req.params.orderId; // Ensure `orderId` is the correct field name in your route
+  //     if (!orderId) {
+  //       return res.redirect('/page-404'); // Handle missing orderId
+  //     }
       
-      // Fetch the order and populate references
-      const order = await Order.findById(orderId)
-        .populate('orderedItems.productId')
-        .sort({ createdOn: -1 });
-        const cartitem=await Cart.findOne({userId:req.session.user._id})
-      if (order) {
-        console.log(order); // Debugging: Check the full order object
-        res.render('orderDetails', { order,cart:cartitem});
-      } else {
-        res.redirect('/page-404'); // Handle order not found
-      }
-    } catch (error) {
-      console.error("Error fetching order details:", error);
-      return res.status(500).json({ message: 'Error updating!', error });
-    }
-  };
+  //     // Fetch the order and populate references
+  //     const order = await Order.findById(orderId)
+  //       .populate('orderedItems.productId')
+  //       .sort({ createdOn: -1 });
+  //       const cartitem=await Cart.findOne({userId:req.session.user._id})
+  //     if (order) {
+  //       console.log(order); // Debugging: Check the full order object
+  //       res.render('orderDetails', { order,cart:cartitem});
+  //     } else {
+  //       res.redirect('/page-404'); // Handle order not found
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching order details:", error);
+  //     return res.status(500).json({ message: 'Error updating!', error });
+  //   }
+  // };
   
 
 module.exports={
@@ -479,9 +449,10 @@ addAddress,
 getAddress,
 updateAddress,
 deleteAddress,
-orderHistory,
-cancelOrder,
-history,
-getOrderDetails,
+
+// orderHistory,
+// cancelOrder,
+// history,
+//getOrderDetails,
 
 }

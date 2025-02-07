@@ -28,6 +28,8 @@
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Phone</th>
+                    <th>Google Id</th>
                     <th>Listed</th>
                   </tr>
                 </thead>
@@ -37,6 +39,12 @@
                   <tr>
                     <td><%= users[i].name %></td>
                     <td><%= users[i].email %></td>
+                    <td><%= users[i].phone %></td>
+                    <% if(users[i].googleId!==null){ %>
+                      <td>Yes</td>
+                      <% }else{ %>
+                        <td>No</td>
+                        <% } %>
                     <td>
                       <% if (users[i].isBlocked === false) { %>
                       <button
@@ -82,3 +90,65 @@
      </ul>
 
 </div>
+
+<%-include("../../views/partials/admin/footer")%> 
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  
+  function blockUser(row,userId,userName) {
+   const buttonlabel=document.querySelector('[name=blockuser]')
+   const currentText = buttonlabel.innerHTML === "Blocked" ? "Blocked" : "Unblocked";
+   alert(userId)
+      alert(userName)
+    console.log('Category ID:', userId);
+  console.log('Name Field:', userName);
+  
+  
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, Block user!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/admin/blockUser/${userId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          
+          body: JSON.stringify({_id:userId, name: userName})
+        })
+        .then(response => response.json())
+        .then(data => {
+          Swal.fire(
+            'Blocked!',
+            "Blocked successfully",
+            'success'
+          );
+          //buttonlabel.innerHTML = currentText === "Block" ? "Unblocked" : "Blocked";
+         // row.style.opacity = '0.5';  // Visual feedback (dim the row)
+          window.location.href = '/admin/user';
+        })
+        .catch(error => {
+          Swal.fire(
+            'Error!',
+            'An error occurred while blocking user.',
+            'error'
+          );
+        });
+      }
+    });
+  }
+  
+  
+  
+  
+  </script>
+     
+</body>
+</html>

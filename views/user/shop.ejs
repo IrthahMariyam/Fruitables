@@ -72,6 +72,26 @@
         .filter-item a:hover {
             color: #007bff;
         }
+        .wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red; 
+    color: white; 
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    z-index: 1;
+}
+
+.wishlist-btn:hover {
+    background-color: darkred; 
+    transform: scale(1.1); 
+}
+
         .product-list-container {
             display: flex;
             gap: 20px;
@@ -95,16 +115,7 @@
             height: auto;
             border-radius: 5px;
         }
-        .wishlist-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background-color: rgba(237, 247, 247, 0.8);
-            color: #fff;
-            padding: 8px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+     
         .add-to-cart-btn {
             background-color: #81C408;
             color: #fff;
@@ -140,23 +151,27 @@
             color: #fff;
         }
 
- .product-card { position: relative; /* Ensure the card is positioned relatively */ 
-  overflow: hidden; /* Hide any overflowing content */ 
+        
+ .product-card { position: relative; 
+  overflow: hidden;
   transition: transform 0.3s ease, 
   box-shadow 0.3s ease; } 
 .product-card:hover { 
  transform: translateY(-10px);
  box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
- } /* Add a smooth transition effect to the product image */
+ }
 .product-card img { 
- transition: transform 0.5s ease; /* Smooth transition for the image */
-border-radius: 10px 10px 0 0; /* Rounded corners for the top of the image */
- } /* Slight zoom effect on the image */
+ transition: transform 0.5s ease; 
+border-radius: 10px 10px 0 0;
+ } 
  .product-card:hover img {
-transform: scale(1.3); /* Zoom in the image */ 
+transform: scale(1.3);
  }
 
+
+
     </style>
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
     <%- include("../../views/partials/user/header") %>
@@ -166,62 +181,83 @@ transform: scale(1.3); /* Zoom in the image */
         <section class="shop-page container">
             <div class="shop-topbar">
                 <div class="search-bar">
-                    <form action="/search" method="get" class="search-form">
-                        <input type="text" name="query" placeholder="Search items..." class="search-input" />
+                        <form action="/shop" method="GET" class="search-form">
+                        <input type="text" name="query" placeholder="Search items..." value="<%= search || '' %>"
+                            class="search-input" />
+                        <input type="hidden" name="category" value="<%= selectedCategory || '' %>" />
                         <button type="submit" class="search-button">Search</button>
                     </form>
+    
                 </div>
             </div>
             <div class="product-list-container">
                 <aside class="sidebar">
                     <div class="filter-section">
                         <div class="filter-title">Categories</div>
-                        <ul>
+                         <ul>
                             <% for(let i=0; i<category.length; i++) { %>
                                 <li class="filter-item" style="list-style: none;">
-                                    <a href="/filter?category=<%=category[i]._id%>">
+                                 
+                                    <a href="/shop?category=<%= category[i]._id %>"
+                                        class="text-decoration-none text-dark <%= selectedCategory === (category._id) ? 'active' : '' %>">
                                         <i class="fas fa-apple-alt me-2" style="color: #81C408;"></i>
                                         <%= category[i].name %>
                                     </a>
-                                </li>
+                                 
+                                </li><br>
                             <% } %>
                         </ul>
                     </div>
                     <div>
                     <div class="filter-section">
                         
-                          <form action="/sortproduct" method="get">
+                        <form action="" method="get">
                            
                             <!-- Sort Dropdown -->
                              <div>
-                            <label for="sortBy">Sort By:</label>
-                            <select id="sortBy" name="sortBy">
-                             <option value="default">Default</option>
-                             <option value="instock">In Stock</option>
-                              <option value="newArrivals">New Arrivals</option>
-                              <!-- <option value="featured">Featured</option> -->
-                              <option value="popularity">Popularity</option>
-                              <option value="averageRatings">Average Ratings</option>
-                              <option value="priceAsc">Low  to High Price</option>
-                              <option value="priceDesc">High  to Low Price</option>
-                              <option value="aToZ">Name: A to Z</option>
-                              <option value="zToA">Name: Z to A</option>
+                            <label for="sortBy">Sort By:</label><br>
+                            <select class="custom-select" id="sortSelect" onchange="handleSort(this.value)">
+                                <option value="default" <%=currentSort==='default' ? 'selected' : '' %>>Default</option>
+                                <option value="priceHighToLow" <%=currentSort==='priceHighToLow' ? 'selected' : '' %>>Price: High to Low</option>
+                                <option value="priceLowToHigh" <%=currentSort==='priceLowToHigh' ? 'selected' : '' %>
+                                    >Price: Low to High</option>
+                                <option value="nameAtoZ" <%=currentSort==='nameAtoZ' ? 'selected' : '' %>>Name: A to Z
+                                </option>
+                                <option value="nameZtoA" <%=currentSort==='nameZtoA' ? 'selected' : '' %>>Name: Z to A
+                                </option>
                             </select>
-                        </div>
-                            <!-- Submit Button -->
+
+                          
+                            <!-- <select class="custom-select" id="sortSelect" onchange="handleSort(this.value)">
+                             <option value="default">Default</option>
                              
-                             <div class="text-center"style="margin-top: 10px;">
-                            <button type="submit"  class="search-button">Search</button>
+                              <option value="newArrivals">New Arrivals</option>
+                               <option value="featured">Featured</option> -->
+                              <!-- <option value="popularity">Popularity</option> -->
+                              <!-- <option value="averageRatings">Average Ratings</option> -->
+                              <!-- <option value="priceAsc">Low  to High Price</option> -->
+                              <!-- <option value="priceDesc">High  to Low Price</option> -->
+                              <!-- <option value="aToZ">Name: A to Z</option> -->
+                              <!-- <option value="zToA">Name: Z to A</option> -->
+                            <!-- </select> --> 
                         </div>
+                           
+                             
+                            
                           </form>
                        </div>
                 </aside>
                 
                 <main class="product-grid">
+                    <%console.log("inside shops")%>
+                    <%console.log(products.length)%>
                     <% for(let i=0; i<products.length; i++) { %>
-                      <%console.log(products.length)%>
+                      
+                     
                         <div class="product-card">
-                            <a href="/productDetails?id=<%=products[i]._id%>">
+                           
+                                <span class="wishlist-btn"onclick="addToWishlist('<%=products[i]._id%>')">❤</span>
+                                <a href="/productDetails?id=<%=products[i]._id%>">
                                 <img src="<%=products[i].productImage[0] %>" alt="<%=products[i].productName%>" />
                                 <h4><%= products[i].productName %></h4>
                                 <p><strike>₹<%= products[i].price %></strike> ₹<%= products[i].salesPrice %></p>
@@ -240,53 +276,118 @@ transform: scale(1.3); /* Zoom in the image */
 
 
 <!-- Pagination -->
-
-
 <div class="pagination" style="text-align: center; width: 100%;">
-  <ul style="display: inline-flex; justify-content: center; list-style: none; padding: 0;">
-    <% for(let i=1;i<=totalPages;i++){ %>
-      <li class="page-item <%=(i===page) ? 'active' : '' %>">
-        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-      </li>
-    <% } %>
-  </ul>
-</div>
+ 
 
+    <div class="pagination">
+        <% if (currentPage> 1) { %>
+            <a class="btn"
+                href="?page=<%= currentPage - 1 %>&category=<%= selectedCategory %>&sort=<%= currentSort %>&query=<%=search%>">Prev</a>
+            <% } %>
 
+                <% for (let i=1; i <=totalPages; i++) { %>
+                    <a class="btn <%= currentPage === i ? 'active' : '' %>"
+                        href="?page=<%= i %>&category=<%= selectedCategory %>&sort=<%= currentSort %>&query=<%=search%>">
+                        <%= i %>
+                    </a>
+                    <% } %>
 
-
+                        <% if (currentPage < totalPages) { %>
+                            <a class="btn"
+                                href="?page=<%= currentPage + 1 %>&category=<%= selectedCategory %>&sort=<%= currentSort %>&query=<%=search%>">Next</a>
+                            <% } %>
+   </div>
+   <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+    <div class="container py-5">
+        <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
+            <div class="row g-4">
+                <div class="col-lg-3">
+                
+                        <h1 class="text-primary mb-0">Fruitables</h1>
+                        <p class="text-secondary mb-0">Fresh products</p>
+                    
+                </div>
+                <div class="col-lg-6">
+                    <div class="position-relative mx-auto">
+                        <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="number" placeholder="Your Email">
+                        <button type="submit" class="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white" style="top: 0; right: 0;">Subscribe Now</button>
+                    </div>
+                </div>
+                </div></div></div></div>
+     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-    <%- include("../../views/partials/user/footer") %>
-    <script> 
-        function addToCart(productId) {
+
+ <script> 
+
+
+     function addToWishlist(productId) {
+     fetch('/wishlist/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+         },
+          body: JSON.stringify({ productId }),
+         })
+         .then(response => response.json())
+         .then(data => {
+         if (data.success) {
+            Swal.fire({
+                title: "Added!",
+                text: data.success,
+                icon: "success"
+             });
+         } else {
+                //Swal.fire("Error", "error" || "Something went wrong", "error");
+                Swal.fire({
+                title: "error",
+                text: data.error,
+                icon: "error"
+             });
+         }
+     })
+     .catch(error => {
+        console.error("Error:", error);
+       // Swal.fire("Error", "error", "error");
+       Swal.fire({
+                title: "error",
+                text: error,
+                icon: "error"
+             });
+     });
+ }
+
+
+
+
+     function addToCart(productId) {
+           // alert("helloo")
             const cartitem=document.getElementById('cartitems')
             fetch('/cart/add', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
+         method: 'POST',
+         headers: {
+        'Content-Type': 'application/json',
   },
   body: JSON.stringify({ productId }),
 })
-  .then((response) => response.json())
+  .then((response) => response.json())//
   .then((data) => {
     if (data.message) {
       Swal.fire({
         title: "Success",
-        text: "Successfully added to cart",
+        text: data.message,
         icon: "success",
-      }).then(() => {
-        // Wait for 2.5 seconds before reloading the page
-        // setTimeout(() => {
-        //   window.location.reload();
-        //   cartitem.innerHTML=parseInt(cartitem.value.trim())+1
-        // }, 1000);
-        if (data.cartitemcount !== undefined) {
-          // Get the cart badge element
-          const cartItemBadge = document.getElementById('cartitems');
-
-          // Update the badge count with the new total
-          cartItemBadge.textContent = data.cartitemcount;
+      })
+      .then(() => {
+        
+       
+        setTimeout(() => {
+            if (data.cartitemcount !== undefined) {
+        // alert("success")
+          document.getElementById('cartitems').textContent = data.cartitemcount
         }
+       
+        }, 500);
+       
     });
     } else {
       Swal.fire('Error', data.error, 'error');
@@ -298,23 +399,29 @@ transform: scale(1.3); /* Zoom in the image */
   });
 
           }
+      
+            function handleSort(sortOption) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.set("sort", sortOption);
+                    window.location.href = `${window.location.pathname}?${urlParams.toString()}`;
+                }
 
+                // Set selected sort option based on URL
+                function setSelectedSort() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const currentSort = urlParams.get("sort");
+                    if (currentSort) {
+                        document.getElementById("sortSelect").value = currentSort;
+                    }
+                }
 
-          function updatePriceRange(value) {
-    document.getElementById('minPrice').value = 0;
-    document.getElementById('maxPrice').value = value;
-  }
-
-  
-                            // Function to update price range display
-                            function updatePriceRangeDisplay(value) {
-                              const maxPrice = document.getElementById("maxPrice");
-                              const display = document.getElementById("priceRangeDisplay");
-                              maxPrice.value = value;
-                              display.textContent = value;
-                            }
-                          
-                          
+                document.addEventListener("DOMContentLoaded", setSelectedSort);
+                
+                // document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                //     button.addEventListener('click', function () {
+                //         alert('Item added to cart!');
+                //     });
+                // });
     </script>     
 
 </body>

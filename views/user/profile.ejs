@@ -301,7 +301,20 @@
               <tr>
                 <td><%= order._id %></td>
                 <td><%= order.createdOn.toLocaleDateString() %></td>
-                <td><%= order.status %></td>
+                <td>
+                  <% if (order.status.toLowerCase() === 'processing') { %>
+                    <span style="color: yellowgreen;"><%= order.status %></span>
+                    <% if (order.status.toLowerCase() === 'delivered') { %>
+                      <span style="color: green;"><%= order.status %></span>
+                  <% } else if (order.status.toLowerCase() === 'cancelled') { %>
+                    <span style="color: red;"><%= order.status %></span>
+                  <% } else if (order.status.toLowerCase() === 'shipped') { %>
+                    <span style="color: yellow;"><%= order.status %></span>
+                  <% } else { %>
+                    <span><%= order.status %></span>
+                  <% } %>
+                </td>
+                
                 <td>₹<%= order.finalAmount.toFixed(2) %></td>
                 
                 <td colspan="2">  <a href="/viewOrderDetails/<%= order._id %>" class="btn border border-secondary rounded-pill px-3 text-primary"> View More</a></td>
@@ -533,7 +546,7 @@
           
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="profileemail" placeholder="Enter emailid" >
+            <input type="email" class="form-control" id="profileemail" placeholder="Enter emailid" readonly >
           </div>
           <div class="mb-3">
             <label for="phone" class="form-label">Phone</label>
@@ -668,7 +681,7 @@
       console.error('Error:', error);
       Swal.fire(
         'Error!',
-        'An error occurred while changing the password.',
+      "passwod mismatch",
         'error'
       );
     }

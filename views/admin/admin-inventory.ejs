@@ -6,6 +6,13 @@
         <div class="card">
           <div class="card-body">
             <h2 class="card-title text-center">Stock Management</h2>
+            <form action="/admin/searchStock" method="GET" id="searchform" class="search-form mb-4">
+              <div class="input-group">
+              <input type="text" id="search" name="searchStock" placeholder="Search by name" required  class="form-control">
+              <button type="submit" class="btn btn-primary">Search</button>
+              </div>
+             </form>
+            <a href="/admin/inventory"><button class="btn btn-primary" style="background-color:#81C408 ; margin-top: -100px;margin-left:900px">Show All </button></a>
             <div class="table-responsive">
               <table class="table table-hover" border="1">
                 <thead>

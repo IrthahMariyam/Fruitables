@@ -1,0 +1,225 @@
+<%- include("../../views/partials/user/header") %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<style>
+  button {
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
+  margin-left: 10px;
+}
+.overlay {
+  position: absolute;
+  z-index: 5;
+}
+.add-to-cart-btn {
+            background-color: #81C408;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+</style>
+
+<!-- Modal Search Start -->
+<div
+  class="modal fade"
+  id="searchModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content rounded-0">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body d-flex align-items-center">
+        <div class="input-group w-75 mx-auto d-flex">
+          <input
+            type="search"
+            class="form-control p-3"
+            placeholder="keywords"
+            aria-describedby="search-icon-1"
+          />
+          <span id="search-icon-1" class="input-group-text p-3"
+            ><i class="fa fa-search"></i
+          ></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Search End -->
+
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+  <h1 class="text-center text-white display-6">Wishlist</h1>
+  <ol class="breadcrumb justify-content-center mb-0">
+    <li class="breadcrumb-item"><a href="/home">Home</a></li>
+    <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
+    <li class="breadcrumb-item active text-white">Cart</li>
+  </ol>
+</div>
+<!-- Single Page Header End -->
+
+<!-- Cart Page Start -->
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <% if ((wishlist && wishlist.products)) { %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr class="text center">
+            <th scope="col">Products</th>
+            <th scope="col">Name</th>
+            <th scope="col">Price</th>
+            <th scope="col">Handle</th>
+            <th scope="col">Add to Cart</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% wishlist.products.forEach(item => { %>
+          <tr id="product-row-<%= item.productId._id %>">
+            <th scope="row">
+              <div class="d-flex align-items-center">
+                <img
+                  src="<%=item.productId.productImage[0]%>"
+                  class="img-fluid me-5 rounded-circle"
+                  style="width: 80px; height: 80px"
+                  alt=""
+                />
+              </div>
+            </th>
+            <td>
+              <p class="mb-0 mt-4"><%=item.productId.productName%></p>
+            </td>
+            <td>
+              <p class="mb-0 mt-4 price">₹<%= item.productId.price %></p>
+            </td>
+           
+            <td>
+              <button
+                class="btn btn-md rounded-circle bg-light border mt-4"
+                onclick="removeFromWishlist('<%= item.productId._id %>')"
+              >
+                <i class="fa fa-times text-danger"></i>
+              </button>
+            </td>
+            <td>
+                <button class="add-to-cart-btn" onclick="whishlisttocart('<%=item.productId._id %>')">Add to Cart</button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+     
+        <% } else { %>
+        <p>Your wishlist is empty</p>
+        <% } %>
+      </div>
+    </div>
+    <!-- Cart Page End -->
+
+
+  <script>
+      
+
+ 
+function removeFromWishlist(productId) {
+     $.ajax({
+    url: "/wishlist/remove", // Backend endpoint
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify({ productId }), // Send productId
+    success: function (response) {
+      // Handle success response
+      console.log("Product removed successfully:", response);
+
+      // Remove the product row
+      const productRow = $(`#product-row-${productId}`);
+      if (productRow.length) {
+        productRow.remove();
+      }
+
+       Swal.fire({
+        title: "Success",
+        text: "Product removed from wishlist successfully!",
+        icon: "success",
+        confirmButtonText: "Okay",
+      });
+    },
+    error: function (xhr) {
+      // Handle errors
+      console.error("Error removing product from wishlist:", xhr.responseJSON);
+      const errorMessage =
+        xhr.responseJSON?.error || "Failed to remove product from wishlist";
+      Swal.fire({
+        title: "Error",
+        text: errorMessage,
+        icon: "error",
+        confirmButtonText: "Okay",
+      });
+    },
+  });
+}
+
+function whishlisttocart(productId) {
+           // alert("helloo")
+            const cartitem=document.getElementById('cartitems')
+            fetch('/cart/add', {
+         method: 'POST',
+         headers: {
+        'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ productId }),
+})
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.message) {
+      Swal.fire({
+        title: "Success",
+        text: data.message,
+        icon: "success",
+      })
+      .then(() => {
+        const productRow = $(`#product-row-${productId}`);
+      if (productRow.length) {
+        productRow.remove();
+      }
+       
+        setTimeout(() => {
+            if (data.cartitemcount !== undefined) {
+        // alert("success")
+          document.getElementById('cartitems').textContent = data.cartitemcount
+        }
+       
+        }, 500);
+       
+    });
+    } else {
+      Swal.fire('Error', data.error, 'error');
+    }
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+    Swal.fire('Error', 'Something went wrong!', 'error');
+  });
+
+          }
+      
+
+    </script>
+    <%- include("../../views/partials/user/footer") %>
+  </div>
+</div>

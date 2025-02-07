@@ -1,5 +1,5 @@
 <%- include("../../views/partials/admin/header") %>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- partial -->
   <div class="main-panel">
     <div class="content-wrapper">
@@ -14,10 +14,11 @@
                 <button type="submit" class="btn btn-primary">Search</button>
                 </div>
               </form>
-              <button class="btn btn-danger" style="margin-right: 100px;" >
-                <a href="/admin/addProducts" class="text-white" style="text-decoration: none;">Add Product</a>
-              </button>
-                 
+              <a href="/admin/addProducts" class="text-white" style="text-decoration: none;margin-top: 50px;">
+                   <button class="btn btn-danger"   >
+                Add Product
+              </button></a>
+              <a href="/admin/products"><button class="btn btn-primary" style="background-color:#81C408 ; margin-top: -115px;margin-left:300px">Show All </button></a>  
               <div class="table-responsive">
                 <table class="table table-hover" border="1">
                   <thead>
@@ -62,11 +63,11 @@
                                 </button>
                                 <%}%>
                           
-                          
+                                <a href="/admin/geteditProduct/<%=products[i]._id%>" class="text-white"
+                                  style="text-decoration: none;">
                             <button class="btn btn-danger" style="width: 60px;">
-                              <a href="/admin/geteditProduct/<%=products[i]._id%>" class="text-white"
-                                style="text-decoration: none;">Edit</a>
-                            </button>
+                              Edit
+                            </button></a>
                           </td>
                           <td>
 
@@ -120,7 +121,7 @@
     <script>
       document.getElementById('form1').addEventListener('submit', function (e) {
    console.log('Form submitted'); 
-   alert("hello")
+  // alert("hello")
    //e.preventDefault()
    
    // Debug log
@@ -131,9 +132,9 @@
       // }
       function softDeleteProduct(row,productId,productName) {
  
-  alert(productId)
-  alert(productName)
-  alert("inside ejs")
+  // alert(productId)
+  // alert(productName)
+  // alert("inside ejs")
   //alert(nameField)
   //console.log(categoryId)
   console.log('Category ID:', productId);

@@ -104,13 +104,14 @@
                                 <% } else { %>
                                     <button class="btn btn-secondary" disabled>Out of Stock</button>
                                     <% } %>
+                                    <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary" onclick="addToWishlist('<%= product._id %>')"><i class="fa fa-heart me-2 text-primary"></i> Add to Wishlist</a>
                             </div>
-				<div class="col-lg-12">
-				Availability:<span class="in-stock text-success ml-5"><b><%=product.status %></b>
+				        <div class="col-lg-12">
+				            Availability:<span class="in-stock text-success ml-5"><b><%=product.status %></b>
                 
-				</div>
-                  <div class="col-lg-12">
-                   <b> <p>Stock: <%= product.stock > 0 ? product.stock : 'Out of Stock' %></p></b>
+				            </div>
+                             <div class="col-lg-12">
+                            <b> <p>Stock: <%= product.stock > 0 ? product.stock : 'Out of Stock' %></p></b>
                   
                     
                        </div>
@@ -203,42 +204,44 @@
                                 </div>
                             </form>   
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-xl-3">
-                        <div class="row g-4 fruite">
-                            <div class="col-lg-12">
-                                <div class="input-group w-100 mx-auto d-flex mb-4">
-                                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                        <div class="col-lg-4 col-xl-3">
+                            <div class="row g-4 fruite">
+                                <div class="col-lg-12">
+                                    <!-- <div class="input-group w-100 mx-auto d-flex mb-4">
+                                        <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                                        <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                                    </div> -->
+                                    <div class="mb-4">
+                                        <h4>Categories</h4>
+                                        <ul class="list-unstyled fruite-categorie">
+                                            <%  for(let i=0;i<totalcategory.length;i++){ %>
+                                                        <li>
+                                                            <div class="d-flex justify-content-between fruite-name">
+                                                                <a href="/filtercategory?category=<%=totalcategory[i]._id%>">
+                                                                    <i class="fas fa-apple-alt me-2"></i><%=totalcategory[i].name%></a>
+                                                               
+                                                            </div>
+                                                        </li>
+                                                       
+                                                         </li>
+                                               <%}%>
+                                                 </ul>
+                                    </div>
                                 </div>
-                                <div class="mb-4">
-                                    <h4>Categories</h4>
-                                    <ul class="list-unstyled fruite-categorie">
-                                        <%  for(let i=0;i<totalcategory.length;i++){ %>
-                                                    <li>
-                                                        <div class="d-flex justify-content-between fruite-name">
-                                                            <a href="/filter?category=<%=totalcategory._id%>"><i class="fas fa-apple-alt me-2"></i><%=totalcategory[i].name%></a>
-                                                           
-                                                        </div>
-                                                    </li>
-                                                   
-                                                     </li>
-                                           <%}%>
-                                             </ul>
+                            
                                 </div>
-                            </div>
-                        
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="position-relative">
-                                    <img src="img/banner-fruits.jpg" class="img-fluid w-100 rounded" alt="">
-                                    <div class="position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%);">
-                                        <h3 class="text-secondary fw-bold">Fresh <br> Fruits <br> Banner</h3>
+                                <div class="col-lg-12">
+                                    <div class="position-relative">
+                                        <img src="img/banner-fruits.jpg" class="img-fluid w-100 rounded" alt="">
+                                        <div class="position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%);">
+                                            <h3 class="text-secondary fw-bold">Fresh <br> Fruits <br> Banner</h3>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                   
                 </div>
 
 
@@ -340,6 +343,39 @@ document.querySelector('.zoomable').addEventListener('mouseleave', function() {
 
           }
     
-
-
+          function addToWishlist(productId) {
+     fetch('/wishlist/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+         },
+          body: JSON.stringify({ productId }),
+         })
+         .then(response => response.json())
+         .then(data => {
+         if (data.success) {
+            Swal.fire({
+                title: "Added!",
+                text: data.success,
+                icon: "success"
+             });
+         } else {
+                //Swal.fire("Error", "error" || "Something went wrong", "error");
+                Swal.fire({
+                title: "error",
+                text: data.error,
+                icon: "error"
+             });
+         }
+     })
+     .catch(error => {
+        console.error("Error:", error);
+       // Swal.fire("Error", "error", "error");
+       Swal.fire({
+                title: "error",
+                text: error,
+                icon: "error"
+             });
+     });
+ }
  </script>

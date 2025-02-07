@@ -140,6 +140,71 @@
       color: #fff;
       margin-top: 20px;
     }
+
+    /* tracking */
+    .order-status.pending {
+            background-color: #fff3cd;
+            color: #ffc107;
+        }
+
+        .order-status.cancelled {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+  /* Tracking Progress Styles */
+  .tracking-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .tracking-step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .tracking-step.completed .icon {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .tracking-step.active .icon {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        .tracking-step .icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+
+        .tracking-step p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .tracking-line {
+            flex: 1;
+            height: 2px;
+            background-color: #e9ecef;
+            margin: 0 10px;
+        }
+
+        .tracking-line.completed {
+            background-color: #28a745;
+        }
+
+
+
   </style>
 </head>
 <body>
@@ -156,6 +221,42 @@
       <p><strong>Status:</strong><%= order.status %></p>
       <p><strong>Payment Method : </strong><%= order.paymentMethod %></p>
     </div>
+  <!-- Tracking Progress -->
+  <div class="tracking-progress">
+    <!-- Order Placed -->
+    <div class="tracking-step <%= ['Pending', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
+        <div class="icon">✔</div>
+        <p>Order Placed</p>
+    </div>
+    <div class="tracking-line <%= ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>"></div>
+
+    <!-- Order Processed -->
+    <div class="tracking-step <%= ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
+        <div class="icon">✔</div>
+        <p>Order Processed</p>
+    </div>
+    <div class="tracking-line <%= ['Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>"></div>
+
+    <!-- Shipped -->
+    <div class="tracking-step <%= ['Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
+        <div class="icon">🚚</div>
+        <p>Shipped</p>
+    </div>
+    <div class="tracking-line <%= ['Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>"></div>
+    <!-- Out for Delivery -->
+    <div class="tracking-step <%= ['Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
+      <div class="icon">📦</div>
+      <p>Out for Delivery</p>
+  </div>
+  <div class="tracking-line <%= order.status === 'Delivered' ? 'completed' : '' %>"></div>
+
+  <!-- Delivered -->
+  <div class="tracking-step <%= order.status === 'Delivered' ? 'completed' : '' %>">
+      <div class="icon">✔</div>
+      <p>Delivered</p>
+  </div>
+</div>
+
 
     <!-- Product Details -->
     <div class="card">
