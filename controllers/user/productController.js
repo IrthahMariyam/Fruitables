@@ -408,38 +408,47 @@ const productDetails = async (req, res) => {
     // console.error(error?.response?.data?.message || error?.message || 'Error adding product')
   }
 };
-
 const productReview = async (req, res) => {
   const { productId, username, rating, reviewText } = req.body;
-//   console.log(req.body, "product review");
-//   console.log(productId, username, rating, reviewText);
-//   console.log("inside object");
-  try {const productreview=await Product.findById(productId)
-    let rate=0;
-    for(let it in productreview)
-{
-  rate=it.review.ratings+rating/review.length
-}
-    avgrating=productreview.review.rating;
-    // Find product and push new review to its array
-    await Product.findByIdAndUpdate(productId, {
-      $push: {
-        review: {
-          username,
-          rating,
-          text: reviewText,
-          date: new Date().toLocaleString(),
+  console.log(req.body, "product review");
+
+  try {
+    // Fetch the product to check if it exists
+    const productreview = await Product.findById(productId);
+    
+    if (!productreview) {
+      return res.status(404).send("Product not found");
+    }
+
+    console.log(productreview, "==============");
+
+    // Update the product with the new review
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      {
+        $push: {
+          review: {
+            username: username,
+            rating: rating,
+            text: reviewText,
+            date: new Date().toLocaleString(),
+          },
         },
       },
-    });
+      { new: true } // Ensures you get the updated document
+    );
 
-    // Redirect back to product page
-    res.redirect(`/productDetails?id=${productId}`);
+    if (updatedProduct) {
+      console.log("Review saved successfully");
+      return res.redirect(`/productDetails?id=${productId}`);
+    } else {
+      return res.status(500).send("Failed to update product with review");
+    }
   } catch (error) {
+    console.error("Error submitting review:", error);
     res.status(500).send("Failed to submit review");
   }
 };
-
 
 
 module.exports={

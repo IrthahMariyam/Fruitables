@@ -55,14 +55,11 @@
                         Block
                       </button>
                       <% } else { %>
-                      <button class="btn btn-success">
-                        <a
-                          href="/admin/unblockUser?id=<%= users[i]._id %>"
-                          class="text-white"
-                          style="text-decoration: none"
-                          >Unblock</a
-                        >
-                      </button>
+                        <a href="/admin/unblockUser?id=<%= users[i]._id %>"
+                        class="text-white"
+                        style="text-decoration: none">
+                      <button class="btn btn-success">Unblock</button></a>
+                       
                       <% } %>
                     </td>
                   </tr>
@@ -99,8 +96,8 @@
   function blockUser(row,userId,userName) {
    const buttonlabel=document.querySelector('[name=blockuser]')
    const currentText = buttonlabel.innerHTML === "Blocked" ? "Blocked" : "Unblocked";
-   alert(userId)
-      alert(userName)
+   //alert(userId)
+     // alert(userName)
     console.log('Category ID:', userId);
   console.log('Name Field:', userName);
   
