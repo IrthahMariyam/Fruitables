@@ -40,10 +40,11 @@ const updateOrderStatus = async (req, res) => {
              
        const statusObj = req.body
 
+
 // Extract the value
 const statusString = String(statusObj.status); // Explicitly convert to a string
 
-//console.log(statusString); // Output: 'Delivered'
+console.log(statusString); // Output: 'Delivered'
 
        const order = await Order.findById(req.params.orderId);
        if (!order) {

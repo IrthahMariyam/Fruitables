@@ -140,7 +140,7 @@ const addProducts = async (req, res) => {
             return res.status(400).json({ message: "No images uploaded." });
 
         } 
-
+console.log("images==========================",req.body.images)
         // Validate Category
         const categoryId = await Category.findOne({ name: products.category });
         if (!categoryId) {
@@ -152,8 +152,8 @@ const addProducts = async (req, res) => {
             productName: products.productName,
             description: products.description,
             category: categoryId._id,
-            price: products.regularPrice,
-            salesPrice: products.salePrice,
+            price: products.price,
+            salesPrice: products.salesPrice,
             createdOn: new Date(),
             stock: products.stock,
             color: products.color,
@@ -312,14 +312,14 @@ res.status(500).json({ error: 'Internal server error' });
         const publicId = fileNameWithVersion.split('.')[0]; // "hcejfhvf45ll5wrofzbh"
 
         // Delete the image from Cloudinary
-        cloudinary.uploader.destroy(publicId, async (error, result) => {
-            if (error) {
-                console.error("Error deleting image from Cloudinary:", error);
-                return res.status(500).json({ status: false, message: "Error deleting image" });
-            }
+        // cloudinary.uploader.destroy(publicId, async (error, result) => {
+        //     if (error) {
+        //         console.error("Error deleting image from Cloudinary:", error);
+        //         return res.status(500).json({ status: false, message: "Error deleting image" });
+        //     }
             
-            console.log("Cloudinary deletion result:", result);
-        })
+        //     console.log("Cloudinary deletion result:", result);
+        // })
         
         const product = await Product.findByIdAndUpdate(
             productIdToServer,

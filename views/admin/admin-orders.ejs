@@ -22,7 +22,7 @@ cd<%- include("../../views/partials/admin/header") %>
             <tbody>
                 <% orders.forEach(order => { %>
                 <tr>
-                    <td><%= order._id %></td>
+                    <td><%= order.orderId %></td>
                     <td><%= order.userId.name %></td>
                    
                    

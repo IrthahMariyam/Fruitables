@@ -369,7 +369,7 @@ transform: scale(1.3);
   },
   body: JSON.stringify({ productId }),
 })
-  .then((response) => response.json())//
+  .then((response) => response.json())
   .then((data) => {
     if (data.message) {
       Swal.fire({
@@ -389,8 +389,9 @@ transform: scale(1.3);
         }, 500);
        
     });
-    } else {
-      Swal.fire('Error', data.error, 'error');
+     } else { 
+      
+      window.location.href="/login"
     }
   })
   .catch((error) => {

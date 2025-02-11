@@ -50,10 +50,22 @@ const history=async (req,res) =>
       const { cancelReason, status } = req.body;
       
      // const cartitem = await Cart.findOne({userId:id})
-    
+     // Find the order
+     const order = await Order.findById(id);
+     if (!order) {
+       return res.status(404).json({ message: "Order not found" });
+     }
+     if (["Shipping", "Out for Delivery", "Delivered"].includes(order.status)) {
+      return res.status(400).json({ message: "Cannot cancel a shipped order." });
+    }
       // Ensure the request body contains the required fields
       if (!cancelReason || !status) {
         return res.status(400).json({ message: 'Invalid request data' });
+      }
+      for (const item of order.orderedItems) {
+        await Product.findByIdAndUpdate(item.productId, {
+          $inc: { stock: item.quantity }, // Increase stock by ordered quantity
+        });
       }
     
       const updatedOrder = await Order.findByIdAndUpdate(id, {

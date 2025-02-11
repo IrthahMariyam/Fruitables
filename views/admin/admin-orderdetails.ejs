@@ -199,7 +199,7 @@
     
     <!-- Order Information -->
     <div class="card">
-      <p id="ordersId"><strong>ORDER ID:</strong> <%= order._id %></p>
+      <p id="ordersId"><strong>ORDER ID:</strong> <%= order.orderId %></p>
       <p><strong>Status:</strong> <%= order.status %></p>
       <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
     </div>
@@ -248,9 +248,9 @@
         <%let it=item.productId %>
         <div class="product-card">
        
-          <img src="<%= it.productImage[0] %>" alt="Product Image">
+          <img src="<%= item.productImage %>" alt="Product Image">
           <div class="product-details">
-            <h4><%=it.productName %></h4>
+            <h4><%=item.productName %></h4>
             <p>Quantity: <%= item.quantity %></p>
             <p>Price: ₹<%= item.price %></p>
           </div>
@@ -288,20 +288,23 @@
       <div class="card-header">Update Order Status</div>
       <form id="statusForm">
         <label for="orderStatus">Choose Status:</label>
-        <select id="orderStatus" name="status" class="form-control">
-          <option value="Pending" <%= order.status === "Pending" ? 'selected' : '' %>>Pending</option>
-          <option value="Processing" <%= order.status === "Processing" ? 'selected' : '' %>>Processing</option>
-          <option value="Cancelled" <%= order.status === "Cancelled" ? 'selected' : '' %>>Cancelled</option>
-          <option value="Shipping" <%= order.status === "Shipping" ? 'selected' : '' %>>Shipping</option>
-          <option value="Delivered" <%= order.status === "Out for Delivery" ? 'selected' : '' %>>Out for Delivery</option>
-          <option value="Delivered" <%= order.status === "Delivered" ? 'selected' : '' %>>Delivered</option>
-          
-          <option value="Delivered" <%= order.status === "Return Request" ? 'selected' : '' %>>Cancel Return Request</option>
-          <option value="Delivered" <%= order.status === "Returned" ? 'selected' : '' %>>Returned</option>
-        </select>
-        <div style="margin-top: 10px; text-align: center;">
-          <button type="submit" class="btn btn-success">Update Status</button>
-        </div>
+        <select id="orderStatus" name="status" class="form-control"
+         <%= order.status === 'Cancelled' || order.status === 'Returned' ? 'disabled' : '' %>>
+         
+        
+             
+              <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+              <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+              <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+              <option value="Out for Delivery" <%= order.status === 'Out for Delivery' ? 'selected' : '' %>>Out for Delivery</option>
+              <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+              <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+          </select>
+        
+    
+           <div style="margin-top: 10px; text-align: center;">
+          <button type="submit" class="btn btn-success"  <%= order.status === 'Cancelled' || order.status === 'Returned' ? 'disabled' : '' %>>Update Status</button>
+            </div>
       </form>
     </div>
 
@@ -309,19 +312,54 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    const statusForm = document.getElementById("statusForm");
-    statusForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-//alert(orderId)
-      const selectedStatus = document.getElementById("orderStatus").value;
-      // const orderId=document.getElementById('ordersId').value
-      // alert(oderId)
-      // Send request to update the order status
+    document.addEventListener("DOMContentLoaded", function () {
+        const statusSelect = document.getElementById("orderStatus");
+
+        function disableInvalidOptions(currentStatus) {
+            const options = statusSelect.options;
+
+            // Allowed transitions
+            const allowedTransitions = {
+                "Pending": ["Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled"],
+                "Processing": ["Shipped", "Out for Delivery", "Delivered", "Cancelled"],
+                "Shipped": ["Out for Delivery", "Delivered"],
+                "Out for Delivery": ["Delivered"],
+                "Delivered": ["Returned"],
+                "Returned": [] 
+            };
+          
+
+            // Enable all options first
+            for (let i = 0; i < options.length; i++) {
+                options[i].disabled = false;
+            }
+
+            // Disable invalid options
+            for (let i = 0; i < options.length; i++) {
+                const option = options[i];
+                if (!allowedTransitions[currentStatus]?.includes(option.value)) {
+                    option.disabled = true;
+                }
+            }
+        }
+
+        // Run function on load
+        disableInvalidOptions(statusSelect.value);
+
+        // Run function on change
+        statusSelect.addEventListener("change", function () {
+            disableInvalidOptions(this.value);
+        });
+
+
+        document.getElementById("statusForm").addEventListener("submit", function (e) {
+         e.preventDefault();
+     
       fetch(`/admin/orders/update-status/${orderId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          status: selectedStatus,
+          status: statusSelect.value,
         }),
       })
       .then((res) => {
@@ -329,14 +367,17 @@
         return res.json();
       })
       .then((data) => {
-        Swal.fire('Success!', `Order status updated to ${selectedStatus}.`, 'success');
+        Swal.fire('Success!', `Order status updated to ${statusSelect.value}.`, 'success');
         window.location.href = '/admin/orders';  // Reload the page to reflect changes
       })
       .catch((err) => {
         Swal.fire('Error!', 'Failed to update the order status.', 'error');
         console.error(err);
+       });
+       });
       });
-    });
+      
+
   </script>
 
 </body>

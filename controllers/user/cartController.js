@@ -6,6 +6,7 @@ const Cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
 const env = require("dotenv").config();
 const session = require("express-session");
+const { v4: uuidv4 } = require('uuid');
 
 
 const getCartPage = async (req, res) => {
@@ -138,7 +139,7 @@ const removeFromCart = async (req, res) => {
         return res.status(401).json({ error: 'User not logged in' });
       }
   
-      const { productId } = req.body;
+      const { productId} = req.body;
       let cart = await Cart.findOne({ userId: req.session.user._id });
       if (!cart) {
         return res.status(404).json({ error: 'Cart not found' });
@@ -153,7 +154,7 @@ const removeFromCart = async (req, res) => {
       if (!product) {
         return res.status(404).json({ error: 'Product not found in inventory' });
       }
-  
+  //product.stock+=quantity;
       const removedItem = cart.items[itemIndex];
      // product.stock += removedItem.quantity;
   
@@ -268,18 +269,18 @@ const placeOrder = async (req, res) => {
     const userId = req.session.user._id;
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     console.log("=============================")
-console.log(cart,"===================================")
-    if (!cart || !cart.items.length) {
+    console.log(cart,"===================================")
+     if (!cart || !cart.items.length) {
       return res.status(400).json({ error: "No items in the cart to place an order." });
-    }
+     }
 
-    let totalPrice = 0;
-    const productItems = [];
-let product;
-    for (const cartItem of cart.items) {
+       let totalPrice = 0;
+       const productItems = [];
+       let product;
+       for (const cartItem of cart.items) {
        product = cartItem.productId;
 
-      if (!product) {
+       if (!product) {
         console.error(`Product with ID ${cartItem.productId} not found.`);
         return res.status(404).json({ error: `Product with ID ${cartItem.productId} not found.` });
       }
@@ -295,6 +296,8 @@ let product;
 
       productItems.push({
         productId: product._id,
+        productName:product.productName,
+        productImage:product.productImage[0],
         quantity: cartItem.quantity,
         price: product.price,
       });
@@ -304,8 +307,11 @@ let product;
     // Apply discount if any
     const finalAmount = totalPrice - discount;
 
+
+    const orderid=uuidv4()
     // Create the order
     const order = new Order({
+      orderId:orderid,
       orderedItems: productItems,
       address,
       totalPrice,

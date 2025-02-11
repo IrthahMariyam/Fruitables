@@ -136,7 +136,7 @@
             <td>
               <button
                 class="btn btn-md rounded-circle bg-light border mt-4"
-                onclick="removeFromCart('<%= item.productId._id %>','<%= item.quantity %>')"
+                onclick="removeFromCart('<%= item.productId._id %>')"
               >
                 <i class="fa fa-times text-danger"></i>
               </button>
@@ -169,13 +169,19 @@
                 </h1>
                 <div class="d-flex justify-content-between mb-4">
                   <h5 class="mb-0 me-4">Subtotal:</h5>
-                  <p class="mb-0">₹<%=total||0%></p>
+                  
+                  <p class="mb-0" id="subtotal">₹<%= total || 0 %></p>
+
+
+
+
+
                 </div>
 
                 <div class="d-flex justify-content-between">
                   <h5 class="mb-0 me-4">Shipping</h5>
                   <div class="">
-                    <p class="mb-0">Charge: ₹100</p>
+                    <p class="mb-0" id="shipping">Charge: ₹<%= (total ? 100 : 0) %></p>
                   </div>
                 </div>
                 <p class="mb-0 text-end"></p>
@@ -184,7 +190,8 @@
                 class="py-4 mb-4 border-top border-bottom d-flex justify-content-between"
               >
                 <h5 class="mb-0 ps-4 me-4">Total</h5>
-                <p class="mb-0 pe-4">₹<%=total+100 || 0 %></p>
+               
+                <p class="mb-0 pe-4"id="totalprice">₹<%= (total ? total + 100 : 0) %></p>
               </div>
               <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button" onclick="window.location.href='/getcheckout'" >Proceed Checkout</button>
             </div>
@@ -202,23 +209,27 @@
       document.querySelectorAll('[name="cartupdate"]').forEach(button => {
   button.addEventListener('click', function(event) {
     event.preventDefault();
-    // call updateQuantity accordingly
+  
   });
 });
 
       
 function updateQuantity(productId,change,stock,price) {
-  
+
   //quantity = parseInt(quantity);
   var $row = $(`#product-row-${productId}`);
   var currentQty = parseInt($row.find(".quantity").text());
   var unitPrice = parseFloat($row.find(".price").text());
+  
   // alert(currentQty)
   // alert(change)
   // alert(stock)
   // alert(productId)
   // alert(price)
-  var newQty = currentQty + change;
+
+ var oldprice=currentQty*price;
+ console.log(oldprice,"oldprice")
+ var newQty = currentQty + change;
 
   if (newQty < 1) {
           Swal.fire({
@@ -255,22 +266,31 @@ var data = {
     url: "/cart/update",
     type: "POST",
     contentType: "application/json",
-   // data: JSON.stringify({ productId, newQty }),
+   
    data: JSON.stringify(data),
     success: function (response) {
-      console.log("Cart updated successfully:", response);
-      var newTotal = price * newQty;
-      // $row.find(".quantity").text(newQty);
-      // $row.find(".total-price").text(newTotal.toFixed(2));
-         
-    console.log(productId)
-    console.log(newTotal)
-    console.log(newQty)
+console.log("Cart updated successfully:", response);
+
+let $productRow = $(`#product-row-${productId}`);
+
+if ($productRow.length) {
   
-   let $productRow = $(`#product-row-${productId}`);
-   $productRow.find(".product-total").text(`₹${newTotal}`);
-   $productRow.find(".quantity").text(`${newQty}`);
-  
+    let newTotal = price * newQty;
+   console.log("newtotal",newTotal)
+    
+  let subtotalText = $(`#subtotal`).text().trim(); // Get text without extra spaces
+        let subtotal = parseFloat(subtotalText.replace("₹", "")) || 0;
+
+    $productRow.find(".product-total").text(`₹${newTotal.toFixed(2)}`);
+    $productRow.find(".quantity").text(newQty);
+           console.log("Before Update - Subtotal:", subtotal);
+      subtotal=(subtotal-oldprice)+newTotal;
+        console.log("After Update - Subtotal:", subtotal);
+        $(`#subtotal`).text(`₹${subtotal.toFixed(2)}`); // Keep 2 decimal places
+        $(`#totalprice`).text(`₹${(subtotal + 100).toFixed(2)}`); // Assuming 100 is shipping fee
+
+}
+
     //window.location.reload()
 
      
@@ -287,117 +307,70 @@ var data = {
 });
 }
 
-// function updateQuantity(productId, stock, price, change) {
-//   let quantityInput = document.getElementById(`quantity-${productId}`);
-//   let quantity = parseInt(quantityInput.value) + change;
-
-//   if (quantity < 1) {
-//     Swal.fire({
-//       title: "Invalid Quantity",
-//       text: "Quantity cannot be less than 1",
-//       icon: "warning",
-//     });
-//     return;
-//   }
-
-//   if (quantity > 5) {
-//     Swal.fire({
-//       title: "Invalid Quantity",
-//       text: "Quantity cannot be more than 5",
-//       icon: "warning",
-//     });
-//     return;
-//   }
-
-//   if (quantity > stock) {
-//     Swal.fire({
-//       title: "Stock Limit Exceeded",
-//       text: `Only ${stock} units are available in stock`,
-//       icon: "error",
-//     });
-//     return;
-//   }
-
-//   quantityInput.value = quantity;
-
-//   $.ajax({
-//     url: "/cart/update",
-//     type: "POST",
-//     contentType: "application/json",
-//     data: JSON.stringify({ productId, quantity }),
-//     success: function (response) {
-//       console.log("Cart updated successfully:", response);
-
-//       // Update UI dynamically
-//       let totprice = price * quantity;
-//       const productRow = $(`#product-row-${productId}`);
-//       productRow.find("#product-total").text(`₹${totprice}`);
-//       productRow.find("#product-quantity").text(`${quantity}`);
-//     },
-//     error: function (xhr) {
-//       console.error("Error updating cart:", xhr.responseJSON);
-//     },
-//   });
-// }
 
 
 
 
 
-//       function removeFromCart(productId,quantity) {
-//         $.ajax({
-//   url: "/cart/update",
-//   type: "POST",
-//   contentType: "application/json",
-//   data: JSON.stringify({ productId, quantity }),
-//   success: function (response) {
-//     console.log("Cart updated successfully:", response);
 
-//     // Calculate new total price
-//     let totprice = price * quantity;
 
-//     // Get the product row as a DOM element
-//     let productRow = document.getElementById(`product-row-${productId}`);
-    
-//     // Use querySelector to find child elements
-//     let productTotal = productRow.querySelector("#product-total");
-//     let productQuantity = productRow.querySelector("#quantity");
 
-//     // Update the text content
-//     if(productTotal) productTotal.textContent = `₹${totprice}`;
-//     if(productQuantity) productQuantity.textContent = quantity;
-//   },
-//   error: function (xhr) {
-//     console.error("Error updating cart:", xhr.responseJSON);
-//   },
-// });
 
-// }
 
-function removeFromCart(productId) {
-     $.ajax({
+
+
+function removeFromCart(productId,price) {
+  var $productRow = $(`#product-row-${productId}`);
+      var currentQty = parseInt($productRow.find(".quantity").text());
+     // alert("currentquantity",currentQty)
+  $.ajax({
     url: "/cart/remove", // Backend endpoint
     type: "POST",
     contentType: "application/json",
-    data: JSON.stringify({ productId }), // Send productId
+    data: JSON.stringify({ productId}), // Send productId
     success: function (response) {
-      // Handle success response
       console.log("Product removed successfully:", response);
+      
+ 
+     
 
-      // Remove the product row
-      const productRow = $(`#product-row-${productId}`);
-      if (productRow.length) {
-        productRow.remove();
+
+    
+     
+     
+      var total=currentQty * price
+     
+      if ($productRow.length) {
+        
+      
+
+        let subtotalText = $(`#subtotal`).text().trim(); 
+        let subtotal = parseFloat(subtotalText.replace("₹", "")) || 0;
+        console.log("Before Update - Subtotal:", subtotal);
+        // Subtract the product price from the subtotal
+        subtotal -= total;
+        console.log("After Update - Subtotal:", subtotal);
+        // Update the displayed values
+        let shipping=0;
+        if(subtotal!=0)
+        shipping=100
+        
+        $(`#shipping`).text(`Charge: ₹${( shipping)}`);
+        $(`#subtotal`).text(`₹${subtotal.toFixed(2)}`); 
+        $(`#totalprice`).text(`₹${(subtotal + shipping).toFixed(2)}`); 
+
+        // Remove the product row from the DOM
+       $productRow.remove();
       }
 
       // Update the cart badge
-     // alert(response.cartitemcount)
       const cartItemBadge = $("#cartitems");
       if (cartItemBadge.length && response.cartitemcount !== undefined) {
         cartItemBadge.text(response.cartitemcount);
       }
-       // Optionally, show a success alert
-       Swal.fire({
+
+      // Show a success alert
+      Swal.fire({
         title: "Success",
         text: "Product removed from cart successfully!",
         icon: "success",
@@ -407,8 +380,7 @@ function removeFromCart(productId) {
     error: function (xhr) {
       // Handle errors
       console.error("Error removing product from cart:", xhr.responseJSON);
-      const errorMessage =
-        xhr.responseJSON?.error || "Failed to remove product from cart";
+      const errorMessage = xhr.responseJSON?.error || "Failed to remove product from cart";
       Swal.fire({
         title: "Error",
         text: errorMessage,
@@ -418,6 +390,7 @@ function removeFromCart(productId) {
     },
   });
 }
+
 
 
     </script>

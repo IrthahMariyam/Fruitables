@@ -299,7 +299,7 @@
             <tbody>
               <% orders.forEach(order => { %>
                 <tr>
-                  <td><%= order._id %></td>
+                  <td><%= order.orderId %></td>
                   <td><%= order.createdOn.toLocaleDateString() %></td>
                   <td>
                     <% if (order.status.toLowerCase() === 'processing') { %>

@@ -265,7 +265,9 @@
                 const products = [];
                 productRows.forEach(row => {
                     const _id=document.getElementById('productid').value;
+                    const productImage=row.querySelector("td:nth-child(1)")?.textContent.trim();
                     const productName = row.querySelector("td:nth-child(2)")?.textContent.trim();
+                   
                     const price = row.querySelector("td:nth-child(3)")?.textContent.replace("₹", "").trim();
                     const quantity = row.querySelector("td:nth-child(4)")?.textContent.trim();
                     const totalPrice = row.querySelector("td:nth-child(5)")?.textContent.replace("₹", "").trim();
@@ -282,6 +284,7 @@
                         products.push({
                             _id,
                             productName,
+                            productImage,
                             price: parseFloat(price),
                             quantity: parseInt(quantity, 10),
                             totalPrice: parseFloat(totalPrice),
@@ -337,7 +340,7 @@
                     paymentMethod: selectedPaymentMethod,
                     orderedItems: getProductDetails(), // Include product details
                 };
-             console.log(orderData,"ejs")
+                console.log(orderData,"ejs")
                 // Validate required fields
                 if (!Object.values(orderData).every(Boolean) || !orderData.orderedItems.length) {
                     Swal.fire({

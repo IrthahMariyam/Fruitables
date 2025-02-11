@@ -557,9 +557,11 @@ console.log(Status)
         //  alert(selectedValue)
 
          if(productName.length<2)
-         alert("enter a valid name")
+         {alert("enter a valid name")
+return}
          if(description.length<6)
-         alert("enter a valid description")
+        { alert("enter a valid description")
+        return}
         if(Status=='Available' && stock<1)
         {
        
@@ -572,6 +574,10 @@ console.log(Status)
          
             alert("If 'Out of stock',please set stock to 0 ")
         return
+        }
+        if(stock <0||salePrice<0||regularPrice<0){
+          alert("negative values not allowed")
+          return
         }
       
    console.log("before data")
