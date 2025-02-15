@@ -32,7 +32,7 @@
 .table {
   width: 100%;
   margin-top: 20px;
-  border-collapse: separate; /* Ensures border radius works */
+  border-collapse: separate; /* Ensures border radius works 
   border-spacing: 0; /* Removes gaps between table cells */
   overflow: hidden; /* Ensures rounded corners */
   border-radius: 8px; /* Adjust this value for more/less rounding */
@@ -279,7 +279,7 @@
             <th>Start Date</th>
             <th>End Date</th>
             <th>Min Price</th>
-            <th>Max Price</th>
+            <th>Usage Limit</th>
             <th>Discount</th>
             <th>Actions</th>
           </tr>
@@ -289,11 +289,11 @@
           <% coupons.forEach((coupon, index) => { %>
           <tr>
             <td><%= index + 1 %></td>
-            <td><%= coupon.couponName%></td>
+            <td><%= coupon.couponCode%></td>
             <td><%= coupon.startDate.toLocaleString() %></td>
             <td><%= coupon.endDate.toLocaleString() %></td>
             <td><%= coupon.minPrice %></td>
-            <td><%= coupon.maxPrice %></td>
+            <td><%= coupon.usageLimit %></td>
             <td><%= coupon.discount %></td>
             <td>
               <button
@@ -341,8 +341,8 @@
               <input
                 type="text"
                 class="form-control"
-                id="couponName"
-                name="couponName"
+                id="couponCode"
+                name="couponCode"
                 required
               />
             </div>
@@ -352,7 +352,7 @@
               <div class="col-md-6 mb-3">
                 <label for="startDate" class="form-label">Start Date & Time</label>
                 <input
-                  type="datetime-local"
+                type="date"
                   class="form-control"
                   id="startDate"
                   name="startDate"
@@ -362,7 +362,7 @@
               <div class="col-md-6 mb-3">
                 <label for="endDate" class="form-label">End Date & Time</label>
                 <input
-                  type="datetime-local"
+                type="date"
                   class="form-control"
                   id="endDate"
                   name="endDate"
@@ -384,12 +384,12 @@
                 />
               </div>
               <div class="col-md-6 mb-3">
-                <label for="maxPrice" class="form-label">Maximum Price</label>
+                <label for="usageLimit" class="form-label">Usage Limit</label>
                 <input
                   type="number"
                   class="form-control"
-                  id="maxPrice"
-                  name="maxPrice"
+                  id="usageLimit"
+                  name="usageLimit"
                   required
                 />
               </div>
@@ -398,7 +398,7 @@
             <!-- Row for Discount and Description -->
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="discount" class="form-label">Discount</label>
+                <label for="discount" class="form-label">Discount ( in ₹ )</label>
                 <input
                   type="number"
                   class="form-control"
@@ -477,34 +477,32 @@
         document.getElementById("addCouponForm").addEventListener("submit", function (e) {
           e.preventDefault(); 
       
-          const couponName = document.getElementById("couponName").value.trim();
+          const couponCode = document.getElementById("couponCode").value.trim();
           const startDate = new Date(document.getElementById("startDate").value);
           const endDate = new Date(document.getElementById("endDate").value);
           const minPrice = parseFloat(document.getElementById("minPrice").value);
-          const maxPrice = parseFloat(document.getElementById("maxPrice").value);
+          const usageLimit = parseInt(document.getElementById("usageLimit").value);
           const discount = parseFloat(document.getElementById("discount").value);
           const description = document.getElementById("description").value.trim();
           const now = new Date();
-      // alert(couponName)
+      // alert(couponCode)
       // alert(startDate)
       // alert(endDate)
       // alert(minPrice)
-      // alert(maxPrice)
-      // alert(discount)
+         // alert(discount)
       // alert(description)
           let errorMessage = "";
       
           // Field validations
-          if (!couponName) errorMessage += "Coupon Name is required.\n";
+          if (!couponCode) errorMessage += "Coupon code is required.\n";
           console.log("ikujyhgf")
           if (isNaN(startDate.getTime()) || startDate < now)
             errorMessage += "Start date must be a valid future date.\n";
           if (isNaN(endDate.getTime()) || endDate < startDate)
             errorMessage += "End date must be after the start date.\n";
-          if (isNaN(minPrice) || minPrice < 0)
+          if (isNaN(minPrice) || minPrice <=0)
             errorMessage += "Minimum price must be a positive number.\n";
-          if (isNaN(maxPrice) || maxPrice < minPrice)
-            errorMessage += "Maximum price must be greater than minimum price.\n";
+          
           if (isNaN(discount) || discount <= 0 || discount > 100)
             errorMessage += "Discount must be between 1 and 100.\n";
           if (!description) errorMessage += "Description is required.\n";
@@ -516,11 +514,11 @@
       
           // Submit form data via AJAX
           const formData = {
-            couponName,
+            couponCode,
             startDate,
             endDate,
             minPrice,
-            maxPrice,
+            usageLimit,
             discount,
             description,
           };

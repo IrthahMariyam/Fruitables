@@ -83,6 +83,50 @@ const history=async (req,res) =>
       res.status(500).json({ message: 'Server error', error });
     }
     };
+
+    const returnOrder=async(req,res)=>{
+    
+      try {
+        const { id } = req.params;
+        const { returnReason, status } = req.body;
+        console.log(id,"orderid")
+        console.log(returnReason, status,"retunreason and status")
+        console.log("params",req.params)
+        console.log("req.body",req.body)
+       // const cartitem = await Cart.findOne({userId:id})
+       // Find the order
+       const order = await Order.findById(id);
+       if (!order) {
+         return res.status(404).json({ success:false,message: "Order not found" });
+       }
+       if (order.status!='Delivered') {
+        return res.status(400).json({success:false, message: "Only delivered order can be returned." });
+      }
+        // Ensure the request body contains the required fields
+        if (!returnReason || !status) {
+          return res.status(400).json({ success:false,message: 'Invalid request data' });
+        }
+        // for (const item of order.orderedItems) {
+        //   await Product.findByIdAndUpdate(item.productId, {
+        //     $inc: { stock: item.quantity }, // Increase stock by ordered quantity
+        //   });
+        // }
+      
+        const updatedOrder = await Order.findByIdAndUpdate(id, {
+          returnReason,
+          status,
+        }, { new: true });
+      
+        if (!updatedOrder) {
+          return res.status(404).json({ success:false,message: 'Order not found' });
+        }
+      
+        res.json({success:true, message: 'Return Request Send', order: updatedOrder });
+      } catch (error) {
+        console.error('Error cancelling order:', error);
+        res.status(500).json({ success:false,message: 'Server error', error });
+      }
+      };
     
 
     const getOrderDetails = async (req, res) => {
@@ -114,6 +158,7 @@ const history=async (req,res) =>
 
         orderHistory,
         cancelOrder,
+        returnOrder,
         history,
         getOrderDetails,
 

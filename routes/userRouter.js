@@ -6,7 +6,7 @@ const profileController=require('../controllers/user/profileController')
 const cartController=require('../controllers/user/cartController')
 const productController=require('../controllers/user/productController')
 const whishlistController=require('../controllers/user/whishlistController')
-
+const couponController=require('../controllers/user/couponController')
 const orderController=require('../controllers/user/orderController')
 const passport = require('passport')
 //const { userAuth } = require('../middlewares/auth')
@@ -78,6 +78,7 @@ router.post("/deleteAddress/:addressId",userAuth,profileController.deleteAddress
 router.get('/api/history',userAuth,orderController.history)
 router.get("/orders/history",userAuth,orderController.orderHistory)
 router.post('/orders/cancel/:id',userAuth,orderController.cancelOrder)
+router.post('/orders/reutrnrequest/:id', orderController.returnOrder);
 router.get('/viewOrderDetails/:orderId',userAuth,orderController.getOrderDetails)
 
 
@@ -94,6 +95,11 @@ router.post('/wishlist/add',userAuth,whishlistController.addtoWishlist)
 router.get('/getWishlist',userAuth,whishlistController.getWishlistPage)
 router.post('/wishlist/remove', userAuth, whishlistController.removeFromWishlist);
 router.post("/whishlisttocart/add",userAuth,whishlistController.whishlistToCart);
+
+//coupon routes
+router.get('/getCouponCodes',userAuth,couponController.getCouponCodes)
+router.post('/applyCoupon',userAuth,couponController.applyCoupon)
+router.post('/removeCoupon',userAuth,couponController.removeCoupon)
 
 module.exports=router;
 

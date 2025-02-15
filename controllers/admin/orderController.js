@@ -20,8 +20,7 @@ const listOrders = async (req, res) => {
        const orders = await Order.find()
            .populate('orderedItems.productId')
            .populate('userId')
-           .sort({ createdOn: -1 })
-           .sort({ createdOn: -1 })
+           .sort({status:-1, createdOn: -1 })
            .skip((page - 1) * itemsPerPage) 
            .limit(itemsPerPage);
 
@@ -55,6 +54,18 @@ if(statusString=="Cancelled")
        order.status = statusString
 
      const s=  await order.save();
+     if(statusString=="Returned"|| "Cancelled")
+     for (const item of order.orderedItems) {
+        const product = await Product.findById(item.productId);
+        if (product) {
+            product.stock += item.quantity;
+          let p=  await product.save();
+          if(p)
+            console.log("product updated")
+        else
+        console.log("not updated")
+        }
+    }
 if(s)console.log("saved")
    return res.status(200).json({ success: true, message: 'Status updated successfully' });
        
@@ -78,7 +89,7 @@ const cancelOrder = async (req, res) => {
 
        // Restock inventory
        for (const item of order.orderedItems) {
-           const product = await Product.findById(item.product);
+           const product = await Product.findById(item.productId);
            if (product) {
                product.stock += item.quantity;
                await product.save();
@@ -96,6 +107,49 @@ const cancelOrder = async (req, res) => {
    }
 };
 
+
+// const returnedOrder = async (req, res) => {
+//     try {
+//         console.log("inside returnorder")
+//         const orderId = req.params.id;
+//         const order = await Order.findById(orderId).populate('orderedItems.productId');
+//         console.log("order==========",order)
+//         console.log(req.params.id,"oderId")
+//         if (!order) {
+//             return res.status(404).json({success:false,error:'order not found'});
+//         }
+ 
+//         if (order.status !== 'Delivered'|| order.status !== 'Return Request' ) {
+//             return res.status(400).json({success:false, error:'Only delivered orders can be returned'})
+//                 }
+//         console.log(item)
+//         // Restock inventory
+//         for (const item of order.orderedItems) {
+//             console.log(item,"item")
+//             console.log(item.productId._id,"productid")
+            
+//             // Use $inc operator to increment stock by the quantity returned
+//         let s= await Product.findByIdAndUpdate(
+//               item.productId._id,
+//               { $inc: { stock: item.quantity } }            
+//             );
+          
+//         }
+ 
+//         order.status = 'Returned';
+//         await order.save();
+//         if(s)
+//             console.log("savedddd")
+//         else
+//         console.log("not saved")
+ 
+//         res.redirect('/admin/orders');
+//     } catch (err) {
+//         console.error('Error canceling order:', err);
+//         res.status(500).json({success:false,error:'Internal Server Error'})
+//     }
+//  };
+ 
 
 
 const getordedetailspage = async (req, res) => {

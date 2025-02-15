@@ -58,18 +58,18 @@ const getCouponPage = async (req, res) => {
 const addCoupon = async (req, res) => {
   try {
     const {
-      couponName,
+      couponCode,
       startDate,
       endDate,
       minPrice,
-      maxPrice,
+      usageLimit,
       discount,
       description,
     } = req.body;
 console.log(req.body)
     // Validation
     const now = new Date();
-    if (!couponName || !startDate || !endDate || !minPrice || !maxPrice || !discount || !description) {
+    if (!couponCode || !startDate || !endDate || !minPrice || !usageLimit || !discount || !description) {
       return res.status(400).json({ success: false, message: "All fields are required." });
     }
 
@@ -81,25 +81,23 @@ console.log(req.body)
       return res.status(400).json({ success: false, message: "End date must be after the start date." });
     }
 
-    if (minPrice < 0) {
-      return res.status(400).json({ success: false, message: "Minimum price must be positive." });
+    if (minPrice <= 0) {
+      return res.status(400).json({ success: false, message: "Minimum price must be greater than zero." });
     }
 
-    if (maxPrice <= minPrice) {
-      return res.status(400).json({ success: false, message: "Maximum price must be greater than minimum price." });
-    }
+   
 
-    if (discount <= 0 || discount > 100) {
+    if (discount <= 0 || discount > 150) {
       return res.status(400).json({ success: false, message: "Discount must be between 1 and 100." });
     }
 
     // Create a new coupon
     const coupon = new Coupon({
-      couponName,
+      couponCode,
       startDate,
       endDate,
       minPrice,
-      maxPrice,
+      usageLimit,
       discount,
       description,
     });

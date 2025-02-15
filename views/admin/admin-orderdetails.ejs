@@ -189,8 +189,13 @@
   </style>
 </head>
 <body>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
        const orderId = "<%= order._id %>";
+       let orderStatus="<%=order.status%>"
+       if(orderStatus=='Return Request'){
+       let returnReason="<%=order.returnReason%>"
+       }
     </script>
 
   <div class="container">
@@ -202,6 +207,7 @@
       <p id="ordersId"><strong>ORDER ID:</strong> <%= order.orderId %></p>
       <p><strong>Status:</strong> <%= order.status %></p>
       <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+      <input type="hidden" id="returnReason" value="<%=order.returnReason%>"
     </div>
      <!-- Tracking Progress -->
   <div class="tracking-progress">
@@ -264,7 +270,7 @@
       <p>Total Price: ₹<%= order.totalPrice %></p>
       <p>Discount: ₹<%= order.discount %></p>
       <p>Shipping Charge: ₹100</p>
-      <p><strong>Payable Amount:</strong> ₹<%= order.finalAmount %></p>
+      <p><strong>Payable Amount:</strong> ₹<%= order.finalAmount+100 %></p>
     </div>
 
     <!-- Shipping Address -->
@@ -286,7 +292,7 @@
     <!-- Status Change Section for Admin -->
     <div class="card">
       <div class="card-header">Update Order Status</div>
-      <form id="statusForm">
+      <form id="statusForm" data-order-id="<%= order._id %>">
         <label for="orderStatus">Choose Status:</label>
         <select id="orderStatus" name="status" class="form-control"
          <%= order.status === 'Cancelled' || order.status === 'Returned' ? 'disabled' : '' %>>
@@ -298,6 +304,7 @@
               <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
               <option value="Out for Delivery" <%= order.status === 'Out for Delivery' ? 'selected' : '' %>>Out for Delivery</option>
               <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+              <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
               <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
           </select>
         
@@ -312,73 +319,206 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const statusSelect = document.getElementById("orderStatus");
+//     document.addEventListener("DOMContentLoaded", function () {
+// let   statusSelect = document.getElementById("orderStatus");
+//     //  const orderStatus = "Return Request"; // This should be dynamically assigned from your backend
+//     // Replace with actual order ID
 
-        function disableInvalidOptions(currentStatus) {
-            const options = statusSelect.options;
+//     if (orderStatus === "Return Request") {
+//         const confirmReturn = confirm("Do you want to accept or cancel the return request?");
 
-            // Allowed transitions
-            const allowedTransitions = {
-                "Pending": ["Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled"],
-                "Processing": ["Shipped", "Out for Delivery", "Delivered", "Cancelled"],
-                "Shipped": ["Out for Delivery", "Delivered"],
-                "Out for Delivery": ["Delivered"],
-                "Delivered": ["Returned"],
-                "Returned": [] 
-            };
+//         if (confirmReturn) {
+//           document.getElementById("orderStatus").options[5].disabled = false;
+//           statusSelect.value="Returned"
+//             // Admin accepts the return request
+//            // updateOrderStatus(orderId, "Return");
+//         } else {
+//             // Admin cancels the return request
+//           //  updateOrderStatus(orderId, "Delivered");
+//           statusSelect.value="Delivered"
+//           document.getElementById("orderStatus").options[4].disabled = false
+//         }
+//     }
+
+
+//          statusSelect = document.getElementById("orderStatus");
+
+//         function disableInvalidOptions(currentStatus) {
+//             const options = statusSelect.options;
+
+//             // Allowed transitions
+//             const allowedTransitions = {
+//                 "Pending": ["Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled"],
+//                 "Processing": ["Shipped", "Out for Delivery", "Delivered", "Cancelled"],
+//                 "Shipped": ["Out for Delivery", "Delivered"],
+//                 "Out for Delivery": ["Delivered"],
+//                 "Delivered": ["Returned"],
+//                 "Return Request":["Return Request","Returned"],
+//                 "Returned": ["Returned"] 
+//             };
           
 
-            // Enable all options first
-            for (let i = 0; i < options.length; i++) {
-                options[i].disabled = false;
-            }
+//             // Enable all options first
+//             for (let i = 0; i < options.length; i++) {
+//                 options[i].disabled = false;
+//             }
 
-            // Disable invalid options
-            for (let i = 0; i < options.length; i++) {
-                const option = options[i];
-                if (!allowedTransitions[currentStatus]?.includes(option.value)) {
-                    option.disabled = true;
+//             // Disable invalid options
+//             for (let i = 0; i < options.length; i++) {
+//                 const option = options[i];
+//                 if (!allowedTransitions[currentStatus]?.includes(option.value)) {
+//                     option.disabled = true;
+//                 }
+//             }
+//         }
+
+        
+
+   
+//         // Run function on load
+//         disableInvalidOptions(statusSelect.value);
+
+//         // Run function on change
+//         statusSelect.addEventListener("change", function () {
+//             disableInvalidOptions(this.value);
+//         });
+
+
+//         document.getElementById("statusForm").addEventListener("submit", function (e) {
+//          e.preventDefault();
+     
+//       fetch(`/admin/orders/update-status/${orderId}`, {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({
+//           status: statusSelect.value,
+//         }),
+//       })
+//       .then((res) => {
+//         if (!res.ok) throw new Error("Failed to update status");
+//         return res.json();
+//       })
+//       .then((data) => {
+//         Swal.fire('Success!', `Order status updated to ${statusSelect.value}.`, 'success');
+//         window.location.href = '/admin/orders';  // Reload the page to reflect changes
+//       })
+//       .catch((err) => {
+//         Swal.fire('Error!', 'Failed to update the order status.', 'error');
+//         console.error(err);
+//        });
+//        });
+
+
+
+//       });
+      
+  document.addEventListener("DOMContentLoaded", function () {
+    let statusSelect = document.getElementById("orderStatus");
+    let orderStatus = statusSelect ? statusSelect.value : "";
+    let orderId = document.getElementById("statusForm").dataset.orderId; // Make sure to pass orderId correctly
+
+    // Fetch return reason if available
+    let returnReason = document.getElementById("returnReason").value
+   // let returnReason = returnReasonElement ? returnReasonElement.innerText.trim() : "No reason provided.";
+
+    // Show Swal if the order is in "Return Request" status
+    if (orderStatus === "Return Request") {
+        setTimeout(() => {
+            Swal.fire({
+                title: "Return Request",
+                text: `Reason: ${returnReason}`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Accept Return",
+                cancelButtonText: "Reject Return",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    statusSelect.value = "Returned"; // Change status
+                    disableInvalidOptions("Returned");
+                } else {
+                    statusSelect.value = "Return Request"; // Keep it as "Return Request"
+                    disableInvalidOptions("Return Request");
                 }
-            }
+            });
+        }, 500);
+    }
+
+    // Function to disable invalid status transitions
+    function disableInvalidOptions(currentStatus) {
+        if (!statusSelect) return;
+        const options = statusSelect.options;
+
+        // Define valid transitions
+        const allowedTransitions = {
+            "Pending": ["Processing"],
+            "Processing": ["Shipped", "Cancelled"],
+            "Shipped": ["Out for Delivery"],
+            "Out for Delivery": ["Delivered"],
+            "Delivered": ["Return Request"],
+            "Return Request": ["Returned"],
+            "Returned": ["Returned"] // Final state
+        };
+
+        // Disable all options first
+        for (let i = 0; i < options.length; i++) {
+            options[i].disabled = true;
         }
 
-        // Run function on load
-        disableInvalidOptions(statusSelect.value);
+        // Enable only valid transitions
+        if (allowedTransitions[currentStatus]) {
+            allowedTransitions[currentStatus].forEach(status => {
+                let option = [...options].find(opt => opt.value === status);
+                if (option) option.disabled = false;
+            });
+        }
+    }
 
-        // Run function on change
-        statusSelect.addEventListener("change", function () {
-            disableInvalidOptions(this.value);
+    // Ensure correct dropdown behavior on load
+    disableInvalidOptions(orderStatus);
+
+    // Update dropdown restrictions when status changes
+    statusSelect.addEventListener("change", function () {
+        disableInvalidOptions(this.value);
+    });
+
+    // **✅ Fixing the Submit Button Issue**
+    document.getElementById("statusForm").addEventListener("submit", function (e) {
+        e.preventDefault(); // Stop default form submission
+        
+        if (!orderId) {
+            console.error("Order ID not found!");
+            Swal.fire("Error!", "Order ID is missing. Cannot update status.", "error");
+            return;
+        }
+
+        fetch(`/admin/orders/update-status/${orderId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: statusSelect.value }),
+        })
+        .then((res) => {
+            if (!res.ok) throw new Error("Failed to update status");
+            return res.json();
+        })
+        .then((data) => {
+            Swal.fire({
+                title: "Success!",
+                text: `Order status updated to ${statusSelect.value}.`,
+                icon: "success"
+            }).then(() => {
+                window.location.href = '/admin/orders'; // Redirect after update
+            });
+        })
+        .catch((err) => {
+            Swal.fire("Error!", "Failed to update the order status.", "error");
+            console.error(err);
         });
+    });
 
-
-        document.getElementById("statusForm").addEventListener("submit", function (e) {
-         e.preventDefault();
-     
-      fetch(`/admin/orders/update-status/${orderId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          status: statusSelect.value,
-        }),
-      })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to update status");
-        return res.json();
-      })
-      .then((data) => {
-        Swal.fire('Success!', `Order status updated to ${statusSelect.value}.`, 'success');
-        window.location.href = '/admin/orders';  // Reload the page to reflect changes
-      })
-      .catch((err) => {
-        Swal.fire('Error!', 'Failed to update the order status.', 'error');
-        console.error(err);
-       });
-       });
-      });
-      
+});
 
   </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 </html>

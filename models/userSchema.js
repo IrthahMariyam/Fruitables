@@ -61,7 +61,11 @@ const userSchema=new Schema({
         type:Date,
         default:Date.now,
     },
-    
+    redeemedUser: {
+        type: Schema.Types.ObjectId,
+        ref: "Coupon",
+        default: null
+    },
 
 })
 

@@ -110,7 +110,8 @@
     }
 
     /* Cancellation Reason Section */
-    .cancellation-reason-container {
+    .cancellation-reason-container, 
+     .return-reason-container {
       padding: 15px;
       border: 1px solid #ddd;
       background-color: #f8f9fa;
@@ -119,12 +120,14 @@
       display: none;
     }
 
-    .cancellation-reason-container h3 {
+    .cancellation-reason-container h3 , 
+    .return-reason-container h3{
       margin-bottom: 15px;
       font-size: 1.2rem;
     }
 
-    .cancellation-reason-container input {
+    .cancellation-reason-container input,
+     .return-reason-container input {
       width: 100%;
       padding: 10px;
       border: 1px solid #ddd;
@@ -280,7 +283,7 @@
       <p>Total Price: ₹<%= order.totalPrice %></p>
       <p>Discount: ₹<%= order.discount %></p>
       <p>Shipping Charge: ₹100</p>
-      <p><strong>Payable Amount:</strong> ₹<%= order.finalAmount %></p>
+      <p><strong>Payable Amount:</strong> ₹<%= order.finalAmount +100%></p>
     </div>
 
     <!-- Shipping Address -->
@@ -311,11 +314,31 @@
       </div>
     </div>
   </div>
-
  <%}%>
+
+    <!-- Return Section -->
+     <% if(order.status == "Delivered"){ %>
+    <div style="text-align: center;">
+      <button id="button-return" class="btn btn-danger">Return Order</button>
+    </div>
+
+    <div id="returnreasondiv" class="return-reason-container">
+      <h3>Reason for Return</h3>
+      <input type="text" id="return-reason" placeholder="Enter reason for return">
+      <div style="text-align: center;">
+        <button id="go-back-return" class="btn btn-secondary">Go Back</button>
+        <button id="return-order"class="btn btn-danger"  >Submit</button>
+      </div>
+    </div>
+  </div>
+ <%}%>
+
+
+
+
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    
+    document.addEventListener("DOMContentLoaded", function () {
   //  const orderid=document.getElementById('ordersId')
   //  const id=orderid.value.toString()
     const buttonCancel = document.getElementById('button-cancel');
@@ -323,7 +346,7 @@
     const buttonCancelOrder = document.getElementById('cancel-order');
     const cancelReason = document.getElementById('reasondiv');
     const reason=document.getElementById('cancellation-reason')
-
+    if (buttonCancel && cancelReason && buttonGoBack && buttonCancelOrder) {
     buttonCancel.addEventListener('click', () => {
       cancelReason.style.display = 'block';
       buttonCancel.style.display = 'none';
@@ -361,6 +384,65 @@
 });
   
 });
+
+    }
+//return
+    const buttonReturn = document.getElementById('button-return');
+    const buttonGoBackReturn = document.getElementById('go-back-return');
+    const buttonReturnOrder = document.getElementById('return-order');
+    const returnReason = document.getElementById('returnreasondiv');
+    const Rreason=document.getElementById('return-reason')
+    if (buttonReturn && returnReason && buttonGoBackReturn && buttonReturnOrder) {
+    buttonReturn.addEventListener('click', () => {
+     
+      returnReason.style.display = 'block';
+      buttonReturn.style.display = 'none';
+    });
+
+    buttonGoBackReturn.addEventListener('click', () => {
+      
+      returnReason.style.display = 'none';
+      buttonReturn.style.display = 'block';
+    });
+    buttonReturnOrder.addEventListener('click', () => {
+      
+  if (Rreason.value.trim() === "") {
+    alert("Please fill the reason");
+    return false
+  } 
+  alert(Rreason.value.trim())
+    alert(orderId)
+    fetch(`/orders/reutrnrequest/${orderId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        returnReason: Rreason.value.trim(), // Use reason.value here
+        status: "Return Request",
+      }),
+    })
+    .then((res) => {
+  if (!res.ok) throw new Error("Failed for Return Request");
+  return res.json();
+})
+.then((data) => {
+  Swal.fire('Cancelled!', 'Requsted to Return Order.', 'success');
+  setTimeout(() => location.reload(), 1500);
+})
+.catch((err) => {
+  Swal.fire('Error!', "Something went wrong", 'error');
+  console.error(err);
+});
+  
+});
+
+    }
+    })
+
+
+
+
+
+
   </script>
 
 </body>

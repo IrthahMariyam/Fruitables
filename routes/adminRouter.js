@@ -55,6 +55,7 @@ router.delete('/deleteImage',adminAuth,productController.deleteSingleImage);
 router.get('/orders', orderController.listOrders);
 router.post('/orders/update-status/:orderId', orderController.updateOrderStatus);
 router.post('/orders/cancel/:id', orderController.cancelOrder);
+//router.post(:id', orderController.returnedOrder);
 router.get('/getorderdetails/:orderid',adminAuth,orderController.getordedetailspage)
 
 // Inventory Management

@@ -631,6 +631,7 @@
     const confirmPassword = document.getElementById('confirmPassword').value;
     const userId = document.getElementById('userid').value.trim()
     
+    
   
   
     if (!validatePassword(newPassword)) {
@@ -1023,7 +1024,11 @@
       alert('Enter a valid emailId');
       return false;
         }
-  
+  if(profilename="")
+  {
+    alert("Please ente name")
+    return false;
+  }
   
   else{
     // Send API request
