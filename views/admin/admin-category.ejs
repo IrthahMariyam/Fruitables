@@ -43,9 +43,9 @@
           <%for(let i=0;i<cat.length;i++){%> 
         <tr>
          
-        <td><input type="text" class="name-field" value="<%= cat[i].name %>" readonly></td>
+        <td><input type="text" class="name-field border-0" value="<%= cat[i].name %>" readonly></td>
          <td>
-          <textarea class="desc-field" readonly rows="3" cols="50"><%= cat[i].description %></textarea>
+          <textarea class="desc-field border-0" readonly rows="3" cols="50"><%= cat[i].description %></textarea>
         </td>
                    
         <td><%if(cat[i].isListed===false){%>
@@ -291,3 +291,5 @@ console.log('Name Field:', nameField);
 
 
 </script>
+
+

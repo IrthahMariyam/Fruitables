@@ -22,10 +22,12 @@ isDeleted: {
 categoryOffer:{
     type:Number,
     default:0
+    
 },
-offerPrice:{
-    type:Number,
-    default:0
+offer:{
+    
+    type:Schema.Types.ObjectId,
+        ref:"Offer",
 },
 createdAt:{
     type:Date,

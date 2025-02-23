@@ -26,6 +26,8 @@ const loadProfile=async (req, res) => {
        const id=req.params.userId;
        console.log(id,"inside loadprofile params id value")
         const user = req.session.user
+        if(!user)
+          res.redirect('/login')
         console.log(user);
         if (user) {
             const userData = await User.findOne({_id: user._id });
@@ -412,31 +414,6 @@ const getProfileDetail=async(req,res)=>{
 
   }
 
- 
-  // const getOrderDetails = async (req, res) => {
-  //   try {
-  //     const orderId = req.params.orderId; // Ensure `orderId` is the correct field name in your route
-  //     if (!orderId) {
-  //       return res.redirect('/page-404'); // Handle missing orderId
-  //     }
-      
-  //     // Fetch the order and populate references
-  //     const order = await Order.findById(orderId)
-  //       .populate('orderedItems.productId')
-  //       .sort({ createdOn: -1 });
-  //       const cartitem=await Cart.findOne({userId:req.session.user._id})
-  //     if (order) {
-  //       console.log(order); // Debugging: Check the full order object
-  //       res.render('orderDetails', { order,cart:cartitem});
-  //     } else {
-  //       res.redirect('/page-404'); // Handle order not found
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching order details:", error);
-  //     return res.status(500).json({ message: 'Error updating!', error });
-  //   }
-  // };
-  
 
 module.exports={
 

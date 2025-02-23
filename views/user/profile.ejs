@@ -9,7 +9,7 @@
        
        
         .dashboard-menu {
-          background-color: #cce3e6;
+          background-color: #bde670 !important;
           border-radius: 10px;
           padding: 15px;
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -185,15 +185,12 @@
                             </a>
                           </li>
                           <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#track-orders" role="tab">
+                            <a class="nav-link active"  href="/wallet" role="tab">
+                              
                               <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet
                             </a>
                           </li>
-                          <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#wallet-history" role="tab">
-                              <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet History
-                            </a>
-                          </li>
+                          
                           <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0)" id="deleteaccount" onclick="handleDeleteAccount('<%=user._id%>','<%=user.name%>')">
                               <i class="fi-rs-shopping-cart-check mr-10"></i>Delete Account
@@ -315,7 +312,7 @@
                     <% } %>
                   </td>
                   
-                  <td>₹<%= order.finalAmount.toFixed(2) %></td>
+                  <td>₹<%= order.totalPrice.toFixed(2) %></td>
                   
                   <td colspan="2">  <a href="/viewOrderDetails/<%= order._id %>" class="btn border border-secondary rounded-pill px-3 text-primary"> View More</a></td>
                 </tr>
@@ -346,31 +343,7 @@
                           </div>
                         </div>
         
-                        <!-- Wallet History Tab -->
-                        <div class="tab-pane fade" id="wallet-history" role="tabpanel">
-                          <div class="card">
-                            <div class="card-header">
-                              <h5 class="mb-0">Wallet History</h5>
-                            </div>
-                            <div class="card-body">
-                              <table class="table">
-                                <thead>
-                                  <tr>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Amount</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr>
-                                    <td colspan="3" class="text-center">No transactions found.</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        </div>
-        
+                      
                         <!-- Referral Tab -->
                         <div class="tab-pane fade" id="referal" role="tabpanel">
                           <div class="card">

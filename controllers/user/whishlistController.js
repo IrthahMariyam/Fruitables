@@ -1,7 +1,4 @@
-const User = require("../../models/userSchema");
-const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
-const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
 const Wishlist= require('../../models/whishlistSchema')
 

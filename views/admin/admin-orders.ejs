@@ -1,4 +1,4 @@
-cd<%- include("../../views/partials/admin/header") %> 
+<%- include("../../views/partials/admin/header") %> 
 <div class="main-panel">
   <div class="content-wrapper">
     <div class="row">
@@ -26,7 +26,7 @@ cd<%- include("../../views/partials/admin/header") %>
                     <td><%= order.userId.name %></td>
                    
                    
-                    <td>₹<%= order.finalAmount.toFixed(2) %></td>
+                    <td>₹<%= parseFloat(order.finalAmount.toFixed(2))+100.00 %></td>
                     <td><%= order.paymentMethod %></td>
                     <td><%= order.status %></td>
                     <td>

@@ -6,30 +6,6 @@ const Order = require('../../models/orderSchema')
 const Coupon=require('../../models/couponSchema')
 
 
-// Add a new coupon
-// const addCoupon = async (req, res) => {
-//     try {
-//         const { code, discount, expiryDate } = req.body;
-
-//         if (!code || !discount || !expiryDate) {
-//             return res.status(400).json({ error: "All fields are required" });
-//         }
-
-//         const existingCoupon = await Coupon.findOne({ code });
-//         if (existingCoupon) {
-//             return res.status(400).json({ error: "Coupon already exists" });
-//         }
-
-//         const coupon = new Coupon({ code, discount, expiryDate });
-//         await coupon.save();
-
-//         res.status(201).json({ message: "Coupon added successfully", coupon });
-//     } catch (error) {
-//         console.error("Error adding coupon:", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// };
-
 // Get all coupons
 const getCouponPage = async (req, res) => {
     try {
@@ -40,19 +16,6 @@ const getCouponPage = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
-// Delete a coupon
-// const deleteCoupon = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         await Coupon.findByIdAndDelete(id);
-//         res.status(200).json({ message: "Coupon deleted successfully" });
-//     } catch (error) {
-//         console.error("Error deleting coupon:", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// };
-
 
 // Add coupon
 const addCoupon = async (req, res) => {
@@ -128,8 +91,68 @@ const deleteCoupon = async (req, res) => {
   }
 };
 
+const updateCoupon = async( req,res)=>{
+  
+  try {console.log("inside update coupon")
+      const couponId = req.params.id
+      console.log(couponId,"couponId in update coupon")
+      const {code,discount,minPrice,startDate,endDate, usageLimit,description,}=req.body
+      console.log("req.body",req.body)
+      if (!code || discount < 0 || discount > 100 || minPrice < 0 || new Date(startDate) < new Date() || new Date(endDate) <= new Date(startDate)) {
+          return res.status(400).json({ success: false, message: 'Invalid input data' });
+      }
+      let changeCode= code.toUpperCase()
+    
+      const check = await Coupon.find({code:changeCode})
+      // if(check){
+      //    // return res.status(404).json({ success: false, message: 'Coupon Code Already used' });
+      // }
+     const updatedCoupon= await Coupon.findByIdAndUpdate(couponId,{
+      couponCode:changeCode,
+      discount,
+      minPrice,
+      startDate,
+      endDate,
+      usageLimit,
+      description,
+     })
+      
+     if (!updatedCoupon) {
+      return res.status(404).json({ success: false, message: 'Coupon not found' });
+  }
+  
+  res.json({ success: true, message: 'Coupon updated successfully'});
+  } catch (error) {
+      console.log(error)
+      res.status(500).json({ success: false, message: 'Server error' });
+      
+  }
+}
+// coupon activate and deactivate 
+const couponStatus = async (req,res)=>{
+  
+  const couponId = req.params.id;
+  const { active } = req.body;
+  console.log(active,"gfdfdddfdfdffd")
+
+  try {
+    console.log(couponId,req.body,"ytretrerere")
+    
+      const coupon = await Coupon.findByIdAndUpdate(couponId, { active }, { new: true });  
+      if (!coupon) {
+          return res.status(404).json({success:false, message: 'Coupon not found' });
+      }console.log(coupon)
+      res.status(200).json({ success:true,message: 'Coupon updated successfully', coupon });
+  } catch (error) {
+      console.log('Error updating coupon:', error);
+      res.status(500).json({success:false, message: 'Server error' });
+  }
+
+}
 module.exports={
     getCouponPage,
     addCoupon,
     deleteCoupon,
+    updateCoupon,
+    couponStatus,
 }

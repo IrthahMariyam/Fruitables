@@ -75,6 +75,17 @@ const pageNotFound = async (req, res) => {
   }
 };
 
+const success = async (req, res) => {
+  try {
+    const {id}=req.query;
+    const user = req.session.user;
+    console.log(user);
+    res.render("success",{orderId:id});
+  } catch (error) {
+    res.redirect("/success");
+  }
+};
+
 const loadSignup = async (req, res) => {
   try {
     return res.render("signup");
@@ -116,7 +127,8 @@ try {
 
 let baseQuery = {
   isDeleted: false,
-  stock: { $gt: 0 },
+ // stock: { $gt: 0 },
+  isListed:true,
 };
 
 
@@ -585,6 +597,7 @@ module.exports = {
   postNewPassword,
   getProfilePage,
  
+ success,
 
   loadProfile,
   deleteAccount,

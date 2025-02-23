@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fruitables - Vegetable Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="keywords" />
+    <meta content="" name="description" />
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Icon Font Stylesheet -->
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Libraries Stylesheet -->
+    <link href="/lib/lightbox/css/lightbox.min.css" rel="stylesheet" />
+    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="/css/style.css" rel="stylesheet" />
+  </head>
+  <body>
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+     <div class="container-fluid fixed-top">
+             <div class="container topbar bg-primary d-none d-lg-block">
+             <div class="d-flex justify-content-between">
+             <div class="top-info ps-2"></div>
+             <div>
+             <medium class="me-3"> Welcome </medium>
+             </div>
+             <div class="top-link pe-2">
+            
+              <% if (locals.user!=null) { %>
+              <%=locals.user.name %>
+              <% console.log(locals.user) }%>
+            </div>
+        </div>
+      </div>
+      <div class="container px-0 ">
+        <nav class="navbar navbar-light bg-white navbar-expand-xl">
+          <a href="/" class="navbar-brand"
+            ><h1 class="text-primary display-6">Fruitables</h1></a
+          >
+          <button
+            class="navbar-toggler py-2 px-3"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarCollapse"
+          >
+            <span class="fa fa-bars text-primary"></span>
+          </button>
+          <div class="collapse navbar-collapse " id="navbarCollapse">
+            
+            <div class="navbar-nav position-absolute start-50 translate-middle-x d-flex">
+                <a href="/home" class="nav-item nav-link active">Home</a>
+                <a href="/shop" class="nav-item nav-link mx-3">Shop</a>
+            </div>
+        
+            
+            <div class="navbar-nav ms-auto">
+                <% if (locals.user != null) { %>
+                    <a href="/userProfile/<%= user._id %>" class="nav-item nav-link active">Profile</a>
+                    <a href="/logout" class="nav-item nav-link active">Logout</a>
+                <% } else { %>
+                    <a href="/login" class="nav-item nav-link active">Login</a>
+                    <a href="/signup" class="nav-item nav-link active">Sign up</a>
+                <% } %>
+                <div class="d-flex m-3 me-0">
+                    <a href="getWishlist" class="position-relative me-4 my-auto">
+                        <i class="fa fa-heart" style="font-size: 38px; color: red"></i>
+                    </a>
+                    <a href="/getcart" class="position-relative me-4 my-auto">
+                        <i class="fa fa-shopping-bag fa-2x"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        </nav>
+    
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+      />
+      <link rel="stylesheet" href="css/linearicons.css" />
+      <link rel="stylesheet" href="css/font-awesome.min.css" />
+      <link rel="stylesheet" href="css/themify-icons.css" />
+      <link rel="stylesheet" href="css/bootstrap.css" />
+      <link rel="stylesheet" href="css/owl.carousel.css" />
+      <link rel="stylesheet" href="css/nice-select.css" />
+      <link rel="stylesheet" href="css/nouislider.min.css" />
+      <link rel="stylesheet" href="css/ion.rangeSlider.css" />
+      <link rel="stylesheet" href="css/ion.rangeSlider.skinFlat.css" />
+      <link rel="stylesheet" href="css/magnific-popup.css" />
+      <link rel="stylesheet" href="css/main.css" />
+      <!-- Axios CDN -->
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+      <!-- SweetAlert CDN -->
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+      <!-- Toastify CDN -->
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      <!-- Add this in your HTML inside the <head> or before </body> -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="main.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    </head>
+
+  <style>
+    body {
+      background-color: #f7f7f7;
+    }
+
+    .card {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      font-size: 24px;
+      background-color: #81C408;
+    }
+
+    .card-body .display-4 {
+      font-size: 48px;
+      color: #333;
+    }
+
+    table {
+      margin-top: 20px;
+    }
+
+    td {
+      font-size: 16px;
+    }
+
+    .text-danger {
+      color: #dc3545 !important;
+    }
+
+    .text-success {
+      color: #28a745 !important;
+    }
+  </style>
+  <body>
+  
+    <div class="container mt-5">
+      <!-- Wallet Overview Card -->
+      <div class="card text-center">
+        <div class="card-header  text-white">
+          <h3>My Wallet</h3>
+        </div>
+        
+          <h4 class="card-title">Current Balance</h4>
+          <p class="display-4">₹<%= wallet.balance.toFixed(2) %></p>
+
+          <button class="btn btn-outline-dark" onclick="addMoneyInWallet()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-circle-plus mr-2 h-4 w-4"
+              data-id="16"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M8 12h8"></path>
+              <path d="M12 8v8"></path>
+            </svg>
+            Add Funds
+          </button>
+        </div>
+      </div>
+
+      <!-- Transaction History Section -->
+      <div class="mt-4">
+        <h5>Recent Transactions</h5>
+        <table class="table table-striped">
+          <tbody>
+            <% if (wallet && Array.isArray(wallet.transactions) &&
+            wallet.transactions.length > 0) { %> <%
+            wallet.transactions.forEach(transaction => { %>
+            <tr>
+              <td>
+                <% if (transaction.transactionType === 'credit') { %>
+                <i class="fas fa-arrow-up text-success"></i>
+                <% } else { %>
+                <i class="fas fa-arrow-down text-danger"></i>
+                <% } %> <%= transaction.description %>
+              </td>
+              <td><%= new Date(transaction.date).toLocaleDateString() %></td>
+              <td
+                class="<%= transaction.transactionType === 'credit' ? 'text-success' : 'text-danger' %>"
+              >
+                <%= transaction.transactionType === 'credit' ? '+' : '-' %><%=
+                transaction.amount.toFixed(2) %>
+              </td>
+            </tr>
+
+            <% }) %> <% } else { %>
+            <tr>
+              <td colspan="3">No transactions found</td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+
+        <button class="btn btn-outline-secondary">View All Transactions</button>
+      </div>
+    </div>
+
+    <script src="js/vendor/jquery-2.2.4.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+      integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/jquery.ajaxchimp.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery.sticky.js"></script>
+    <script src="js/nouislider.min.js"></script>
+    <script src="js/countdown.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <!--gmaps Js-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+    <script src="js/gmaps.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+      function addMoneyInWallet() {
+        Swal.fire({
+          title: "Enter Amount",
+          input: "number",
+          inputPlaceholder: "Enter amount to add",
+          inputAttributes: {
+            min: 1,
+            max: 10000,
+          },
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Proceed",
+        }).then((result) => {
+          if (result.isConfirmed && result.value > 0) {
+           
+            const amount = result.value;
+
+            axios
+              .post("/wallet/create-order", { amount })
+              .then((orderResponse) => {
+                const { orderId, currency } = orderResponse.data;
+
+                const options = {
+                  key: "rzp_test_lcQt1KNawGzBhX",
+                  amount: amount,
+                  currency: currency,
+                  name: "Fruitables",
+                  description: "Add money to wallet",
+                  order_id: orderId,
+                  handler: function (response) {
+                    axios
+                      .post("/wallet/add/money", {
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_signature: response.razorpay_signature,
+                        amount,
+                      })
+                      .then((paymentResponse) => {
+                        if (paymentResponse.data.ok) {
+                                    Swal.fire("Success!", "Money added successfully!", "success").then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire("Error", paymentResponse.data.msg, "error");
+                                }
+                            }).catch(error => {
+                                Swal.fire("Error", "Payment verification failed!", "error");
+                            });
+                        },
+                        theme: { color: "#3399cc" },
+                    };
+
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+                })
+                .catch(error => {
+                    Swal.fire("Error", "Failed to create order!", "error");
+                });
+        }
+    });
+}
+
+    </script>
+  </body>
+</html>

@@ -227,19 +227,7 @@ transform: scale(1.3);
                                 </option>
                             </select>
 
-                          
-                            <!-- <select class="custom-select" id="sortSelect" onchange="handleSort(this.value)">
-                             <option value="default">Default</option>
-                             
-                              <option value="newArrivals">New Arrivals</option>
-                               <option value="featured">Featured</option> -->
-                              <!-- <option value="popularity">Popularity</option> -->
-                              <!-- <option value="averageRatings">Average Ratings</option> -->
-                              <!-- <option value="priceAsc">Low  to High Price</option> -->
-                              <!-- <option value="priceDesc">High  to Low Price</option> -->
-                              <!-- <option value="aToZ">Name: A to Z</option> -->
-                              <!-- <option value="zToA">Name: Z to A</option> -->
-                            <!-- </select> --> 
+                         
                         </div>
                            
                              
@@ -260,7 +248,11 @@ transform: scale(1.3);
                                 <a href="/productDetails?id=<%=products[i]._id%>">
                                 <img src="<%=products[i].productImage[0] %>" alt="<%=products[i].productName%>" />
                                 <h4><%= products[i].productName %></h4>
-                                <p><strike>₹<%= products[i].price %></strike> ₹<%= products[i].salesPrice %></p>
+                                <% if(products[i].salesPrice==products[i].price){ %>
+                                    <p class="text-dark fs-5 fw-bold mb-0 text-center ">₹<%=products[i].salesPrice %>/ kg</p>
+                                    <% }else{ %>
+                                        <p class="text-dark fs-5 fw-bold mb-0 text-center "><strike style="color:#81C408;">₹<%= products[i].price %>/ kg</strike> ₹<%= products[i].salesPrice %>/ kg</p>
+                                    <% } %>
                             </a>
                             <% if (products[i].stock > 0) { %>
                             <button class="add-to-cart-btn" onclick="addToCart('<%= products[i]._id %>')">Add to Cart</button>
@@ -418,11 +410,6 @@ transform: scale(1.3);
 
                 document.addEventListener("DOMContentLoaded", setSelectedSort);
                 
-                // document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                //     button.addEventListener('click', function () {
-                //         alert('Item added to cart!');
-                //     });
-                // });
     </script>     
 
 </body>

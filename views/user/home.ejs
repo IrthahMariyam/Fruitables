@@ -105,8 +105,11 @@
                                                 <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                     <h4><%=products[i].productName%></h4>
                                                     <div class="d-flex justify-content-between flex-lg-wrap">
+                                                        <% if(products[i].salesPrice==products[i].price){ %>
                                                         <p class="text-dark fs-5 fw-bold mb-0 text-center ">₹<%=products[i].salesPrice %>/ kg</p>
-                                                       
+                                                       <% }else{ %>
+                                                        <p class="text-dark fs-5 fw-bold mb-0 text-center "><strike style="color:#81C408;">₹<%= products[i].price %>/ kg</strike> ₹<%= products[i].salesPrice %>/ kg</p>
+                                                        <% } %>
                                                     </div>
                                                     <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"> View More</a>
                                                    

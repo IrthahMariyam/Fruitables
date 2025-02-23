@@ -9,7 +9,11 @@ const orderSchema = new Schema({
         default: () => uuidv4(),
         unique: true
        },
-
+ 
+ razorpayOrderId: { type: String },  
+ razorpayPaymentId: { type: String }, 
+ razorpayPaymentStatus: { type: String, enum: ['pending', 'Paid', 'Failed'] },
+ paymentStatus: { type: String, enum: ['pending', 'Paid', 'Failed'] },
   orderedItems: [
     {
       productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
@@ -17,11 +21,12 @@ const orderSchema = new Schema({
       productImage: { type: String, required: true }, 
       quantity: { type: Number, required: true },
       price: { type: Number, default: 0 },
+      discountApplied: { type: Number, default: 0 },
     },
   ],
-  totalPrice: { type: Number, required: true },
+ 
   discount: { type: Number, default: 0 },
-  finalAmount: { type: Number, required: true },
+  finalAmount: { type: Number, },
   addressId: {
     type: Schema.Types.ObjectId,
     ref: "Address",
@@ -51,15 +56,23 @@ const orderSchema = new Schema({
       "Delivered",
       "Cancelled",
       "Return Request",
+      'Return Approved',
+      'Return Rejected',
       "Returned",
     ],
   },
-  deliveredOn:{type: Date,},
+  subtotal:{type:Number},
+  couponCode:{type:String},
+  couponDiscount:{type:Number},
+  totalPrice:{type:Number,},
+  
+  orderDate: { type: Date, default: Date.now },
   returnReason: { type: String },
   cancelReason: { type: String },
-  paymentMethod: { type: String, required: true },
+  paymentMethod: { type: String, required: true,enum:["COD","WALLET","RAZORPAY"] },
   createdOn: { type: Date, default: Date.now, required: true },
-  couponApplied: { type: Boolean, default: false },
+ }, {
+    timestamps: true
 });
 
 const Order = mongoose.model("Order", orderSchema);

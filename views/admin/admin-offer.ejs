@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Offer</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ 
+    <link rel="stylesheet" href="/assets/vendors/mdi/css/materialdesignicons.min.css">
+   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <!-- End layout styles -->
+    
+    <style>
+        body {
+        font-family: "Arial", sans-serif;
+        background-color:#000000 !important;
+        padding-top: 30px;
+        padding-left:  0px;
+        color: #333;
+      }
+  .sidebar{
+    padding:0px;
+    margin-left: 0px;
+  }
+  #editOfferId {
+    display: block;
+    /* Add other styling as needed */
+}
+  .table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: separate; /* Ensures border radius works 
+    border-spacing: 0; /* Removes gaps between table cells */
+    overflow: hidden; /* Ensures rounded corners */
+    border-radius: 8px; /* Adjust this value for more/less rounding */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better appearance */
+  }
+  
+  .table th, .table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+     
+  .table thead th, 
+.table-responsive .table th {
+  background-color: #81C408 !important;
+  color: white !important;
+}
+.content-main {
+        margin-top: 50px;
+        margin-left: 15px;
+        background-color: #191C24 !important;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        width:100%
+      }
+        .content-header {
+          display: flex;
+          justify-content:center;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+  
+        .content-header h2 {
+          font-weight: bold;
+          color: #333;
+          align-items: center; 
+        }
+  
+        .table {
+          margin-top: 20px;
+        }
+  
+        .modal-title {
+          font-weight: bold;
+        }
+  
+        .btn-primary {
+          background-color: #81c408;
+          border: none;
+        }
+  
+        .btn-primary:hover {
+          background-color: #68a007;
+        }
+  
+        .btn-danger {
+          background-color: #dc3545;
+        }
+  
+        .btn-danger:hover {
+          background-color: #b22a37;
+        }
+    </style>
+    
+  </head>
+ 
+  <body>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+          <a class="sidebar-brand brand-logo text-white" href="dashboard">FRUITABLES</a>
+          <a class="sidebar-brand brand-logo-mini" href="dashboard"><img src="/assets/images/logo-mini.svg" alt="logo" /></a>
+        </div>
+        <ul class="nav">
+          <li class="nav-item profile">
+            <div class="profile-desc">
+              <div class="profile-pic">
+                <div class="count-indicator">
+                  <img class="img-xs rounded-circle " src="/assets/images/faces/face15.jpg" alt="">
+                  <span class="count bg-success"></span>
+                </div>
+                <div class="profile-name">
+                  <h5 class="mb-0 font-weight-normal">Admin</h5>
+                  
+                </div>
+              </div>
+
+                        </div>
+          </li>
+          <li class="nav-item nav-category">
+            <span class="nav-link">Navigation</span>
+          </li>
+          <li class="nav-item menu-items">
+            <a href="/admin/dashboard" class="nav-link">
+              <span class="menu-icon">
+                <i class="mdi mdi-speedometer"></i>
+              </span>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a href="/admin/user" class="nav-link">
+              <span class="menu-icon">
+                <i class="fas fa-users"></i>
+              </span>
+              <span class="menu-title">Users</span>
+            </a>
+            
+           
+          </li>
+          <li class="nav-item menu-items">
+            <a href="/admin/products" class="nav-link" >
+              <span class="menu-icon">
+                <i class="fas fa-box"></i>
+              </span>
+              <span class="menu-title">products</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a href="/admin/category" class="nav-link">
+              <span class="menu-icon">
+                <i class="fas fa-tags"></i>
+              </span>
+              <span class="menu-title">Category</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="/admin/orders">
+              <span class="menu-icon">
+                <i class="fas fa-shopping-cart"></i>
+              </span>
+              <span class="menu-title">Order</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="/admin/inventory">
+              <span class="menu-icon">
+                <i class="fas fa-warehouse"></i>
+              </span>
+              <span class="menu-title">Inventory</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="/admin/coupon" >
+              <span class="menu-icon">
+                <i class="fas fa-ticket-alt"></i>
+              </span>
+              <span class="menu-title">Coupons</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" data-toggle="collapse" href="/admin/offer" aria-expanded="false" aria-controls="auth">
+              <span class="menu-icon">
+                <i class="fas fa-gift"></i> 
+              </span>
+              <span class="menu-title">Offer</span>
+             
+            </a>
+           
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" data-toggle="collapse" href="/admin/logout" aria-expanded="false" aria-controls="auth">
+              <span class="menu-icon">
+                <i class="fas fa-sign-out-alt"></i>
+              </span>
+              <span class="menu-title">Logout</span>
+             
+            </a>
+           
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_navbar.html -->
+        <nav class="navbar p-0 fixed-top d-flex flex-row">
+          <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+            <a class="navbar-brand brand-logo-mini" href=""><img src="/assets/images/logo-mini.svg" alt="logo" /></a>
+          </div>
+          <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+              <span class="mdi mdi-menu"></span>
+            </button>
+          
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item dropdown d-none d-lg-block">
+               
+
+              <li class="nav-item dropdown">
+                <a class="nav-link" id="profileDropdown" href="#" data-toggle="dropdown">
+                  <div class="navbar-profile">
+                    <img class="img-xs rounded-circle" src="/assets/images/faces/face15.jpg" alt="">
+                    <p class="mb-0 d-none d-sm-block navbar-profile-name">ADMIN</p>
+                    <i class="mdi mdi-menu-down d-none d-sm-block"></i>
+                  </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
+                 
+                  <a href="/admin/logout" class="dropdown-item preview-item" >
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-logout text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Log out</p>
+                    </div>
+                  </a>
+                  
+                </div>
+              </li>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+              <span class="mdi mdi-format-line-spacing"></span>
+            </button>
+          </div>
+        </nav>
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card bg-dark">
+            <div class="card-body">
+                <h2 class="card-title text-center">Offers List</h2>
+                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createOfferModal">+ Add New Offer</button>
+                
+            <div class="table-responsive bg-white">
+                <table class="table" border="1">
+                                    <thead>
+                                        <tr>
+                                            
+                                            <th>Offer Title</th>
+                                            <th>Description</th>
+                                            <th>Discount (%)</th>
+                                            <th> Type</th>
+                                            <th>Items</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% offers.forEach((offer, index) => { %>
+                                            <tr id="offer-<%= offer.id %>">
+                                                
+                                                <td><%= offer.name %></td>
+                                                <td><%= offer.description %></td>
+                                                <td><%= offer.discount %></td>
+                                                <td><%= offer.applicableType %></td>
+                                                <td><% if(offer.applicableType=="category"){ %>
+                                                    <% offer.applicableItems.forEach(item => { %>
+                                                        <%= item.name %><br> 
+                                                    <% }) }%>
+                                                    <%if(offer.applicableType=="product"){ %>
+                                                        <% offer.applicableItems.forEach(item => { %>
+                                                            <%= item.productName %><br>
+                                                            <% }) } %>
+                                                </td>
+                                                <td><%= new Date(offer.startDate).toLocaleDateString('en-GB') %></td>
+                                                <td><%= new Date(offer.endDate).toLocaleDateString('en-GB') %></td>
+                                                <td>
+                                                    <button 
+                                                    class="btn <%= offer.isActive ? 'btn-danger' : 'btn-success' %>" 
+                                                    id="btn-<%= offer._id %>" 
+                                                    value="<%= offer._id %>" 
+                                                    onclick="changeStatus(this)">
+                                                    <%= offer.isActive ? 'Deactivate' : 'Activate' %>
+                                                </button>
+                                                    <button class="btn btn-warning edit-button" 
+                                                    data-id="<%= offer._id %>" 
+                                                    data-code="<%= offer.name %>" 
+                                                    data-discount="<%= offer.discount %>" 
+                                                    data-offer-description="<%= offer.description %>"
+                                                    data-applicable-type="<%= offer.applicableType %>"
+                                                    data-applicable-items='<%= JSON.stringify(offer.applicableItems) %>'
+                                                    data-start-date="<%= new Date(offer.startDate).toISOString().split('T')[0] %>" 
+                                                    data-end-date="<%= new Date(offer.endDate).toISOString().split('T')[0] %>"
+                                                    data-toggle="modal" 
+                                                    data-target="#editOfferModal">Edit</button>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="createOfferModal" tabindex="-1" aria-labelledby="createOfferModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createOfferModalLabel">Create Offer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    
+                </div>
+                <div class="modal-body">
+                    <form id="createOfferForm">
+                        <div class="form-group">
+                            <label for="offerName">Offer Name</label>
+                            <input type="text" class="form-control" id="offerName" required>
+                            <small id="offerNameError" class="text-danger" style="display: none;">Offer Name is required.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="offerDescription">Description</label>
+                            <textarea class="form-control" id="offerDescription" required></textarea>
+                            <small id="offerDescriptionError" class="text-danger" style="display: none;">Description is required.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="discountAmount">Discount (%)</label>
+                            <input type="number" class="form-control" id="discountAmount" required>
+                            <small id="discountError" class="text-danger" style="display: none;">Discount must be between 1 and 100.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="applicableType">Applicable Type</label>
+                            <select class="form-control" id="applicableType" > 
+                                <option value="">Select Type</option>
+                                <option value="category">Category</option>
+                                <option value="product">Product</option>
+                            </select>
+                            <small id="applicableTypeError" class="text-danger" style="display: none;">Applicable Type is required.</small>
+                        </div>
+                        <div class="form-group" id="categorySelection" style="display:none;">
+                            <label>Select Categories</label><br>
+                            <div>
+                                <% categories.forEach(function(category) { %>
+                                    <input type="checkbox" id="category-<%= category.id %>" value="<%= category.id %>">
+                                    <label for="category-<%= category.id %>"><%= category.name %></label><br>
+                                <% }); %>
+                            </div>
+                            <small id="categoryError" class="text-danger" style="display: none;">At least one category must be selected.</small>
+                        </div>
+                        <div class="form-group" id="productItemsField" style="display:none;">
+                            <label>Select Products</label><br>
+                            <div class="product-grid" style="max-height: 200px; overflow-y: auto;">
+                                <% products.forEach(function(product) { %>
+                                    <div class="product-item">
+                                        <input type="checkbox" id="product-<%= product.id %>" value="<%= product.id %>">
+                                        <label for="product-<%= product.id %>"><%= product.productName %></label>
+                                    </div>
+                                <% }); %>
+                            </div>
+                            <small id="productError" class="text-danger" style="display: none;">At least one product must be selected.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" required>
+                            <small id="startDateError" class="text-danger" style="display: none;">Start Date is required.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">End Date</label>
+                            <input type="date" class="form-control" id="endDate" required>
+                            <small id="endDateError" class="text-danger" style="display: none;">End Date is required.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Offer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- Edit Offer Modal -->
+    <div class="modal fade" id="editOfferModal" tabindex="-1" aria-labelledby="editOfferModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editOfferModalLabel">Edit Offer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editOfferForm">
+                        <div class="form-group">
+                            
+                            <input type="text" hidden id="editOfferId" >
+                            <label for="editOfferName">Offer Name</label>
+                            <input type="text" class="form-control" id="editOfferName" required>
+                            <small id="editOfferNameError" class="text-danger" style="display: none;">Offer Name is required.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="editOfferDescription">Description</label>
+                            <textarea class="form-control" id="editOfferDescription" required></textarea>
+                            <small id="editOfferDescriptionError" class="text-danger" style="display: none;">Description is required.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDiscountAmount">Discount (%)</label>
+                            <input type="number" class="form-control" id="editDiscountAmount" required>
+                            <small id="editDiscountError" class="text-danger" style="display: none;">Discount must be between 1 and 100.</small>
+                        </div>
+                        <div  class="form-group">
+                            <label  for="editApplicableType">Applicable Type</label>
+                            <input style="background-color: #153454;" type="text" class="form-control" id="editApplicableType" readonly> <!-- Read-only input -->
+                            <small id="editApplicableTypeError" class="text-danger" style="display: none;">Applicable Type is required.</small>
+                        </div>
+                        <div class="form-group" id="editCategorySelection" style="display:none;">
+                            <label>Select Categories</label><br>
+                            <div>
+                                <% categories.forEach(function(category) { %>
+                                    <input type="checkbox" id="edit-category-<%= category.id %>" value="<%= category.id %>">
+                                    <label for="edit-category-<%= category.id %>"><%= category.name %></label><br>
+                                <% }); %>
+                            </div>
+                            <small id="editCategoryError" class="text-danger" style="display: none;">At least one category must be selected.</small>
+                        </div>
+                        <div class="form-group" id="editProductItemsField" style="display:none;">
+                            <label>Select Products</label><br>
+                            <div class="product-grid" style="max-height: 200px; overflow-y: auto;">
+                                <% products.forEach(function(product) { %>
+                                    <div class="product-item">
+                                        <input type="checkbox" id="edit-product-<%= product.id %>" value="<%= product.id %>">
+                                        <label for="edit-product-<%= product.id %>"><%= product.productName %></label>
+                                    </div>
+                                <% }); %>
+                            </div>
+                            <small id="editProductError" class="text-danger" style="display: none;">At least one product must be selected.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="editStartDate">Start Date</label>
+                            <input type="date" class="form-control" id="editStartDate" required>
+                            <small id="editStartDateError" class="text-danger" style="display: none;">Start Date is required.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="editEndDate">End Date</label>
+                            <input type="date" class="form-control" id="editEndDate" required>
+                            <small id="editEndDateError" class="text-danger" style="display: none;">End Date is required.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+        <script src="/admin/assets/vendors/js/vendor.bundle.base.js"></script>
+       
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+       
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+       
+    document.getElementById("createOfferForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent actual form submission
+    
+        // Clear any previous error messages
+        clearErrors();
+    
+        // Collect form values
+        const offerName = document.getElementById('offerName').value.trim();
+        const offerDescription = document.getElementById('offerDescription').value.trim();
+        const discountAmount = document.getElementById('discountAmount').value;
+        const applicableType = document.getElementById('applicableType').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+    
+        // Get selected categories or products based on applicable type
+        let selectedItems = [];
+        if (applicableType === 'category') {
+            document.querySelectorAll('#categorySelection input[type=checkbox]:checked').forEach(function (el) {
+                selectedItems.push(el.value);
+            });
+        } else if (applicableType === 'product') {
+            document.querySelectorAll('#productItemsField input[type=checkbox]:checked').forEach(function (el) {
+                selectedItems.push(el.value);
+            });
+        }
+    
+        // Validate form fields
+        let isValid = true;
+    
+        if (!offerName) {
+            showError('offerNameError', 'Offer Name is required.');
+            isValid = false;
+        }
+        if (!offerDescription) {
+            showError('offerDescriptionError', 'Description is required.');
+            isValid = false;
+        }
+        if (!discountAmount || discountAmount < 1 || discountAmount > 100) {
+            showError('discountError', 'Discount must be between 1 and 100.');
+            isValid = false;
+        }
+        if (!applicableType) {
+            showError('applicableTypeError', 'Applicable Type is required.');
+            isValid = false;
+        }
+        if (applicableType === 'category' && selectedItems.length === 0) {
+            showError('categoryError', 'At least one category must be selected.');
+            isValid = false;
+        }
+        if (applicableType === 'product' && selectedItems.length === 0) {
+            showError('productError', 'At least one product must be selected.');
+            isValid = false;
+        }
+        if (!startDate) {
+            showError('startDateError', 'Start Date is required.');
+            isValid = false;
+        }
+        if (!endDate) {
+            showError('endDateError', 'End Date is required.');
+            isValid = false;
+        }
+        if (endDate<startDate) {
+            showError('endDateError', 'End Date must be after start date.');
+            isValid = false;
+        }
+        if (startDate < new Date()) {
+            showError('startDateError', 'Start Date must be after current date.');
+            isValid = false;
+        }
+    
+        // If all validations pass, send the form data
+        if (isValid) {
+            // Show confirmation dialog with SweetAlert
+            Swal.fire({
+                title: 'Confirm Action',
+                text: 'Are you sure you want to create this offer?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, create it!',
+                cancelButtonText: 'Cancel'
+             }).then((result) => {
+                if (result.isConfirmed) {
+                    // Create data object to send to backend
+                    const formData = {
+                        offerName,
+                        offerDescription,
+                        discountAmount,
+                        applicableType,
+                        selectedItems,
+                        startDate,
+                        endDate
+                    };
+    
+                   console.log(formData,"formData in addmodal")
+    
+                    // Send data to backend using Axios
+                    axios.post('/admin/offers/create', formData)
+                        .then(function (response) {
+                            if (response.data){
+                           if(response.data.success) {
+                                Swal.fire(
+                                    'Success!',
+                                    response.data.message,
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.data.message,
+                                    'error'
+                                );
+                            }}
+                        })
+                        .catch(function (error) {
+                            Swal.fire(
+                                'Error!',
+                                'Server error. Please try again later.',
+                                'error'
+                            );
+                        });
+                } else {
+                    Swal.fire(
+                        'Cancelled',
+                        'Action canceled.',
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+    
+    // Helper function to show error messages
+    function showError(fieldId, message) {
+        const errorField = document.getElementById(fieldId);
+        errorField.textContent = message;
+        errorField.style.display = 'block';
+    }
+    
+    // function to clear previous error messages
+    function clearErrors() {
+        const errorFields = document.querySelectorAll('.text-danger');
+        errorFields.forEach(function (field) {
+            field.style.display = 'none';
+        });
+    }
+    
+                document.addEventListener("DOMContentLoaded", function () {
+                var modals = document.querySelectorAll('.modal');
+                modals.forEach(function(modal) {
+                new bootstrap.Modal(modal);
+    });
+            const applicableTypeCreate = document.getElementById("applicableType");
+            const categorySelectionCreate = document.getElementById("categorySelection");
+            const productItemsFieldCreate = document.getElementById("productItemsField");
+    
+            // Show/hide fields based on applicable type selection in Create Offer modal
+            applicableTypeCreate.addEventListener("change", function () {
+                if (this.value === "category") {
+                    categorySelectionCreate.style.display = "block";
+                    productItemsFieldCreate.style.display = "none";
+                } else if (this.value === "product") {
+                    productItemsFieldCreate.style.display = "block";
+                    categorySelectionCreate.style.display = "none";
+                } else {
+                    categorySelectionCreate.style.display = "none";
+                    productItemsFieldCreate.style.display = "none";
+                }
+            });
+    
+           
+    
+            // Example form submission handling
+       
+    
+    
+    
+        });
+    
+      
+        $(document).on('click', '.edit-button', function () {
+       
+        const dataAttributes = $(this).data();
+       // Log all data attributes
+        
+        // Access the data attributes with the correct names
+        const offerId = dataAttributes.id; // This should work
+        const offerName = dataAttributes.code; // This should work
+        const offerDescription = dataAttributes.offerDescription; // This should work if accessed correctly
+        const discountAmount = dataAttributes.discount; // This should work
+        const applicableType = dataAttributes.applicableType; // This should work
+        const startDate = dataAttributes.startDate; // This should work
+        const endDate = dataAttributes.endDate; // This should work
+        const items  = dataAttributes.applicableItems
+    
+        
+     
+        // Check if any of these values are undefined
+       // $('#editOfferId').val(offerId);
+        console.log("Setting offerId to:", offerId);
+        $('#editOfferId').val(offerId);
+        console.log("After setting, value is:", $('#editOfferId').val());
+        $('#editOfferName').val(offerName);
+        $('#editOfferDescription').val(offerDescription);
+        $('#editDiscountAmount').val(discountAmount);
+        $('#editApplicableType').val(applicableType);
+        $('#editStartDate').val(startDate);
+        $('#editEndDate').val(endDate);
+    
+        // Show or hide the category and product selection fields based on applicableType
+        const applicableTypeEdit = document.getElementById("editApplicableType");
+            const editCategorySelection = document.getElementById("editCategorySelection");
+            const editProductItemsField = document.getElementById("editProductItemsField");
+    
+            // Show/hide fields based on applicable type selection in Edit Offer modal
+           
+                if (applicableType === "category") {
+                    editCategorySelection.style.display = "block";
+                    editProductItemsField.style.display = "none";
+                } else if (applicableType === "product") {
+                    editProductItemsField.style.display = "block";
+                    editCategorySelection.style.display = "none";
+                } else {
+                    editCategorySelection.style.display = "none";
+                    editProductItemsField.style.display = "none";
+                }
+            
+                
+    
+        // Reset checkboxes and pre-select previously selected categories and products
+        $('#editCategorySelection input[type="checkbox"]').prop('checked', false);
+        items.forEach(item => {
+           
+            $(`#edit-category-${item._id}`).prop('checked', true);
+        });
+    
+        $('#editProductItemsField input[type="checkbox"]').prop('checked', false);
+        items.forEach(item => {
+            $(`#edit-product-${item._id}`).prop('checked', true);
+        });
+    
+        // Show the modal
+        $('#editOfferModal').modal('show');
+    });
+    
+    $('#editOfferForm').on('submit', function (e) {
+        e.preventDefault();
+    
+        // Clear any previous error messages
+        clearErrors();
+    
+        // Gather the updated values from the form fields
+        const offerId = $('#editOfferId').val().trim()
+        const offerName = $('#editOfferName').val().trim();
+        console.log("editOfferName=",offerName)
+        const offerDescription = $('#editOfferDescription').val().trim();
+        const discountAmount = $('#editDiscountAmount').val();
+        const applicableType = $('#editApplicableType').val();
+        const startDate = $('#editStartDate').val();
+        const endDate = $('#editEndDate').val();
+    
+        // Collect selected categories or products based on applicableType
+        let applicableItems = [];
+        if (applicableType === 'category') {
+            $('#editCategorySelection input[type="checkbox"]:checked').each(function () {
+                applicableItems.push($(this).val());
+            });
+        } else if (applicableType === 'product') {
+            $('#editProductItemsField input[type="checkbox"]:checked').each(function () {
+                applicableItems.push($(this).val());
+            });
+        }
+    
+        // Validate form fields
+        let isValid = true;
+    
+        if (!offerName) {
+            showError('editOfferNameError', 'Offer Name is required.');
+            isValid = false;
+        }
+        if (!offerDescription) {
+            showError('editOfferDescriptionError', 'Description is required.');
+            isValid = false;
+        }
+        if (!discountAmount || discountAmount < 1 || discountAmount > 100) {
+            showError('editDiscountError', 'Discount must be between 1 and 100.');
+            isValid = false;
+        }
+        if (!applicableType) {
+            showError('editApplicableTypeError', 'Applicable Type is required.');
+            isValid = false;
+        }
+        if (applicableType === 'category' && applicableItems.length === 0) {
+            showError('editCategoryError', 'At least one category must be selected.');
+            isValid = false;
+        }
+        if (applicableType === 'product' && applicableItems.length === 0) {
+            showError('editProductError', 'At least one product must be selected.');
+            isValid = false;
+        }
+        if (!startDate) {
+            showError('editStartDateError', 'Start Date is required.');
+            isValid = false;
+        }
+        if (!endDate) {
+            showError('editEndDateError', 'End Date is required.');
+            isValid = false;
+        }
+    
+         // If validation fails, stop further processing
+         if (!isValid) {
+            return;
+         }
+    
+        // If all validations pass, show SweetAlert confirmation
+         Swal.fire({
+            title: 'Confirm Action',
+            text: 'Are you sure you want to update this offer?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, update it!',
+            cancelButtonText: 'Cancel'
+         }).then((result) => {
+            if (result.isConfirmed) {
+                // Prepare the data object to send to the server
+                const updatedOfferData = {
+                    offerId: offerId,
+                    name: offerName,
+                    description: offerDescription,
+                    discount: discountAmount,
+                    applicableType: applicableType,
+                    applicableItems: applicableItems, // Array of selected category/product IDs
+                    startDate: startDate,
+                    endDate: endDate
+                 };
+                 console.log(updatedOfferData,"formData in editmodal")
+    
+                 // Send data to backend using Axios
+                 axios.put(`/admin/offers/update/`, updatedOfferData)
+                    .then(response => {
+                        if (response.data && response.data.success) {
+                            Swal.fire(
+                                'Success!',
+                                response.data.message,
+                                'success'
+                            ).then(() => {
+                                // Close modal and reload page
+                                $('#editOfferModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.data.message,
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire(
+                            'Error!',
+                            'Server error. Please try again later.',
+                            'error'
+                        );
+                    });
+            } else {
+                Swal.fire(
+                    'Cancelled',
+                    'Action canceled.',
+                    'error'
+                );
+            }
+        });
+    });
+    
+    // Function to display error messages
+    function showError(fieldId, message) {
+        const errorField = document.getElementById(fieldId);
+        errorField.textContent = message;
+        errorField.style.display = 'block';
+    }
+    
+    // Helper function to clear previous error messages
+    function clearErrors() {
+        const errorFields = document.querySelectorAll('.text-danger');
+        errorFields.forEach(function (field) {
+            field.style.display = 'none';
+        });
+    }
+    
+    
+    
+    
+        function changeStatus(button) {
+        const offerId = button.value; // Get the offer ID from the button's value
+        const isActive = button.classList.contains('btn-danger'); // Check if the offer is currently active
+        const action = isActive ? 'deactivate' : 'activate';
+    
+        // SweetAlert2 confirmation dialog
+        Swal.fire({
+            title: `Are you sure you want to ${action} this offer?`,
+            text: `Are you sure you want to ${action} this offer?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed',
+            cancelButtonText: 'No, cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send a POST request to toggle the offer status
+                axios.patch(`/admin/offers/action/${offerId}`)
+                    .then(response => {
+                        if (response.data.success) {
+                            // Update the button class and text based on the new state
+                            if (response.data.isActive) {
+                                button.classList.remove('btn-success');
+                                button.classList.add('btn-danger');
+                                button.textContent = 'Deactivate';
+                            } else {
+                                button.classList.remove('btn-danger');
+                                button.classList.add('btn-success');
+                                button.textContent = 'Activate';
+                            }
+    
+                            // Success message
+                            Swal.fire("Success!", `Offer has been ${action}d successfully.`, "success");
+                        } else {
+                            Swal.fire("Error!", "Failed to toggle offer status.", "error");
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        console.error('Error toggling offer status:', error);
+                        Swal.fire("Error!", "An error occurred while trying to toggle the offer status.", "error");
+                    });
+            }
+        });
+    }
+    </script>
+    </body>
+    </html>

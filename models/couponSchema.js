@@ -1,6 +1,6 @@
 
 const mongoose = require("mongoose");
-
+const {Schema}=mongoose
 const couponSchema = new mongoose.Schema({
   couponCode: {
     type: String,
@@ -10,22 +10,12 @@ const couponSchema = new mongoose.Schema({
   startDate: {
     type: Date,
     required: true,
-    // validate: {
-    //   validator: function (value) {
-    //     return value >= new Date();
-    //   },
-    //   message: "Start date must be in the future.",
-    // },
+   
   },
   endDate: {
     type: Date,
     required: true,
-    // validate: {
-    //   validator: function (value) {
-    //     return value > this.startDate;
-    //   },
-    //   message: "End date must be after the start date.",
-    // },
+    
   },
   minPrice: {
     type: Number,
@@ -60,6 +50,10 @@ const couponSchema = new mongoose.Schema({
       },
     },
   ],
-});
+  active:{
+    type:Boolean,
+    default:true
+}
+},{timestamps:true})
 
 module.exports = mongoose.model("Coupon", couponSchema);

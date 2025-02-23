@@ -7579,10 +7579,10 @@ a {
     text-decoration: underline; }
 
 a:not([href]):not([class]) {
-  color: inherit;
+  /* color: inherit; */
   text-decoration: none; }
   a:not([href]):not([class]):hover {
-    color: inherit;
+    /* color: inherit; */
     text-decoration: none; }
 
 pre,

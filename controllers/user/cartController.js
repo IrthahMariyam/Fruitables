@@ -1,11 +1,7 @@
-const User = require("../../models/userSchema");
-const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
-const env = require("dotenv").config();
-const session = require("express-session");
 const { v4: uuidv4 } = require('uuid');
 
 
@@ -17,7 +13,11 @@ const getCartPage = async (req, res) => {
        }
        const userId = req.session.user._id;
         
-       const carts = await Cart.findOne({ userId }).populate('items.productId');
+      const carts = await Cart.findOne({ userId }).populate('items.productId');
+      // const carts = await Cart.findOne({ userId }).populate({
+      //   path: 'items.productId',
+      //   match: { isListed: true }  // assuming you have an isListed field in your product schema
+      // });
            //console.log(cart,"cart")
             
        if (!carts) { 
@@ -215,145 +215,12 @@ const updateCartQuantity = async (req, res) => {
 };
 
 
-
-
-
-  
-  const getCheckoutPage=async(req,res)=>{
-    try {
-      
-   const userId = req.session.user._id; 
-   //console.log(req.session,"user session")
-   //console.log(userId)
-   const carts = await Cart.findOne({ userId }).populate("items.productId");
-  const address=await Address.find({userId})
-  
-  //console.log(address)
-   if (!carts) {
-     return res.render("checkout", { 
-       captureEvents: { items: [], total: 0 }, 
-       user: req.user ,
-       address:address,
-     });
-   }
-
-   let total = 0;
-   carts.items.forEach(item => {
-     total += item.totalPrice;
-   });
-
-   
-   res.render("checkout", {
-     carts,
-     total,
-     address:address,
-     cart:carts.items,
-   });
- } catch (error) {
-   console.error("Error loading checkout page:", error);
-   res.status(500).send("An error occurred while loading the checkout page.");
- }
-};
-
-const placeOrder = async (req, res) => {
-  try {
-    const { address, paymentMethod, discount = 0 } = req.body;
-
-    if (!address) {
-      return res.status(400).json({ error: "Address is required." });
-    }
-    if (!paymentMethod) {
-      return res.status(400).json({ error: "Payment method is required." });
-    }
-
-    const userId = req.session.user._id;
-    const cart = await Cart.findOne({ userId }).populate("items.productId");
-    console.log("=============================")
-    console.log(cart,"===================================")
-     if (!cart || !cart.items.length) {
-      return res.status(400).json({ error: "No items in the cart to place an order." });
-     }
-
-       let totalPrice = 0;
-       const productItems = [];
-       let product;
-       for (const cartItem of cart.items) {
-       product = cartItem.productId;
-
-       if (!product) {
-        console.error(`Product with ID ${cartItem.productId} not found.`);
-        return res.status(404).json({ error: `Product with ID ${cartItem.productId} not found.` });
-      }
-
-      const availableStock = product.stock - cartItem.quantity;
-      if (availableStock < 0) {
-        return res
-          .status(400)
-          .json({ error: `Insufficient stock for product ${product.productName}.` });
-      }
-
-      totalPrice += cartItem.quantity * product.price;
-
-      productItems.push({
-        productId: product._id,
-        productName:product.productName,
-        productImage:product.productImage[0],
-        quantity: cartItem.quantity,
-        price: product.price,
-      });
-      console.log(productItems,"productitems in placeorder.")
-    }
-
-    // Apply discount if any
-    const finalAmount = totalPrice - discount;
-
-
-    const orderid=uuidv4()
-    // Create the order
-    const order = new Order({
-      orderId:orderid,
-      orderedItems: productItems,
-      address,
-      totalPrice,
-      finalAmount,
-      userId,
-      status: "Processing",
-      paymentMethod,
-    });
-    await order.save();
-    console.log("orderrrrrrrrrrrrrrr",order)
-
-    // Update product stock
-    for (const cartItem of cart.items) {
-      await Product.findByIdAndUpdate(
-        cartItem.productId,
-        { $inc: { stock: -cartItem.quantity } },
-        { new: true }
-      );
-    }
-
-    // Clear the cart for the user
-    await Cart.findOneAndDelete({ userId });
-
-    res.status(200).json({
-      success: true,
-      message: "Order placed successfully.",
-      order,
-    });
-  } catch (err) {
-    console.error("Error placing order:", err);
-    res.status(500).json({ success: false, error: "Error placing order.", details: err.message });
-  }
-};
-
-
-
   
   module.exports={
     getCartPage,
     addToCart,
     updateCartQuantity,
     removeFromCart,
-    getCheckoutPage,
-    placeOrder,
+   // getCheckoutPage,
+    
   }

@@ -39,14 +39,14 @@ const userSchema=new Schema({
         default:false,
     },
     
-    wallet:{
-        type:Number,
-        default:0,
-    },
-    whishlist:[{
-        type:Schema.Types.ObjectId,
-        ref:"Whishlist"
-    }],
+    // wallet:{
+    //     type:Number,
+    //     default:0,
+    // },
+    // whishlist:[{
+    //     type:Schema.Types.ObjectId,
+    //     ref:"Whishlist"
+    // }],
    
     createdOn:{
         type:Date,

@@ -8,10 +8,15 @@ const productController=require('../controllers/user/productController')
 const whishlistController=require('../controllers/user/whishlistController')
 const couponController=require('../controllers/user/couponController')
 const orderController=require('../controllers/user/orderController')
+const walletController=require('../controllers/user/walletController')
+
+
+
 const passport = require('passport')
 //const { userAuth } = require('../middlewares/auth')
 const User = require('../models/userSchema')
 const Address = require('../models/addressSchema')
+const Wallet=require('../models/walletSchema')
 
 
 
@@ -31,7 +36,7 @@ router.get("/reset-password",userController.getResetPasswordPage)
 router.post("/reset-password",userController.postNewPassword)
 
 router.get('/pageNotFound',userController.pageNotFound)
-
+router.get('/success',userAuth,userController.success)
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}))
 
 
@@ -42,6 +47,7 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     const findUser=await User.findOne({email:req.user.email,isAdmin:false})
 
     req.session.user=findUser
+   
     
     res.redirect("/")  
 });
@@ -69,7 +75,6 @@ router.get('/getprofileDetail/:userId',userAuth,profileController.getProfileDeta
 router.post('/updateDetail/:userId',userAuth,profileController.updateProfileDetail)
 router.post("/deleteAccount/:userId",userAuth,profileController.deleteAccount)
 router.post("/changePassword/:userId",userAuth,profileController.changePassword)
-// router.get('/updateemail',userAuth,profileController.getUpdateEmailPage)
 router.post("/addAddress",userAuth,profileController.addAddress)
 router.get("/getAddress/:id",userAuth,profileController.getAddress)
 router.post("/updateAddress/:id",userAuth,profileController.updateAddress)
@@ -81,14 +86,19 @@ router.post('/orders/cancel/:id',userAuth,orderController.cancelOrder)
 router.post('/orders/reutrnrequest/:id', orderController.returnOrder);
 router.get('/viewOrderDetails/:orderId',userAuth,orderController.getOrderDetails)
 
+//router.post('/verify-payment/:id',userAuth,orderController.verifyPayment);
+//router.post('/createOrder',userAuth,orderController.createOrder)
+router.post('/placeOrder',userAuth,orderController.placeOrder)
+router.post('/razorpayverifyPayment',userAuth,orderController.verifyPayment)
+//router.post('/paywithWallet',userAuth,orderController.paywithWallet)
 
 //cart routes
 router.get('/getcart',userAuth,cartController.getCartPage)
 router.post("/cart/add",userAuth,cartController.addToCart);
 router.post('/cart/update', userAuth, cartController.updateCartQuantity);
 router.post('/cart/remove', userAuth, cartController.removeFromCart);
-router.get('/getcheckout',userAuth,cartController.getCheckoutPage);
-router.post('/placeorder',userAuth,cartController.placeOrder)
+router.get('/getcheckout',userAuth,orderController.getCheckoutPage);
+
 
 //whishlist routes
 router.post('/wishlist/add',userAuth,whishlistController.addtoWishlist)
@@ -100,6 +110,19 @@ router.post("/whishlisttocart/add",userAuth,whishlistController.whishlistToCart)
 router.get('/getCouponCodes',userAuth,couponController.getCouponCodes)
 router.post('/applyCoupon',userAuth,couponController.applyCoupon)
 router.post('/removeCoupon',userAuth,couponController.removeCoupon)
+
+
+//wallet
+router.get('/wallet',userAuth,walletController.getWallet)
+//router.post('addMoneyToWallet',userAuth,walletController.addMoneyToWallet)
+//router.post('/wallet/verify-payment',userAuth,walletController.walletVerifyPayment)
+//router.post('/wallet/create-order',userAuth,walletController.walletCreateOrder)
+//router.get('/wallet/history', userAuth, walletController.getTransactionHistory)
+router.post("/wallet/create-order",userAuth,walletController.createAddmoneyWallet)
+router.post("/wallet/add/money",userAuth,walletController.addMoneyWallet)
+router.post("/wallet/purchase",userAuth,walletController.purchaseUsingWallet)
+
+
 
 module.exports=router;
 

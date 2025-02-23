@@ -1,9 +1,5 @@
 const User = require("../../models/userSchema");
-const Category = require("../../models/categorySchema");
-const Product = require("../../models/productSchema");
-const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
-const Order = require("../../models/orderSchema");
 const Coupon=require("../../models/couponSchema")
 const env = require("dotenv").config();
 
@@ -17,7 +13,7 @@ const getCouponCodes= async(req, res)=>{
     console.log("inside getcoupon user")
     const currentDate = new Date();
       const cartTotal = parseFloat(req.query.cartTotal) || 0;
-      console.log(req.query,"lllllllllllllllllllll")
+    //  console.log(req.query,"lllllllllllllllllllll")
       console.log(cartTotal)
       console.log(currentDate)
       //console.log(req.session.user._id,"hgfdhgfdhgfdhgfdhgfdhgfd")
