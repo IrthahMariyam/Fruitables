@@ -26,7 +26,8 @@
                       <th>Name</th>
                       <th>Category</th>
                       <th>Stock</th>
-                      <th>Price</th>
+                      <th>Regular Price</th>
+                      <th>Sale Price</th>
                       <th>Images</th>
                       <th>Actions</th>
                       <th>delete</th>
@@ -49,6 +50,9 @@
                           </td>
                           <td>
                             <%=products[i].price%>
+                          </td>
+                          <td>
+                            <%=products[i].salesPrice%>
                           </td>
                           <td>
                             <img src="<%=products[i].productImage[0]%>" alt=''>

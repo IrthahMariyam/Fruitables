@@ -24,9 +24,7 @@
                 <tr>
                     <td><%= order.orderId %></td>
                     <td><%= order.userId.name %></td>
-                   
-                   
-                    <td>₹<%= parseFloat(order.finalAmount.toFixed(2))+100.00 %></td>
+                    <td>₹<%= order.finalAmount %></td>
                     <td><%= order.paymentMethod %></td>
                     <td><%= order.status %></td>
                     <td>
@@ -68,16 +66,16 @@
      <%}%>
      </ul>
 
-</div>
+ </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script>
   
-function blockUser(row,userId,userName) {
+ function blockUser(row,userId,userName) {
  const buttonlabel=document.querySelector('[name=blockuser]')
  const currentText = button.innerHTML === "Blocked" ? "Blocked" : "Unblocked";
- alert(userId)
-    alert(userName)
+ //alert(userId)
+ //alert(userName)
   console.log('Category ID:', userId);
 console.log('Name Field:', userName);
 
@@ -108,8 +106,8 @@ console.log('Name Field:', userName);
           'success'
         );
         button.innerHTML = currentText === "Blocked" ? "Unblocked" : "Blocked";
-       // row.style.opacity = '0.5';  // Visual feedback (dim the row)
-        //window.location.href = '/admin/user';
+         // row.style.opacity = '0.5';  // Visual feedback (dim the row)
+         //window.location.href = '/admin/user';
       })
       .catch(error => {
         Swal.fire(

@@ -259,6 +259,7 @@
             <h4><%=item.productName %></h4>
             <p>Quantity: <%= item.quantity %></p>
             <p>Price: ₹<%= item.price %></p>
+            <p>Product Total: ₹<%= item.totalPrice %></p>
           </div>
         </div>
       <%  }); %>
@@ -267,10 +268,10 @@
     <!-- Price Details -->
     <div class="card">
       <div class="card-header">Price Details</div>
-      <p>Total Price: ₹<%= order.totalPrice %></p>
-      <p>Discount: ₹<%= order.discount %></p>
+      <p>Total Price: ₹<%= order.subtotal %></p>
+      <p>Coupon Discount: ₹<%= order.discount %></p>
       <p>Shipping Charge: ₹100</p>
-      <p><strong>Payable Amount:</strong> ₹<%= order.finalAmount+100 %></p>
+      <p><strong>Payable Amount:</strong>₹<%= order.finalAmount %></p>
     </div>
 
     <!-- Shipping Address -->
@@ -301,6 +302,7 @@
              
               <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
               <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+              <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancel</option>
               <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
               <option value="Out for Delivery" <%= order.status === 'Out for Delivery' ? 'selected' : '' %>>Out for Delivery</option>
               <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
@@ -319,99 +321,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-//     document.addEventListener("DOMContentLoaded", function () {
-// let   statusSelect = document.getElementById("orderStatus");
-//     //  const orderStatus = "Return Request"; // This should be dynamically assigned from your backend
-//     // Replace with actual order ID
 
-//     if (orderStatus === "Return Request") {
-//         const confirmReturn = confirm("Do you want to accept or cancel the return request?");
-
-//         if (confirmReturn) {
-//           document.getElementById("orderStatus").options[5].disabled = false;
-//           statusSelect.value="Returned"
-//             // Admin accepts the return request
-//            // updateOrderStatus(orderId, "Return");
-//         } else {
-//             // Admin cancels the return request
-//           //  updateOrderStatus(orderId, "Delivered");
-//           statusSelect.value="Delivered"
-//           document.getElementById("orderStatus").options[4].disabled = false
-//         }
-//     }
-
-
-//          statusSelect = document.getElementById("orderStatus");
-
-//         function disableInvalidOptions(currentStatus) {
-//             const options = statusSelect.options;
-
-//             // Allowed transitions
-//             const allowedTransitions = {
-//                 "Pending": ["Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled"],
-//                 "Processing": ["Shipped", "Out for Delivery", "Delivered", "Cancelled"],
-//                 "Shipped": ["Out for Delivery", "Delivered"],
-//                 "Out for Delivery": ["Delivered"],
-//                 "Delivered": ["Returned"],
-//                 "Return Request":["Return Request","Returned"],
-//                 "Returned": ["Returned"] 
-//             };
-          
-
-//             // Enable all options first
-//             for (let i = 0; i < options.length; i++) {
-//                 options[i].disabled = false;
-//             }
-
-//             // Disable invalid options
-//             for (let i = 0; i < options.length; i++) {
-//                 const option = options[i];
-//                 if (!allowedTransitions[currentStatus]?.includes(option.value)) {
-//                     option.disabled = true;
-//                 }
-//             }
-//         }
-
-        
-
-   
-//         // Run function on load
-//         disableInvalidOptions(statusSelect.value);
-
-//         // Run function on change
-//         statusSelect.addEventListener("change", function () {
-//             disableInvalidOptions(this.value);
-//         });
-
-
-//         document.getElementById("statusForm").addEventListener("submit", function (e) {
-//          e.preventDefault();
-     
-//       fetch(`/admin/orders/update-status/${orderId}`, {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({
-//           status: statusSelect.value,
-//         }),
-//       })
-//       .then((res) => {
-//         if (!res.ok) throw new Error("Failed to update status");
-//         return res.json();
-//       })
-//       .then((data) => {
-//         Swal.fire('Success!', `Order status updated to ${statusSelect.value}.`, 'success');
-//         window.location.href = '/admin/orders';  // Reload the page to reflect changes
-//       })
-//       .catch((err) => {
-//         Swal.fire('Error!', 'Failed to update the order status.', 'error');
-//         console.error(err);
-//        });
-//        });
-
-
-
-//       });
-      
   document.addEventListener("DOMContentLoaded", function () {
     let statusSelect = document.getElementById("orderStatus");
     let orderStatus = statusSelect ? statusSelect.value : "";
@@ -450,7 +360,7 @@
 
         // Define valid transitions
         const allowedTransitions = {
-            "Pending": ["Processing"],
+            "Pending": ["Processing","Cancelled"],
             "Processing": ["Shipped", "Cancelled"],
             "Shipped": ["Out for Delivery"],
             "Out for Delivery": ["Delivered"],
@@ -481,7 +391,7 @@
         disableInvalidOptions(this.value);
     });
 
-    // **✅ Fixing the Submit Button Issue**
+    // 
     document.getElementById("statusForm").addEventListener("submit", function (e) {
         e.preventDefault(); // Stop default form submission
         
@@ -506,7 +416,7 @@
                 text: `Order status updated to ${statusSelect.value}.`,
                 icon: "success"
             }).then(() => {
-                window.location.href = '/admin/orders'; // Redirect after update
+                window.location.href = '/admin/orders'; 
             });
         })
         .catch((err) => {

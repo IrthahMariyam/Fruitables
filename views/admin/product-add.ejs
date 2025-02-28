@@ -184,7 +184,7 @@
                     class="form-control"
                     id="product_name"
                   />
-                  <div id="productName-error" class="error-message"></div>
+                  <div id="productNameError" class="error-message"></div>
                 </div>
 
                 <div class="mb-4">
@@ -196,7 +196,7 @@
                     class="form-control"
                     rows="4"
                   ></textarea>
-                  <div id="description-error" class="error-message"></div>
+                  <div id="descriptionError" class="error-message"></div>
                 </div>
 
                 <div class="row">
@@ -209,7 +209,7 @@
                         type="text"
                         class="form-control"
                       />
-                      <div id="regularPrice-error" class="error-message"></div>
+                      <div id="regularPriceError" class="error-message"></div>
                     </div>
                   </div>
                   <div class="col-lg-4">
@@ -221,21 +221,21 @@
                         type="text"
                         class="form-control"
                       />
-                      <div id="salePrice-error" class="error-message"></div>
+                      <div id="salePriceError" class="error-message"></div>
                     </div>
                   </div>
                   <div class="col-lg-4">
                     <div class="mb-4">
                       <label class="form-label">Stock</label>
                       <input name="stock" type="text" class="form-control" />
-                      <div id="stock" class="error-message"></div>
+                      <div id="stockError" class="error-message"></div>
                     </div>
                   </div>
                   <div class="col-lg-4">
                     <div class="mb-4">
                       <label class="form-label">Color</label>
-                      <input name="color" type="text" class="form-control" />
-                      <div id="color-error" class="error-message"></div>
+                      <input name="color" type="text" id="color" class="form-control" />
+                      <div id="colorError" class="error-message"></div>
                     </div>
                   </div>
                 </div>
@@ -251,7 +251,7 @@
                         type="radio"
                         name="item"
                         id="item1"
-                        value="Fruit"
+                        value="Fruit" checked
                       />
                       <label class="form-check-label" for="item1">Fruit</label>
                     </div>
@@ -281,7 +281,7 @@
                     </option>
                     <% } %>
                   </select>
-                  <div id="category-error" class="error-message"></div>
+                  <div id="categoryError" class="error-message"></div>
                 </div>
 
                 <div class="row">
@@ -294,7 +294,7 @@
                       <option value="Out of Stock">Out of Stock</option>
                       <option value="Removed">Removed</option>
                     </select>
-                    <div id="Available-error" class="error-message"></div>
+                    <div id="AvailableError" class="error-message"></div>
                   </div>
                 </div>
 
@@ -310,6 +310,7 @@
                       class="form-control"
                     />
                   </div>
+                  <div id="imageError" class="error-message"></div>
                 </div>
 
                 <div id="cropperContainers"></div>
@@ -474,14 +475,34 @@
           '[name="regularPrice"]'
         ).value);
         
-       
+       if(productName.length<3)
+       {
+        document.getElementById("productNameError").innerText="Enter a valid product name"
+        return
+       }
+       if(description.length<3)
+       {
+        document.getElementById("descriptionError").innerText="Enter a valid description"
+        return
+       }
+       if(regularPrice<0)
+       {
+        document.getElementById("regularPriceError").innerText="regular Price must positive value"
+        return
+       }
 
   const salePrice = parseInt(document.querySelector('[name="salePrice"]').value);
+  if(salePrice<0)
+       {
+        document.getElementById("salePriceError").innerText="sale Price must positive value"
+        return
+       }
 if(parseInt( salePrice)>parseInt( regularPrice)){  
-  Swal.fire({
-          icon: 'error',
-          title: 'salesprice must be less than price',
-          text: 'salesprice must be less than price'})
+   document.getElementById("regularPriceError").innerText="regular price must be greater than sales price"
+  // Swal.fire({
+  //         icon: 'error',
+  //         title: 'salesprice must be less than price',
+  //         text: 'salesprice must be less than price'})
 return 
 }
         const stock = document.querySelector('[name="stock"]').value;
@@ -489,6 +510,12 @@ return
         const Status = document.querySelector('[name="Available"]').value;
         const category = document.getElementById("category").value;
         const radios = document.getElementsByName("item");
+        const picture=document.getElementById('upload').value;
+        if(picture.length==0)
+        {
+          document.getElementById('imageError').innerText="please select images"
+          return
+        }
         let selectedValue;
         for (const radio of radios) {
           if (radio.checked) {
@@ -498,20 +525,39 @@ return
         }
         if(Status=='Available' && stock<=0)
         {
-            alert("If no stock please select status 'Out of stock' ")
+          document.getElementById("stockError").innerText="If no stock please select status 'Out of stock' ";
+           // alert("If no stock please select status 'Out of stock' ")
             return
         }
         if(Status=='Out of Stock' && stock>0 )
         {
             
-          
-            alert("If 'Out of stock',please set stock to 0 ")
+          document.getElementById("stockError").innerText="If 'Out of stock',please set stock to 0 ";
+          //  alert("If 'Out of stock',please set stock to 0 ")
             return
         }
-        if(stock <0||salePrice<0||regularPrice<0){
-          alert("negative values not allowed")
+        if(stock <0){
+          document.getElementById("stockError").innerText="Negative values not allowed";
+        //  alert("negative values not allowed")
           return
         }
+        if(salePrice<0){
+          document.getElementById("salePriceError").innerText="Negative values not allowed";
+        //  alert("negative values not allowed")
+          return
+        }
+        if(regularPrice<0){
+          document.getElementById("regularPriceError").innerText="Negative values not allowed";
+        //  alert("negative values not allowed")
+          return
+        }
+        if(regularPrice<salePrice)
+        {
+          document.getElementById("regularPriceError").innerText="reguar price must be greater than or equal to saleprice";
+          return
+        }
+
+        
         const data = {
           productName: productName,
           description: description,

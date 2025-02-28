@@ -3,10 +3,13 @@ const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
+const Wallet=require('../../models/walletSchema')
+const Referrel=require('../../models/referralSchema')
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
 const session = require("express-session");
+const crypto = require("crypto");
 
 
 
@@ -15,14 +18,13 @@ const loadHomepage = async (req, res) => {
     const limit = 9;
     let cartitem
     const category = await Category.find({ isListed: true,isDeleted:false });
-    //const categoryIds=categories.map((category)=>category._id.toString())
-    const products = await Product.find({
+     const products = await Product.find({
       isListed: true,
       isDeleted:false ,
     //   stock: { $gt: 0 },
     })
-      .sort({ createdOn: -1 })
-      .populate("category");
+      .sort({ productOffer: -1 })
+    .populate("category");
     
      // console.log(category)
      // console.log(products)
@@ -34,15 +36,11 @@ const loadHomepage = async (req, res) => {
       // console.log(user, "user");
       // console.log(userData, "userData");
       // console.log("session name", req.session.user.name);
-
       // console.log("session data", req.session.user);
       res.locals.user = userData.name;
-      
-     // console.log("locals data", res.locals.user);
+      // console.log("locals data", res.locals.user);
      cartitem=await Cart.findOne({userId:userData._id})
-    
-    
-    //console.log("cart items==================",cartitem)
+       //console.log("cart items==================",cartitem)
       res.render("home", { user: userData,
          name: req.session.user.name,
          products: products,
@@ -127,7 +125,7 @@ try {
 
 let baseQuery = {
   isDeleted: false,
- // stock: { $gt: 0 },
+   // stock: { $gt: 0 },
   isListed:true,
 };
 
@@ -164,7 +162,7 @@ if (req.query.gt || req.query.lt) {
  }
 
  let products = await Product.find(baseQuery)
- .sort(sortOption)
+ .sort({ productOffer: -1 }||sortOption)
  .skip(skip)
  .limit(limit)
  .lean();
@@ -251,20 +249,26 @@ async function sendVerificationEmail(email, otp) {
 const signup = async (req, res) => {
   try {
     console.log("inside sigup controller")
-    const { name, email, phone, password, cpassword } = req.body;
-    console.log(name, email, phone, password,cpassword)
+    const { name, email, phone, password, cpassword,referralCode } = req.body;
+    console.log(name, email, phone, password,cpassword,referralCode)
+   console.log("req.body",req.body)
     // if (password !== cpassword)
+   
     //   return res.render("signup", { message: "password mismatch" });
     const user = await User.findOne({ email });
     //console.log(user," consoleuser")
     if (user) {
       console.log("User already exists");
+
+    
       return res.render("signup", {
-        message: "User with this email already exists",
-      });
+    success: false,
+    message: "User with this email already exists",
+  })
     } else {
-      const newUser = new User({ name, email, phone, password });
-      console.log(newUser); //newUser
+      
+      const newUser = new User({ name, email, phone, password ,referralCode});
+      console.log(newUser,"newUser"); //newUser
       // await newUser.save();
       const otp = generateOTP();
       const emailSent = await sendVerificationEmail(email, otp);
@@ -273,7 +277,8 @@ const signup = async (req, res) => {
       } else {
         req.session.userOtp = otp;
         req.session.email=email;
-        req.session.userData = { name, email, phone, password };
+        req.session.referralCode=referralCode
+        req.session.userData = { name, email, phone, password ,referralCode};
         res.render("verify-otp",{email:email});
         console.log("Otp Sent", otp);
       }
@@ -289,7 +294,14 @@ const securePassword = async (password) => {
     return passwordHash;
   } catch (error) {}
 };
+const generateReferralCode = () => {
+  const randomString = crypto.randomBytes(3).toString("hex").toUpperCase(); // Generates a 6-character string
 
+  console.log("refcode=",`FR${randomString}`)
+  return `FR${randomString}`; 
+};
+
+//console.log(generateReferralCode());
 const verifyOTP = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -302,10 +314,61 @@ const verifyOTP = async (req, res) => {
         email: user.email,
         phone: user.phone,
         password: passwordHash,
+        referralCode:generateReferralCode(),
       });
       await saveUserData.save();
       req.session.user = saveUserData;
+      req.session.email=saveUserData.email;
       req.session.name = saveUserData.name;
+      console.log("saveUserData.referralCode",saveUserData.referralCode)
+      console.log("req.body.referralCode", req.session.referralCode)
+      if (saveUserData) {
+        const referrer = await User.findOne({ referralCode:saveUserData.referralCode });
+        console.log("referrer",referrer)
+
+        if (referrer) {
+          // Add ₹50 to new user's wallet
+          console.log("saveUserData._id",saveUserData._id)
+          let userWallet = await Wallet.findOne({ userId: saveUserData._id });
+          if (!userWallet) {
+            userWallet = new Wallet({
+              userId: saveUserData._id,
+              balance: 50,
+             
+              transactions: [{ amount: 50, reason:"Login via Referral Code", transactionType: "credit",description:"Referral Amount", timestamp: new Date() }],
+            });
+          } else {
+            userWallet.balance += 50;
+           
+            userWallet.transactions.push({ amount: 50, transactionType: "credit", reason:"Login via Referral Code",description:"Referral Amount", timestamp: new Date() });
+          }
+          await userWallet.save();
+          console.log(`₹50 added to ${saveUserData.name}'s wallet for referral.`);
+
+          const referredBy=await User.findOne({ referralCode:req.session.referralCode });
+          console.log("referredBy",referredBy)
+          // Add ₹50 to referrer's wallet
+          let referrerWallet = await Wallet.findOne({ userId: referredBy._id });
+          if (!referrerWallet) {
+            referrerWallet = new Wallet({
+              userId: referredBy._id,
+              balance: 100,
+             
+              transactions: [{ amount: 100, transactionType: "credit",  reason:"Login via Referral Code",description:"Referral Amount",timestamp: new Date() }],
+            });
+          } else {
+            referrerWallet.balance += 100,
+            
+            referrerWallet.transactions.push({ amount: 100, reason:"Login via Referral Code",transactionType: "credit", description:"Referral Amount",timestamp: new Date() });
+          }
+          await referrerWallet.save();
+          console.log(`₹100 added to ${referrer.name}'s wallet for referral.`);
+
+          // Save referrer in the new user's record
+          saveUserData.referredBy = referredBy._id;
+          await saveUserData.save();
+        }
+      }
       res.json({
         success: true,
         redirectUrl: "/"

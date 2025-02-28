@@ -134,9 +134,11 @@
 
             if (email === "" || password === "") {
                 alert("All fields are required.");
+                
                 return false;
             } else if (!validateEmail(email)) {
                 alert("Invalid email format.");
+            
                 return false;
             }
 

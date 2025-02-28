@@ -237,7 +237,7 @@ button[type="submit"]:hover {
                         <div class="mb-8">
                             <label for="product_name" class="form-label text-white">Product Name</label>
                             <input type="text" name="productName" class="form-control border" id="product_name" value="<%= product.productName %>">
-                            <div id="productName-error" class="error-message"></div>
+                            <div id="productNameError" class="error-message"></div>
                         </div>
 
                         </div>
@@ -246,29 +246,29 @@ button[type="submit"]:hover {
                         <div class="mb-8">
                             <label class="form-label text-white">Full description</label>
                             <textarea name="descriptionData" class="form-control border" rows="10" id="descriptionid"><%= product.description %></textarea>
-                            <div id="description-error" class="error-message"></div>
+                            <div id="descriptionError" class="error-message"></div>
                         </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-4">
                                 <label class="form-label text-white">Regular price ( / kg)</label>
                                 <input type="text" name="regularPrice" class="form-control border" value="<%= product.price %>">
-                                <div id="regularPrice-error" class="error-message"></div>
+                                <div id="regularPriceError" class="error-message"></div>
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label text-white">Sale Price ( / kg)</label>
                                 <input type="text" name="salePrice" class="form-control border" value="<%= product.salesPrice %>">
-                                <div id="salePrice-error" class="error-message"></div>
+                                <div id="salePriceError" class="error-message"></div>
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label text-white">Stock</label>
                                 <input type="text" name="stock" class="form-control border" value="<%= product.stock %>">
-                                <div id="stock-error" class="error-message"></div>
+                                <div id="stockError" class="error-message"></div>
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label text-white">Color</label>
                                 <input type="text" name="color" class="form-control border" value="<%= product.color %>">
-                                <div id="color-error" class="error-message"></div>
+                                <div id="colorError" class="error-message"></div>
                             </div>
                         </div>
 
@@ -320,6 +320,7 @@ button[type="submit"]:hover {
                                 <option value="Out of Stock" <%= product.status === 'Out of Stock' ? 'selected' : '' %>>Out of Stock</option>
                                 <option value="Removed" <%= product.status === 'Removed' ? 'selected' : '' %>>Removed</option>
                             </select>
+                            <div id="statusError" class="error-message"></div>
                         </div>
                           </div>
                         <!-- Existing Images -->
@@ -355,6 +356,7 @@ button[type="submit"]:hover {
                                 <img id="cropImage1" alt="Image to crop">
                                 <button type="button" id="saveButton1" class="btn btn-primary mt-2">Save Cropped Image</button>
                             </div>
+                            <div id="imageError" class="error-message"></div>
                         </div>
                         <!-- image new code -->
 
@@ -556,33 +558,53 @@ console.log(Status)
           break; } }
         //  alert(selectedValue)
 
-         if(productName.length<2)
-         {alert("enter a valid name")
-return}
+         if(productName.length<3)
+         {
+            document.getElementById("productNameError").innerText="enter a valid name";
+            //alert("enter a valid name")
+         return}
          if(description.length<6)
-        { alert("enter a valid description")
-        return}
+
+        {
+            document.getElementById("desriptionError").innerText="enter a valid description";
+            // alert("enter a valid description")
+         return}
         if(Status=='Available' && stock<1)
         {
-       
-        alert("If no stock please select status 'Out of stock' ")
+       document.getElementById('stockError').innerText="If no stock please select status 'Out of stock' "
+       // alert("If no stock please select status 'Out of stock' ")
         return
         }
         if(Status=='Out of Stock' && stock>0)
         {
-            
+            document.getElementById('stockError').innerText="If 'Out of stock',please set stock to 0 "
          
-            alert("If 'Out of stock',please set stock to 0 ")
+          //  alert("If 'Out of stock',please set stock to 0 ")
         return
         }
-        if(stock <0||salePrice<0||regularPrice<0){
-          alert("negative values not allowed")
+        if(stock <0){
+            document.getElementById('stockError').innerText="negative values not allowed"
+         // alert("negative values not allowed")
           return
         }
+        if(salePrice<0){
+        //  alert("negative values not allowed")
+          document.getElementById('salePriceEror').innerText="negative values not allowed"
+          return
+        }
+        if(regularPrice<0){
+            document.getElementById('regularPriceError').innerText="negative values not allowed"
+         // alert("negative values not allowed")
+          return
+        }
+      if(parseInt(salePrice)>parseInt(regularPrice))
+      {
+         document.getElementById('regularPriceError').innerText="regular price must be greater than saleprice"
+         return
+      }
+     console.log("before data")
       
-   console.log("before data")
-      
-    let data = {
+     let data = {
         productName: productName,
         description: description,
         price: regularPrice,
@@ -609,6 +631,11 @@ return}
     const mergedImages = existingImagesArray.concat(imageUrls);
     // Add image URLs to the form data
     data.images = mergedImages;
+    if(mergedImages.length==0){
+        document.getElementById('imageError').innerText="please select images"
+      //  alert("mergedImages.length",mergedImages.length)
+        return
+    }
 //alert(`'/admin/editProduct/${productid}'`)
     // Send the data to the backend
     axios.post(`/admin/editProduct/${productid}`, data, {
@@ -621,7 +648,7 @@ return}
         icon: 'success',  // 'Success' should be lowercase
         title: 'Success',
         text: 'Product edited successfully',
-        timer:1500
+        timer:2000
     });
 
     // Redirect after success
@@ -663,25 +690,9 @@ function deleteSingleImage(imageId, productId) {
         }
     });
 }
-
-
 </script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js" integrity="sha512-KFHXdr2oObHKI9w4Hv1XPKc898mE4kgYx58oqsc/JqqdLMDI4YjOLzom+EMlW8HFUd0QfjfAvxSL6sEq/a42fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-
-
-
-
-
-
-
-
-
 </script>
-
-
-
 <%- include("../../views/partials/admin/footer") %>
 
 </body>

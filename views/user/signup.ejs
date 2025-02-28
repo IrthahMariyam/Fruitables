@@ -91,11 +91,17 @@
     </style>
   </head>
   <body>
+    
     <div class="container">
       <h2>Sign Up</h2>
       <!-- <form id="signupForm" method="post" action="/signup"> -->
       <form class="form" id="signupForm" method="post" action="/signup">
-        <div id="error" class="error.message"></div>
+        <div id="error" class="error-message" style="color: red;">
+          <% if (typeof message !== 'undefined' && message) { %>
+            <%= message %>
+          <% } %>
+        </div>
+        
         <div class="form-group">
           <label for="name">Full Name</label>
           <input
@@ -104,7 +110,7 @@
             class="form-control"
             name="name"
             placeholder="Enter full Name"
-            required
+          
           />
           <label style="font-size: 10px"
             >Name can only contain alphabets and spaces</label
@@ -118,7 +124,7 @@
             class="form-control"
             name="email"
             placeholder="Enter email"
-            required
+            
           />
         </div>
         <div class="form-group">
@@ -130,7 +136,7 @@
             class="form-control"
             name="phone"
             placeholder="Enter 10 digits"
-            required
+          
           />
         </div>
         <div class="form-group">
@@ -141,7 +147,7 @@
             class="form-control"
             name="password"
             placeholder="Enter password"
-            required
+          
           />
           <label style="font-size: 10px"
             >Password must contain atleast one alphabet,digit and special
@@ -157,9 +163,18 @@
             class="form-control"
             name="cPassword"
             placeholder="Enter the same password"
-            required
+            
           />
-          <div class="error" id="error"></div>
+          <label for="referalCode">Referral Code:</label>
+          <input
+          type="text"
+          id="referalCode"
+          class="form-control"
+          name="referralCode"
+          placeholder="(optional)"
+          
+        />
+          <!-- <div class="error" id="error"></div> -->
         </div>
         <button type="submit" class="btn">Sign Up</button>
       </form>
@@ -175,17 +190,15 @@
     </div>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
+    
+        document.addEventListener("DOMContentLoaded", function () {
         document.querySelector("form").addEventListener("submit", formValidate);
-        // console.log("hello")
-        // alert("hello")
-      });
-
-      const message = document.getElementById("message").value;
-      if (message) {
-        alert(message);
-      }
-
+        let errorMessage = "<%- typeof message !== 'undefined' ? message : '' %>";
+    if (errorMessage) {
+      document.getElementById("error").innerText = errorMessage;
+    }
+  });
+     
       function formValidate(e) {
         console.log("inside formvalidate");
         e.preventDefault();
@@ -205,27 +218,35 @@
           name == "" ||
           phone == ""
         ) {
-          alert("fields  required");
+          document.getElementById('error').innerText="please fill all fields"
+        //  alert("fields  required");
           return false;
         } else if (password != confirmPassword) {
-          alert("Passwords do not match");
+           document.getElementById('error').innerText="Passwords do not match"
+         // alert("Passwords do not match");
           return false;
         } else if (!validatePassword(password)) {
-          alert("Enter password in correct format");
+           document.getElementById('error').innerText="Enter password in correct format"
+         // alert("Enter password in correct format");
           return false;
         } else if (password.length < 8) {
-          alert("Password is invalid (must be at least 8 characters)");
+           document.getElementById('error').innerText="Password is invalid must be at least 8 characters"
+        //  alert("Password is invalid must be at least 8 characters)");
           return false; // Stop form submission
         } else if (!validateEmail(email)) {
-          alert("Email is not validated");
+         document.getElementById('error').innerText="Email is not validated"
+        //  alert("Email is not validated");
           return false; // Stop form submission
         } else if (!validateName(name)) {
-          alert("Give in correct format");
+           document.getElementById('error').innerText="Give in correct format"
+        //  alert("Give in correct format");
           return false;
         } else if (invalidPattern.test(phone)) {
-          alert("Phone number cannot be all the same digit");
+           document.getElementById('error').innerText="Phone number cannot be all the same digit"
+        //  alert("Phone number cannot be all the same digit");
         } else if (!validIndianPattern.test(phone)) {
-          alert("Enter a valid Indian phone number");
+           document.getElementById('error').innerText="Enter a valid Indian phone number"
+         // alert("Enter a valid Indian phone number");
         } else {
           document.getElementById("signupForm").submit();
           return true;

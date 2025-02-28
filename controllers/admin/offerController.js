@@ -119,20 +119,20 @@ console.log("inside c1")
         //         { _id: { $in: selectedItems } },
         //         { $addToSet: { productOffer: savedOffer._id } }
         //     );}
-        if (applicableType === 'category') {
+        if (applicableType == 'category') {
             try {
                 // Find categories by their IDs
-                const categories = await Category.find({ 
-                    _id: { $in: selectedItems } 
-                });
-        
+                const categories = await Category.find({ _id: { $in: selectedItems } });
+        console.log("category=",categories)
                 if (categories.length > 0) {
-                    // Update both offer value and add offer ID
+                    // Update category offer and store offer ID
                     await Category.updateMany(
                         { _id: { $in: selectedItems } },
                         { 
-                            $set: { categoryOffer: discountAmount },
-                            $addToSet: { offer: savedOffer._id }
+                            $set: { 
+                                categoryOffer: discountAmount, 
+                                offer: savedOffer._id  
+                            }
                         }
                     );
                     console.log('Categories updated successfully');
@@ -141,7 +141,7 @@ console.log("inside c1")
                 console.error('Error updating categories:', error);
                 throw error;
             }
-        } else if (applicableType === 'product') {
+        } else if (applicableType == 'product') {
             try {
                 // Update products
                 const result = await Product.updateMany(
@@ -219,12 +219,12 @@ const updateOffer = async (req, res) => {
 
             await Product.updateMany(
                 { _id: { $in: newProductIds } },
-                { $addToSet: { offers: updatedOffer._id } }
+                { $set: { offers: updatedOffer._id } }
             );
         } else if (applicableType === 'product') {
             await Product.updateMany(
                 { _id: { $in: applicableItems } },
-                { $addToSet: { offers: updatedOffer._id } }
+                { $set: { offers: updatedOffer._id } }
             );
         }
         await handleOfferChange(offerId);

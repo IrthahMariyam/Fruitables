@@ -16,9 +16,9 @@ async (accessToken,refreshToken,profile,done)=>{
             return done(null,user)
         }else{
             user= new User({
-                name:profile.displayName,
-                email:profile.emails[0].value,
-                googleId:profile.id,
+                 name:profile.displayName,
+                 email:profile.emails[0].value,
+                 googleId:profile.id,
             });
             await user.save();
             return done(null,user);

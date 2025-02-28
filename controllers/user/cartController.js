@@ -77,8 +77,9 @@ const getCartPage = async (req, res) => {
           {
             productId,
             quantity: 1,
-            price: product.price,
-            totalPrice: product.price,
+            price: product.salesPrice,
+            totalPrice: product.salesPrice,
+            status:"pending",
           },
         ],
       });
@@ -98,7 +99,7 @@ const getCartPage = async (req, res) => {
         }
 
         existingProduct.quantity += 1;
-        existingProduct.totalPrice = existingProduct.quantity * existingProduct.price;
+        existingProduct.totalPrice = existingProduct.quantity * existingProduct.salesPrice;
       //   await cart.save();
       //  cart = await Cart.findOne({ userId :userId._id})
       //   cartitemcount=cart.items.length
@@ -110,8 +111,9 @@ const getCartPage = async (req, res) => {
         cart.items.push({
           productId,
           quantity: 1,
-          price: product.price,
-          totalPrice: product.price,
+          price: product.salesPrice,
+          totalPrice: product.salesPrice,
+          status:"pending",
         });
       }}
         await cart.save();

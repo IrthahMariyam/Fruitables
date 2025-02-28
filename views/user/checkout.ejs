@@ -203,7 +203,7 @@
                                           <th scope="row">
                                           </th>
                                           <td class="py-5">
-                                              <p class="mb-0 text-dark py-3">Discount</p>
+                                              <p class="mb-0 text-dark py-3">Coupon Discount</p>
                                           </td>
                                           <td class="py-5"></td>
                                           <td class="py-5"></td>
@@ -404,6 +404,7 @@
                             price: parseFloat(price),
                             quantity: parseInt(quantity, 10),
                             totalPrice: parseFloat(totalPrice),
+                            status:"Pending",
                         });
                     }
                     //console.log(products,"products")
@@ -493,7 +494,7 @@ if(!address)
                     subtotal:totalamount,
                     couponCode: couponCode||"",
                     couponDiscount: couponDiscount,
-                    totalPrice:totalPrice,
+                    finalAmount:totalPrice,
                     orderedItems: getProductDetails(), // Include product details
                 };
                 console.log(orderData,"ejs")
@@ -679,7 +680,7 @@ function createCouponElement(coupon) {
 function applyCoupon(couponCode) {
  
   const cartTotal = parseFloat($(`#totalprice`).text().replace('₹', '').trim()) ;
-  alert(cartTotal)
+  //alert(cartTotal)
   console.log("Cart Total:", cartTotal); // Debug log
 
   if (isNaN(cartTotal)) {

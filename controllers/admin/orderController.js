@@ -4,6 +4,7 @@ const Category=require("../../models/categorySchema")
 const Product=require('../../models/productSchema')
 const Order = require('../../models/orderSchema')
 const Address=require('../../models/addressSchema')
+const Wallet=require('../../models/walletSchema')
 const bcrypt=require('bcrypt')
 const fs=require('fs')
 const path=require('path')
@@ -20,7 +21,7 @@ const listOrders = async (req, res) => {
        const orders = await Order.find()
            .populate('orderedItems.productId')
            .populate('userId')
-           .sort({status:-1, createdOn: -1 })
+           .sort({createdOn: -1 })
            .skip((page - 1) * itemsPerPage) 
            .limit(itemsPerPage);
 
@@ -49,6 +50,43 @@ console.log(statusString); // Output: 'Delivered'
        if (!order) {
            return res.status(404).send('Order not found');
        }
+       
+     //  let walletRefundSuccess = false;
+     let userId=order.userId;
+     console.log("userId",userId)
+  console.log("paymentMethod=",order.paymentMethod)
+     if (order.paymentMethod === "RAZORPAY" || order.paymentMethod === "WALLET"|| (order.paymentMethod === "COD" && order.status=='Returned')) {
+       console.log("inside cancel==wallet")
+       let wallet = await Wallet.findOne({ userId:userId });
+       if (!wallet) {
+         wallet = new Wallet({ userId, balance: 0, transactions: [] });
+         await wallet.save();
+       }
+ 
+     
+       const amount = order.finalAmount;
+       console.log("orderid",order._id)
+       // Add money to wallet
+       wallet.balance += Number(amount);
+       wallet.transactions.push({
+         amount: Number(amount),
+         transactionType: "credit",
+         description: `Money credited for order (Order ID: ${order._id})`,
+         productId: null,
+         reason: "Order Cancellation/Return",
+         date: new Date(),
+         
+       });
+ 
+       await wallet.save();
+  //  walletRefundSuccess = true;
+      console.log("success")
+     }
+ 
+
+
+
+
 if(statusString=="Cancelled")
 {order.cancelReason="Cancelled by Admin"}
        order.status = statusString
@@ -77,15 +115,54 @@ if(s)console.log("saved")
 
 const cancelOrder = async (req, res) => {
    try {
+    console.log("insde cancelOder==================================")
        const orderId = req.params.id;
        const order = await Order.findById(orderId);
        if (!order) {
            return res.status(404).send('Order not found');
        }
 
-       if (order.status !== 'Pending') {
-           return res.status(400).send('Only pending orders can be canceled');
+       if (order.status !== 'Pending'|| order.status !== 'Processing') {
+           return res.status(400).send('Only pending or processing orders can be canceled');
        }
+
+     //  let walletRefundSuccess = false;
+       let userId=order.userId;
+       console.log("userId",userId)
+    console.log("paymentMethod=",order.paymentMethod)
+       if (order.paymentMethod === "RAZORPAY" || order.paymentMethod === "WALLET"|| (order.paymentMethod === "COD" && order.status=='Returned')) {
+         console.log("inside cancel==wallet")
+         let wallet = await Wallet.findOne({ userId:userId });
+         if (!wallet) {
+           wallet = new Wallet({ userId, balance: 0, transactions: [] });
+           await wallet.save();
+         }
+   
+       
+         const amount = order.finalAmount;
+         console.log("orderid",order._id)
+         // Add money to wallet
+         wallet.balance += Number(amount);
+         wallet.transactions.push({
+           amount: Number(amount),
+           transactionType: "credit",
+           description: `Money credited in your wallet with Order ID: ${order._id})`,
+           productId: null,
+           reason: `Order ${statusString}`,
+           date: new Date(),
+           
+         });
+   
+         await wallet.save();
+    //  walletRefundSuccess = true;
+        console.log("success")
+       }
+   
+
+
+
+
+
 
        // Restock inventory
        for (const item of order.orderedItems) {

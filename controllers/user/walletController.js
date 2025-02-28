@@ -27,7 +27,7 @@ const createAddmoneyWallet = async (req, res) => {
         const order = await razorpay.orders.create(options);
         res.json({
             orderId: order.id,
-            amount: order.amount, // ✅ Fix: No extra multiplication
+            amount: order.amount, 
             currency: order.currency,
         });
     } catch (error) {

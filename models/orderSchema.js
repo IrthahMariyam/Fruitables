@@ -1,9 +1,6 @@
-
-
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
-
-const orderSchema = new Schema({
+ const mongoose = require("mongoose");
+ const { Schema } = mongoose;
+ const orderSchema = new Schema({
     orderId: {
         type: String,
         default: () => uuidv4(),
@@ -14,7 +11,7 @@ const orderSchema = new Schema({
  razorpayPaymentId: { type: String }, 
  razorpayPaymentStatus: { type: String, enum: ['pending', 'Paid', 'Failed'] },
  paymentStatus: { type: String, enum: ['pending', 'Paid', 'Failed'] },
-  orderedItems: [
+ orderedItems: [
     {
       productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
       productName: { type: String, required: true }, 
@@ -22,30 +19,51 @@ const orderSchema = new Schema({
       quantity: { type: Number, required: true },
       price: { type: Number, default: 0 },
       discountApplied: { type: Number, default: 0 },
+      totalPrice:{type:Number,},
+      status: {
+        type: String,
+        required: true,
+        default:"Pending",
+        enum: [
+          "Pending",
+          "Processing",
+          "Shipped",
+          "Out for Delivery",
+          "Delivered",
+          "Cancelled",
+          "Return Request",
+          'Return Approved',
+          'Return Rejected',
+          "Returned",
+        ],
+      },
     },
   ],
  
-  discount: { type: Number, default: 0 },
-  finalAmount: { type: Number, },
-  addressId: {
+   discount: { type: Number, default: 0 },
+     subtotal:{type:Number},
+     finalAmount: { type: Number, },
+   couponCode:{type:String,default:null},
+ //  couponDiscount:{type:Number},
+      addressId: {
     type: Schema.Types.ObjectId,
     ref: "Address",
-  },
-  userId: {
+   },
+   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  address: {
+   address: {
     name: { type: String, required: true },
     landmark: { type: String, required: true },
     district: { type: String, required: true },
     state: { type: String, required: true },
     pincode: { type: String, required: true },
     phone: { type: String, required: true },
-  },
-  invoiceDate: { type: Date, default: Date.now },
-  status: {
+   },
+   invoiceDate: { type: Date, default: Date.now },
+   status: {
     type: String,
     required: true,
     enum: [
@@ -61,11 +79,7 @@ const orderSchema = new Schema({
       "Returned",
     ],
   },
-  subtotal:{type:Number},
-  couponCode:{type:String},
-  couponDiscount:{type:Number},
-  totalPrice:{type:Number,},
-  
+ 
   orderDate: { type: Date, default: Date.now },
   returnReason: { type: String },
   cancelReason: { type: String },
@@ -73,7 +87,7 @@ const orderSchema = new Schema({
   createdOn: { type: Date, default: Date.now, required: true },
  }, {
     timestamps: true
-});
+ });
 
-const Order = mongoose.model("Order", orderSchema);
-module.exports = Order;
+ const Order = mongoose.model("Order", orderSchema);
+ module.exports = Order;

@@ -69,6 +69,7 @@
 <!-- Cart Page Start -->
 <div class="container-fluid py-5">
   <div class="container py-5">
+    
     <% if ((carts && carts.items)) { %>
     <div class="table-responsive">
       <table class="table">
@@ -76,9 +77,10 @@
           <tr class="text center">
             <th scope="col">Products</th>
             <th scope="col">Name</th>
+
             <th scope="col">Price</th>
             <th scope="col">Quantity</th>
-            <th scope="col">Discount</th>
+            <th scope="col">Discounted %</th>
             <th scope="col">Total</th>
             <th scope="col">Handle</th>
             <th scope="col">Cancel</th>
@@ -106,8 +108,10 @@
             <td>
               <p class="mb-0 mt-4 quantity"><%= item.quantity %></p>
             </td>
+           
             <td>
-              <p class="mb-0 mt-4"><%= item.discount||0 %></p>
+             
+              <p class="mb-0 mt-4"><%= item.productId.productOffer||0 %></p>
             </td>
             <td>
               <p class="mb-0 mt-4 product-total">₹<%= item.totalPrice.toFixed(2) %></p>
@@ -138,7 +142,7 @@
             <td>
               <button
                 class="btn btn-md rounded-circle bg-light border mt-4"
-                onclick="removeFromCart('<%= item.productId._id %>')"
+                onclick="removeFromCart('<%= item.productId._id %>','<%= item.price.toFixed(2) %>')"
               >
                 <i class="fa fa-times text-danger"></i>
               </button>
@@ -327,7 +331,10 @@ if ($productRow.length) {
 
 function removeFromCart(productId,price) {
   var $productRow = $(`#product-row-${productId}`);
+  //alert($productRow)
+  
       var currentQty = parseInt($productRow.find(".quantity").text());
+    //  alert(currentQty)
      // alert("currentquantity",currentQty)
   $.ajax({
     url: "/cart/remove", // Backend endpoint
@@ -337,15 +344,10 @@ function removeFromCart(productId,price) {
     success: function (response) {
       console.log("Product removed successfully:", response);
       
- 
-     
-
-
-    
-     
-     
       var total=currentQty * price
-     
+    // alert(currentQty)
+    // alert(price)
+    // alert(total)
       if ($productRow.length) {
         
       

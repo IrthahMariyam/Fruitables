@@ -134,6 +134,14 @@
             <span class="nav-link">Navigation</span>
           </li>
           <li class="nav-item menu-items">
+            <a href="/admin/loadSalesPage" class="nav-link">
+              <span class="menu-icon">
+                <i class="mdi mdi-speedometer"></i>
+              </span>
+              <span class="menu-title">Reports</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
             <a href="/admin/dashboard" class="nav-link">
               <span class="menu-icon">
                 <i class="mdi mdi-speedometer"></i>
@@ -271,7 +279,6 @@
                 <table class="table" border="1">
                                     <thead>
                                         <tr>
-                                            
                                             <th>Offer Title</th>
                                             <th>Description</th>
                                             <th>Discount (%)</th>
@@ -280,7 +287,7 @@
                                             <th>Start Date</th>
                                             <th>End Date</th>
                                             <th>Actions</th>
-                                        </tr>
+                                      </tr>
                                     </thead>
                                     <tbody>
                                         <% offers.forEach((offer, index) => { %>
@@ -291,10 +298,10 @@
                                                 <td><%= offer.discount %></td>
                                                 <td><%= offer.applicableType %></td>
                                                 <td><% if(offer.applicableType=="category"){ %>
-                                                    <% offer.applicableItems.forEach(item => { %>
-                                                        <%= item.name %><br> 
-                                                    <% }) }%>
-                                                    <%if(offer.applicableType=="product"){ %>
+                                                <% offer.applicableItems.forEach(item => { %>
+                                                <%= item.name %><br> 
+                                                <% }) }%>
+                                                  <%if(offer.applicableType=="product"){ %>
                                                         <% offer.applicableItems.forEach(item => { %>
                                                             <%= item.productName %><br>
                                                             <% }) } %>

@@ -219,6 +219,7 @@
                               <p id="username"> <Strong>Name: </Strong><%= user.name %></p>
                               <p id="userphone"><Strong>Phone:</Strong><%= user.phone %></p>
                               <p id="useremail"><Strong>Email:</Strong><%= user.email %></p>
+                              <p id="referralCode"><Strong>Referral Code:</Strong><%= user.referralCode %></p>
                              </div>
                              <div class="text-center " style="margin-bottom: 30px;">
                               <button class="btn btn-primary w-70" onclick="openEditDetails('<%= user._id %>')">Edit</button>
@@ -312,7 +313,7 @@
                     <% } %>
                   </td>
                   
-                  <td>₹<%= order.totalPrice.toFixed(2) %></td>
+                  <td>₹<%= order.finalAmount %></td>
                   
                   <td colspan="2">  <a href="/viewOrderDetails/<%= order._id %>" class="btn border border-secondary rounded-pill px-3 text-primary"> View More</a></td>
                 </tr>
@@ -344,18 +345,7 @@
                         </div>
         
                       
-                        <!-- Referral Tab -->
-                        <div class="tab-pane fade" id="referal" role="tabpanel">
-                          <div class="card">
-                            <div class="card-header">
-                              <h5 class="mb-0">Referral</h5>
-                            </div>
-                            <div class="card-body">
-                              <p>Share this link: <strong>[Referral Link]</strong></p>
-                              <p>Earned: ₹0</p>
-                            </div>
-                          </div>
-                        </div>
+                      
                       </div>
                     </div>
                     <!-- End Main Content -->
@@ -999,7 +989,7 @@
         }
   if(profilename="")
   {
-    alert("Please ente name")
+    alert("Please enter name")
     return false;
   }
   

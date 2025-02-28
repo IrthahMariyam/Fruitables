@@ -7,9 +7,14 @@ const orderController=require("../controllers/admin/orderController")
 const userController=require("../controllers/admin/userController")
 const couponController=require("../controllers/admin/couponController")
 const offerController=require('../controllers/admin/offerController')
+const salesController=require('../controllers/admin/salesController')
 const {userAuth,adminAuth}=require('../middlewares/auth')
-const path=require("path")
 
+const path=require("path");
+const { loadSalesPage } = require('../controllers/admin/salesController');
+const {salesReport}= require('../controllers/admin/salesController');
+router.get("/loadSalesPage",adminAuth,salesController.loadSalesPage);
+router.get("/sales-report",adminAuth,salesController.salesReport)
 
 router.get("/pageerror",adminController.pageerror)
 router.get("/login",adminController.loadLogin)
@@ -18,8 +23,11 @@ router.get("/",adminAuth,adminController.loadDashboard)
 router.get("/dashboard",adminAuth,adminController.loadDashboard)
 router.get("/logout",adminController.logout)
 
+//router.get('/salesreport',adminAuth,salesController.salesReport)
+//router.get('/sales-report', salesController.salesReport);
+//router.get('/download-report/:format', salesController.downloadReport);
 
-// router.get("/user",adminAuth,customerController.customerInfo)
+
 router.get("/user",adminAuth,userController.findUsers)
 router.get("/searchUser",adminAuth,userController.findUsers)
 router.post("/blockUser/:id",adminAuth,userController.userBlocked)

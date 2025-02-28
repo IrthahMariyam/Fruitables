@@ -272,6 +272,7 @@
             <h4><%= item.productName %></h4>
             <p>Quantity: <%= item.quantity %></p>
             <p>Price: ₹<%= item.price %></p>
+            <p>Product Total:₹<%= item.totalPrice %></p>
           </div>
         </div>
       <% }); %>
@@ -280,10 +281,11 @@
     <!-- Price Details -->
     <div class="card">
       <div class="card-header">Price Details</div>
-      <p>Total Price: ₹<%= order.totalPrice %></p>
-      <p>Discount: ₹<%= order.discount %></p>
+      <p>Total Price: ₹<%= order.subtotal %></p>
+
+      <P>Coupon Code:<%=order.couponCode%><p>Coupon Discount: ₹<%= order.discount %></p>
       <p>Shipping Charge: ₹100</p>
-      <p><strong>Payable Amount:</strong> ₹<%= order.totalPrice +100%></p>
+      <p><strong>Payable Amount:</strong>₹ <%= order.finalAmount%></p>
     </div>
 
     <!-- Shipping Address -->
@@ -411,7 +413,7 @@
     return false
   } 
   alert(Rreason.value.trim())
-    alert(orderId)
+  //  alert(orderId)
     fetch(`/orders/reutrnrequest/${orderId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

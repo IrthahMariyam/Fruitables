@@ -39,15 +39,7 @@ const userSchema=new Schema({
         default:false,
     },
     
-    // wallet:{
-    //     type:Number,
-    //     default:0,
-    // },
-    // whishlist:[{
-    //     type:Schema.Types.ObjectId,
-    //     ref:"Whishlist"
-    // }],
-   
+     
     createdOn:{
         type:Date,
         default:Date.now,
@@ -66,8 +58,32 @@ const userSchema=new Schema({
         ref: "Coupon",
         default: null
     },
-
+    referralCode:{ type:String,
+        default:null,
+},
+referredBy:{
+    type:String,default:null
+},
 })
+
+userSchema.pre("save", async function (next) {
+    if (!this.referralCode) {
+        let isUnique = false;
+        let newCode;
+
+        while (!isUnique) {
+            newCode = `COSREF${Math.floor(100000 + Math.random() * 900000)}`; // Generate COSREF + 6-digit number
+            const existingUser = await mongoose.model("User").findOne({ referralCode: newCode });
+
+            if (!existingUser) {
+                isUnique = true;
+            }
+        }
+
+        this.referralCode = newCode;
+    }
+    next();
+});
 
 const User=mongoose.model("User",userSchema)
 module.exports=User;

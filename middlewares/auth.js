@@ -23,7 +23,7 @@ const userAuth = async (req, res, next) => {
       console.log("inside userrauth start no session");
       console.log(res.locals.user);
      // res.redirect("/login");
-   //  res.render("home")
+     //  res.render("home")
    next();
     }
   } catch (error) {

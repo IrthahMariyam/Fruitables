@@ -102,7 +102,7 @@ const editCategory = async (req, res) => {
 
         const updateCategory = await Category.findByIdAndUpdate(id, {
             name: name,
-            description: description
+            description: description,
         }, { new: true });
 
         if (updateCategory) {

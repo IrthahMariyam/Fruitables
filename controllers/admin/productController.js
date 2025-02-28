@@ -245,8 +245,8 @@ const postEditProduct = async (req, res) => {
             const update = {
             productName: updatedData.productName,
             description: updatedData.description,
-            price: updatedData.regularPrice,
-            salesPrice: updatedData.salePrice,
+            price: updatedData.price,
+            salesPrice: updatedData.salesPrice,
             stock: updatedData.stock,
             color: updatedData.color,
             status: updatedData.Available,
