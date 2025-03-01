@@ -33,7 +33,7 @@ const loadSalesPage = async (req, res) => {
             let totalDiscount = 0;
 
             orders.forEach(order => {
-                totalSales += order.totalPrice;  // Ensure field name matches schema
+                totalSales += order.finalAmount;  // Ensure field name matches schema
                 totalDiscount += order.discount;
             });
 
@@ -58,7 +58,7 @@ const loadSalesPage = async (req, res) => {
             const yearlySales = orders.filter(order => new Date(order.createdOn) >= firstDayOfYear);
 
             // Calculate total amounts for each period
-            const calculateTotal = (orders) => orders.reduce((sum, order) => sum + order.totalPrice, 0);
+            const calculateTotal = (orders) => orders.reduce((sum, order) => sum + order.finalAmount, 0);
 
             const totalDailySales = calculateTotal(dailySales);
             const totalWeeklySales = calculateTotal(weeklySales);

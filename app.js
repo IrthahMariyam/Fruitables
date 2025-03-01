@@ -8,6 +8,7 @@ const userRouter=require('./routes/userRouter')
 const adminRouter=require('./routes/adminRouter')
 const cors = require('cors');
 const db=require('./config/db')
+const { updateProductSalesPrice } = require('./controllers/admin/offerController');
 db()
 
 app.use(cors())
@@ -41,13 +42,7 @@ app.set('views',[
     path.join(__dirname,"views/admin")
 ])
 app.use(express.static(path.join(__dirname,"public")))
-//app.use(express.static('public'))
 
-// app.use((req,res,next)=>{
-// res.locals.user=res.session.user||null;
-// res.locals.isGuest=req.session.user
-// next()
-// })
 app.use('/',userRouter)
 app.use('/admin',adminRouter)
 

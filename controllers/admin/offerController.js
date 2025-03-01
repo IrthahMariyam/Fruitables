@@ -4,8 +4,6 @@ const Offer= require('../../models/offerSchema');
 const Category = require('../../models/categorySchema');
 const cron = require('node-cron');
 
-
-
 const getOfferPage = async (req, res) => {
     try {
        console.log("insidepage")
@@ -60,10 +58,10 @@ const getOfferPage = async (req, res) => {
 // create offers
 const createOffer = async (req, res) => {
    
-console.log("inside c1")
+console.log("inside req c1")
     try {
         const { offerName, offerDescription, discountAmount, applicableType, selectedItems, startDate, endDate } = req.body;
-       
+       console.log("offercreation",req.body)
         if (!offerName || !offerDescription || !discountAmount || 
             !applicableType || !selectedItems || !startDate || !endDate) {
             return res.status(400).json({ 
@@ -102,37 +100,19 @@ console.log("inside c1")
         const savedOffer = await offer.save();
 
        
-
-        //  if (applicableType === 'category') {
-        //     const productsInCategory = await Products.find({ 
-        //         category: { $in: selectedItems } 
-        //     });
-            
-        //     if (productsInCategory.length > 0) {
-        //         await Products.updateMany(
-        //             { category: { $in: selectedItems } },
-        //             { $addToSet: { productOffer: savedOffer._id } }
-        //         );
-        //     }
-        //  } else  {
-        //     await Products.updateMany(
-        //         { _id: { $in: selectedItems } },
-        //         { $addToSet: { productOffer: savedOffer._id } }
-        //     );}
         if (applicableType == 'category') {
             try {
                 // Find categories by their IDs
                 const categories = await Category.find({ _id: { $in: selectedItems } });
-        console.log("category=",categories)
+        console.log("category=",categories.name)
                 if (categories.length > 0) {
+                    console.log("tyuio")
                     // Update category offer and store offer ID
                     await Category.updateMany(
                         { _id: { $in: selectedItems } },
                         { 
-                            $set: { 
-                                categoryOffer: discountAmount, 
-                                offer: savedOffer._id  
-                            }
+                            $set: { categoryOffer: discountAmount,offer: savedOffer._id },
+                           // $addToSet: { offer: savedOffer._id }
                         }
                     );
                     console.log('Categories updated successfully');
@@ -141,14 +121,14 @@ console.log("inside c1")
                 console.error('Error updating categories:', error);
                 throw error;
             }
-        } else if (applicableType == 'product') {
+        } if (applicableType == 'product') {
             try {
                 // Update products
                 const result = await Product.updateMany(
                     { _id: { $in: selectedItems } },
                     { 
-                        $set: { productOffer: discountAmount },
-                        $addToSet: { offer: savedOffer._id }
+                        $set: { productOffer: discountAmount ,offer: savedOffer._id},
+                     //   $addToSet: { offer: savedOffer._id }
                     }
                 );
                 console.log('Products updated successfully:', result);
@@ -169,62 +149,79 @@ console.log("inside c1")
     }
 };
 
-// updateOffer
 const updateOffer = async (req, res) => {
-  
     try {
-        console.log("inside updateOffer")
+        console.log("inside updateOffer",req.body);
         const { offerId, name, description, discount, applicableType, applicableItems, startDate, endDate } = req.body;
-        
-        let offerName = name.toUpperCase();
-        
-        // Find the existing offer to know the old applicable items
+
+        if (!offerId || !name || !description || !discount || !applicableType || !applicableItems || !startDate || !endDate) {
+            return res.status(400).json({ success: false, message: 'All fields are required' });
+        }
+
+        if (!Array.isArray(applicableItems) || applicableItems.length === 0) {
+            return res.status(400).json({ success: false, message: `Please select at least one ${applicableType}` });
+        }
+
         const existingOffer = await Offer.findById(offerId);
-        
         if (!existingOffer) {
             return res.status(404).json({ success: false, message: 'Offer not found!' });
         }
 
-        // Update the offer
-        const updatedOffer = await Offer.findByIdAndUpdate(offerId, {
-            name: offerName,
-            description,
-            discount,
-            applicableType,
-            applicableItems,
-            startDate,
-            endDate
-        }, { new: true });
-        console.log("updatedOffer",updatedOffer)
-        // Remove the offer from old applicable items (products or categories)
+        // Remove the offer from old applicable categories or products
         if (existingOffer.applicableType === 'category') {
-            const productsInOldCategory = await Product.find({ category: { $in: existingOffer.applicableItems } });
-            const oldProductIds = productsInOldCategory.map(product => product._id);
-
-            await Product.updateMany(
-                { _id: { $in: oldProductIds } },
-                { $pull: { offers: existingOffer._id } }
+            await Category.updateMany(
+                { _id: { $in: existingOffer.applicableItems } },
+                { 
+                    $set: { categoryOffer: 0 }, // Reset previous discount
+                    $unset:  { offer: 1 } 
+                   // $unset: { offer: existingOffer._id }
+                }
             );
-        } else if (existingOffer.applicableType === 'product') {
+            // await Product.updateMany(
+            //     { category: { $in: existingOffer.applicableItems } },
+            //     { $pull: { offer: existingOffer._id } }
+            // );
+        } if (existingOffer.applicableType ==='product') {
             await Product.updateMany(
                 { _id: { $in: existingOffer.applicableItems } },
-                { $pull: { offers: existingOffer._id } }
+                { 
+                    $set: { productOffer: 0 }, // Reset previous discount
+                    $unset:  { offer: 1 } 
+                   //  $pull: { offer: existingOffer._id }
+                }
             );
         }
 
-        // Add the updated offer to new applicable items
-        if (applicableType === 'category') {
-            const productsInNewCategory = await Product.find({ category: { $in: applicableItems } });
-            const newProductIds = productsInNewCategory.map(product => product._id);
+        // Update the offer
+        const updatedOffer = await Offer.findByIdAndUpdate(offerId, {
+            name: name.toUpperCase(),
+            description: description,
+            discount: discount,
+            applicableType,
+            applicableItems: applicableItems,
+            startDate,
+            endDate
+        }, { new: true });
 
-            await Product.updateMany(
-                { _id: { $in: newProductIds } },
-                { $set: { offers: updatedOffer._id } }
+        console.log("updatedOffer", updatedOffer);
+
+        // Apply the updated offer to new applicable categories or products
+        if (applicableType === 'category') {
+            await Category.updateMany(
+                { _id: { $in: applicableItems } },
+                { 
+                    $set: { categoryOffer: discount, offer: updatedOffer._id },
+                   // $addToSet: { offer: updatedOffer._id }
+                }
             );
-        } else if (applicableType === 'product') {
+           
+        } if (applicableType === 'product') {
             await Product.updateMany(
                 { _id: { $in: applicableItems } },
-                { $set: { offers: updatedOffer._id } }
+                { 
+                    $set: { productOffer: discount ,offer: updatedOffer._id },
+                   // $addToSet: { offer: updatedOffer._id }
+                }
             );
         }
         await handleOfferChange(offerId);
@@ -234,6 +231,7 @@ const updateOffer = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
     }
 };
+
 // active and deactivate function 
 const activateOffer= async(req,res)=>{
     const offerId = req.params.id;
@@ -277,57 +275,74 @@ const deactivateOffer= async(req,res)=>{
 
 async function updateProductSalesPrice(productId) {
     try {
-        // Get the product with populated offers
-        const product = await Product.findById(productId)
-            .populate('offer')
-            .populate({
-                path: 'category',
-                populate: {
-                    path: 'offer'
-                }
-            });
-
+        console.log(`Updating sales price for product: ${productId}`);
+        
+        // Get the product without relying on populate
+        const product = await Product.findById(productId);
+        
         if (!product) {
+            console.log(`Product not found: ${productId}`);
             throw new Error('Product not found');
         }
-
+        
+        console.log(`Product fetched:`, product.productName || product._id);
+        
         const currentDate = new Date();
         let bestDiscount = 0;
         let originalPrice = product.price;
-
-        // Check product offers
-        if (product.offer && product.offer.length > 0) {
-            product.offer.forEach(offer => {
-                if (offer.isActive && 
-                    offer.startDate <= currentDate && 
-                    offer.endDate >= currentDate) {
-                    bestDiscount = Math.max(bestDiscount, offer.discount);
-                }
-            });
+        console.log(`Original price: ${originalPrice}`);
+        
+        // Get product offer if exists
+        if (product.offer) {
+            const productOffer = await Offer.findById(product.offer);
+            if (productOffer && productOffer.isActive && 
+                productOffer.startDate <= currentDate && 
+                productOffer.endDate >= currentDate) {
+                bestDiscount = productOffer.discount;
+                console.log(`Product offer applied: ${bestDiscount}%`);
+            }
         }
-
-        // Check category offers
-        if (product.category && product.category.offer && product.category.offer.length > 0) {
-            product.category.offer.forEach(offer => {
-                if (offer.isActive && 
-                    offer.startDate <= currentDate && 
-                    offer.endDate >= currentDate) {
-                    bestDiscount = Math.max(bestDiscount, offer.discount);
+        
+        // Get category offer if exists
+        if (product.category) {
+            const category = await Category.findById(product.category);
+            if (category && category.offer) {
+                const categoryOffer = await Offer.findById(category.offer);
+                if (categoryOffer && categoryOffer.isActive && 
+                    categoryOffer.startDate <= currentDate && 
+                    categoryOffer.endDate >= currentDate) {
+                    const categoryDiscount = categoryOffer.discount;
+                    console.log(`Category offer found: ${categoryDiscount}%`);
+                    // Use whichever discount is greater
+                    bestDiscount = Math.max(bestDiscount, categoryDiscount);
+                    console.log(`Best discount after comparing: ${bestDiscount}%`);
                 }
-            });
+            }
         }
 
         // Calculate new sales price
         const newSalesPrice = bestDiscount > 0 
             ? originalPrice - Math.round(originalPrice * (bestDiscount / 100))
             : originalPrice;
-
+        
+        console.log(`New sales price: ${newSalesPrice}`);
+        
         // Update the product's sales price
-        await Product.findByIdAndUpdate(productId, {
-            salesPrice: newSalesPrice,
-            productOffer: bestDiscount
-        });
-
+        const updatedProduct = await Product.findByIdAndUpdate(
+            productId, 
+            {
+                salesPrice: newSalesPrice,
+                productOffer: bestDiscount
+            },
+            { new: true }  // Return the updated document
+        );
+        
+        if (updatedProduct) {
+            console.log(`Sales price updated for product: ${productId} to ${newSalesPrice}`);
+        } else {
+            console.log("Product not updated - findByIdAndUpdate returned null");
+        }
+        
         return {
             success: true,
             newSalesPrice,
@@ -344,28 +359,32 @@ async function updateProductSalesPrice(productId) {
 // Function to update offers when changes are made
 async function handleOfferChange(offerId) {
     try {
+        console.log(`Handling offer change for: ${offerId}`);
         const offer = await Offer.findById(offerId);
         if (!offer) {
+            console.log(`Offer not found: ${offerId}`);
             throw new Error('Offer not found');
         }
-
+        console.log(`Offer details:`, offer);
         // If it's a category offer, update all products in that category
         if (offer.applicableType === 'category') {
             const products = await Product.find({
                 category: { $in: offer.applicableItems }
             });
-            
+            console.log(`Found ${products.length} products in affected categories`);
             for (const product of products) {
                 await updateProductSalesPrice(product._id);
             }
         } 
         // If it's a product offer, update those specific products
         else if (offer.applicableType === 'product') {
+            console.log(`Updating ${offer.applicableItems.length} directly affected products`);
             for (const productId of offer.applicableItems) {
+                console.log(`Updating product: ${productId}`);
                 await updateProductSalesPrice(productId);
             }
         }
-
+        console.log(`Offer change handled successfully`);
         return {
             success: true,
             message: 'Offers updated successfully'
@@ -375,6 +394,21 @@ async function handleOfferChange(offerId) {
         throw error;
     }
 }
+
+
+cron.schedule('0 0 * * *', async () => {
+    console.log('Running daily offer update check');
+    try {
+        const products = await Product.find();
+        console.log(`Checking offers for ${products.length} products`);
+        for (const product of products) {
+            await updateProductSalesPrice(product._id);
+        }
+        console.log('Daily offer update completed successfully');
+    } catch (error) {
+        console.error('Error in daily offer update:', error);
+    }
+});
 
 // After saving a new offer or updating an existing one
 //await handleOfferChange(savedOffer._id);
@@ -390,149 +424,3 @@ module.exports={
     handleOfferChange
 }
 
-
-
-
-
-// Function to handle offer updates - runs every minute
-// async function handleOfferUpdates() {
-//     const currentDate = new Date();
-    
-//     try {
-//         // 1. Handle Offer Activations
-//         await activateNewOffers(currentDate);
-        
-//         // 2. Handle Offer Deactivations
-//         await deactivateExpiredOffers(currentDate);
-        
-//         // 3. Update Product Prices
-//         await updateProductPrices(currentDate);
-        
-//     } catch (error) {
-//         console.error('Error in offer update cron job:', error);
-//     }
-// }
-
-// // Function to activate new offers
-// async function activateNewOffers(currentDate) {
-//     try {
-//         // Find offers that should start now
-//         const newOffers = await Offer.find({
-//             isActive: true,
-//             startDate: { $lte: currentDate },
-//             endDate: { $gt: currentDate }
-//         });
-
-//         for (const offer of newOffers) {
-//             if (offer.applicableType === 'category') {
-//                 // Update all products in the categories
-//                 await Product.updateMany(
-//                     { category: { $in: offer.applicableItems } },
-//                     { $addToSet: { offer: offer._id } }
-//                 );
-//             } else if (offer.applicableType === 'product') {
-//                 // Update specific products
-//                 await Product.updateMany(
-//                     { _id: { $in: offer.applicableItems } },
-//                     { $addToSet: { offer: offer._id } }
-//                 );
-//             }
-//         }
-//     } catch (error) {
-//         console.error('Error activating offers:', error);
-//     }
-// }
-
-// // Function to deactivate expired offers
-// async function deactivateExpiredOffers(currentDate) {
-//     try {
-//         // Find expired offers
-//         const expiredOffers = await Offer.find({
-//             isActive: true,
-//             endDate: { $lte: currentDate }
-//         });
-
-//         for (const offer of expiredOffers) {
-//             // Deactivate the offer
-//             await Offer.findByIdAndUpdate(offer._id, { isActive: false });
-
-//             // Remove offer reference from products
-//             if (offer.applicableType === 'category') {
-//                 await Product.updateMany(
-//                     { category: { $in: offer.applicableItems } },
-//                     { $pull: { offer: offer._id } }
-//                 );
-//             } else if (offer.applicableType === 'product') {
-//                 await Product.updateMany(
-//                     { _id: { $in: offer.applicableItems } },
-//                     { $pull: { offer: offer._id } }
-//                 );
-//             }
-//         }
-//     } catch (error) {
-//         console.error('Error deactivating offers:', error);
-//     }
-// }
-
-// // Function to update product prices based on active offers
-// async function updateProductPrices(currentDate) {
-//     try {
-//         // Get all active products
-//         const products = await Product.find({
-//             isListed: true,
-//             isDeleted: false
-//         }).populate({
-//             path: 'category',
-//             populate: {
-//                 path: 'offer',
-//                 match: {
-//                     isActive: true,
-//                     startDate: { $lte: currentDate },
-//                     endDate: { $gt: currentDate }
-//                 }
-//             }
-//         }).populate({
-//             path: 'offer',
-//             match: {
-//                 isActive: true,
-//                 startDate: { $lte: currentDate },
-//                 endDate: { $gt: currentDate }
-//             }
-//         });
-
-//         for (const product of products) {
-//             let bestDiscount = 0;
-//             const originalPrice = product.price;
-
-//             // Check product-specific offers
-//             if (product.offer && product.offer.length > 0) {
-//                 const productDiscount = Math.max(...product.offer.map(o => o.discount));
-//                 bestDiscount = productDiscount;
-//             }
-
-//             // Check category offers
-//             if (product.category && product.category.offer && product.category.offer.length > 0) {
-//                 const categoryDiscount = Math.max(...product.category.offer.map(o => o.discount));
-//                 bestDiscount = Math.max(bestDiscount, categoryDiscount);
-//             }
-
-//             // Calculate new sales price
-//             let newSalesPrice;
-//             if (bestDiscount > 0) {
-//                 newSalesPrice = originalPrice - (originalPrice * (bestDiscount / 100));
-//             } else {
-//                 newSalesPrice = originalPrice; // No active offers
-//             }
-
-//             // Update product's sales price
-//             await Product.findByIdAndUpdate(product._id, {
-//                 salesPrice: Math.round(newSalesPrice)
-//             });
-//         }
-//     } catch (error) {
-//         console.error('Error updating product prices:', error);
-//     }
-// }
-
-// // Schedule the cron job to run every minute
-// cron.schedule('* * * * *', handleOfferUpdates);

@@ -36,10 +36,7 @@ const productSchema=new Schema({
        
     
     },
-    offer:{
-        type:Schema.Types.ObjectId,
-        ref:"Offer", 
-    },
+ 
     color:{
        type:String, 
     },
@@ -79,11 +76,11 @@ const productSchema=new Schema({
             type:Date
         },
     }],
-    offer:[{
+    offer:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Offer',
         default:null
-    }],
+    },
     isFeatured: { type: Boolean, default: false },
   popularity: { type: Number, default: 0 },
   averageRating: { type: Number, default: 0 },

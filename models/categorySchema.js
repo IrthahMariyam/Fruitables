@@ -25,10 +25,10 @@ categoryOffer:{
     
 },
 offer:{
-    
-    type:Schema.Types.ObjectId,
-        ref:"Offer",
-},
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Offer',
+        default:null
+    },
 createdAt:{
     type:Date,
     default:Date.now
