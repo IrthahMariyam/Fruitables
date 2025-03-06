@@ -192,7 +192,13 @@
                                           <td class="py-5"></td>
                                           <td class="py-5">
                                               <div class="py-3 border-bottom border-top">
-                                                  <p class="mb-0 text-dark" > ₹  100 </p>
+                                                  <p class="mb-0 text-dark" >
+                                                    <% if(total >= 1000) { %>
+                                                      ₹0
+                                                  <% } else { %>
+                                                      ₹50
+                                                  <% } %>
+                                                </p>
                                               </div>
                                           </td>
 
@@ -404,7 +410,7 @@
                             price: parseFloat(price),
                             quantity: parseInt(quantity, 10),
                             totalPrice: parseFloat(totalPrice),
-                            status:"Pending",
+                            status:"Ordered",
                         });
                     }
                     //console.log(products,"products")
@@ -512,6 +518,16 @@ if(!address)
   console.log("cartId before place",cartId)
   console.log("address",address)
   console.log("orderData",orderData)
+  if(paymentMethod=="COD" && orderData.finalAmount>1000)
+  {
+    Swal.fire({
+                icon: 'error',
+                text: 'Payment above 1000 is not allowed for Cash On Delivery.So Please select other Payment Method',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            return;
+  }
    switch(paymentMethod) {
         case "COD":
             placeOrder(orderData);
@@ -884,14 +900,25 @@ const verifyPayment = async (paymentData, cartId) => {
                 text: "Payment successful! Redirecting...",
                 showConfirmButton: false,
                 timer: 1500
-            });
+        
+        
+        
+        
+              });
             console.log("result",result)
             setTimeout(() => {
                 window.location.href = `/success?id=${result.orderId}`;
             }, 1500);
         } else {
-            throw new Error(result.message || "Payment verification failed");
-        }
+            //throw new Error(result.message || "Payment verification failed");
+            await Swal.fire({
+                        icon: "error",
+                        title: "Payment Failed!",
+                        text: "Payment verification failed. Please try again.",
+                        confirmButtonColor: "#d33",
+                        confirmButtonText: "Retry",
+                    });
+          }
     } catch (error) {
         console.error("Error verifying payment:", error);
         await Swal.fire({
@@ -902,7 +929,7 @@ const verifyPayment = async (paymentData, cartId) => {
         });
         
         setTimeout(() => {
-            window.location.href = '/failedPayment';
+            window.location.href = '/paymentFailed';
         }, 1500);
     }
 };

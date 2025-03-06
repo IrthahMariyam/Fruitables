@@ -7,36 +7,48 @@
     <title>Admin Dashboard</title>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
     <style>
         /* General Styles */
         * {
-            margin:0;
-           
+            margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
             font-family: Arial, sans-serif;
-            background-color: #000000 !important;
+            background-color: #f4f4f4 !important;
+            
         }
         a {
             text-decoration: none;
         }
-      
-               /* Sidebar */
+
+        /* Navbar */
+        .navbar {
+            background-color: #84CBCB;
+        }
+        .navbar-brand {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Sidebar */
         .sidebar {
             width: 20%;
-            height: 100vh;
-            background-color: #fff;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            height: 100%;
+            background-color: rgb(231, 248, 232);
+            background-color: rgb(231, 248, 232);
+            padding: 10px;
         }
         .sidebar ul {
             list-style-type: none;
             padding: 0;
         }
         .sidebar ul li {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
         }
         .sidebar ul li a {
             color: #333;
@@ -44,20 +56,19 @@
             display: block;
         }
         .sidebar ul li a:hover {
-            color: #62e448;
+            color: #28a745;
             font-weight: bold;
         }
 
         /* Main Content */
         .content {
-            width: 95%;
-            padding: 60px;
-            margin-left: 20px;
-            background-color: #191C24;
-            /* background-color: #f4f4f4; */
+            margin-top: 100px;
+            width: 80%;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
         .card-custom {
-            background-color: #76d860;
+            background-color: #84CBCB;
             color: #fff;
             border: none;
         }
@@ -67,7 +78,7 @@
 
         /* Cards Section */
         .stats-card {
-            background-color: #50e252;
+            background-color:  #28a745;
             color: white;
             text-align: center;
             padding: 10px;
@@ -85,7 +96,9 @@
             font-size: 12px;
         }
 /* sales */
+
 /* Container for the sales report */
+
 .sales-report-container {
     width: 100%;
     max-width: 1200px;
@@ -105,6 +118,7 @@
     gap: 10px;
     margin-bottom: 15px;
     flex-wrap: wrap;
+    background: #ffffff;
 }
 
 /* Style for dropdown and date inputs */
@@ -147,7 +161,7 @@
 }
 
 .sales-report-table thead {
-    background-color: #4ed457;
+    background-color:#28A745;
     color: white;
 }
 
@@ -194,15 +208,20 @@
 
     </style>
 </head>
-<body>
+ <body>
     <!-- Navbar -->
     <%- include("../../views/partials/admin/header.ejs")%>
-
-
-
+                           
+    <div class="main-panel">
+        <div class="content-wrapper" style="background-color: #f2f2f2;">
+         <div class="row">
+         <div class="col-lg-12 grid-margin stretch-card">
+         <div class="card background-color:white">
+         <div class="card-body ">
+            <h2 class="card-title text-center text-dark">DASHBOARD</h2>
         <!-- Main Content -->
-        <div class="content" style="margin-top: 100px;">
-            <h2 class=" text-center">Report</h2>
+        
+            <!-- / -->
             <!-- Stats Section -->
             <div class="row mb-4">
                 <div class="col-md-4">
@@ -231,7 +250,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="stats-card">
-                        <h3><%=revenueAmount %></h3>
+                        <h3><%=revenueAmount.toFixed(2) %></h3>
                         <p>Overall Revenue</p>
                     </div>
                 </div>
@@ -243,8 +262,9 @@
                 </div>
                
             </div>
+            <div style="background-color: whitesmoke;">
 
-            <div class="sales-report-container">
+            <div class="sales-report-container  ">
                 <!-- Filter Section -->
                 <div class="report-filter-section">
                     <select id="filter">
@@ -281,17 +301,144 @@
                     <button onclick="downloadExcel()">Download Excel</button>
                 </div>
             </div>
-            
-            
-        </div>
-        
+            <!-- chart -->
+            <h4 style="margin-left: 50px;">Top Selling Products</h4>
+
+<div style="height: 400px; display: flex; gap: 50px;">
+<div>
+<!-- Filter Controls -->
+<div style="margin-left: 50px;">
+  <label for="filter">Filter by: </label>
+  <select id="filter1">
+    <option value="daily">Daily</option>
+    <option value="monthly">Monthly</option>
+    <option value="yearly">Yearly</option>
+  </select>
+
+  <label for="chartType">Chart Type: </label>
+  <select id="chartType1">
+    <option value="line">Line</option>
+    <option value="bar">Bar</option>
+    <option value="pie">Pie</option>
+  </select>
+</div>
+
+<!-- Chart Display -->
+
+<canvas id="topSellingChart" width="600px" height="400px"></canvas>
+
+</div>
+<div style="height: 400px;">
+    <h4>Top Selling Products</h4>
+  
+    <!-- Filter Controls -->
+    <!-- <div>
+      <label for="filter">Filter by: </label>
+      <select id="filter">
+        <option value="daily">Daily</option>
+        <option value="monthly">Monthly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+  
+      
     </div>
+   -->
+    <!-- Table for Top Selling Products -->
+    <table id="topSellingProductsTable"  cellpadding="5" cellspacing="10" style="border: 1;">
+      <thead>
+        <tr style="text-align: left;">
+            <th style="padding: 8px; border: 1px solid">Product Name</th>
+            <th style="padding: 8px; border: 1px solid">Total Sold</th>
+          </tr>
+      </thead>
+      <tbody>
+        <!-- Data will be populated here -->
+      </tbody>
+    </table>
+  </div>
+
+</div>
+            
+
+             <!--end  -->
+
+
+             <div style="height: 400px; margin-top: 100px; display: flex;">
+                <div style="margin-left: 50px;">
+                    <h4 >Top Categories</h4>
+                <label for="filter">Filter by: </label>
+
+                <select id="filter2">
+                    <option value="daily">Daily</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                  
+                  <label for="chartType">Chart Type: </label>
+
+                  <select id="chartType2">
+                    <option value="line">Line</option>
+                    <option value="bar">Bar</option>
+                    <option value="pie">Pie</option>
+                  </select>
+                  
+                  <canvas id="topCategoriesChart" width="600" height="400"></canvas>
+                </div>
+                <div style="height: 400px; margin-top: 100px;padding-left: 20px;">
+                    <h4>Top Categories</h4>
+<!--                   
+                     <label for="filter">Filter by: </label>
+                    <select id="filter">
+                      <option value="daily">Daily</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="yearly">Yearly</option>
+                    </select> 
+                   -->
+                   
+                  
+                    <!-- Table for Top Selling Categories -->
+                    <table id="topSellingCategoriesTable" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+                        <thead>
+                            <tr style=" text-align: left;">
+                                <th style="padding: 8px; border: 1px solid ">Category Name</th>
+                                <th style="padding: 8px; border: 1px solid">Total Sold</th>
+                              </tr>
+                      </thead>
+                      <tbody>
+                        <!-- Data will be populated here -->
+                      </tbody>
+                    </table>
+                  </div>
+            </div>
+          </div>
+        </div>
+
+
+
+    
+</div>
+</div>
+</div>
+</div>
+  </div>
+</div>
+</div>
+</div> 
+<!-- page-body-wrapper ends -->
+</div>
+<!--  -->
+
+<%-include("../../views/partials/admin/footer")%> 
+
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 
  <script>
     async function fetchSalesReport() {
@@ -372,4 +519,223 @@ function downloadExcel() {
     XLSX.writeFile(wb, "Sales_Report.xlsx");
 }
 
+// product graph 
+
+const topSellingChartCanvas = document.getElementById('topSellingChart');
+let topSellingChart;
+
+async function updateTopSellingChart() {
+  const filter = document.getElementById('filter1').value;
+  const chartType = document.getElementById('chartType1').value;
+
+  const response = await fetch(`/admin/top-selling-products?filter=${filter}`);
+  const data = await response.json();
+  console.log(data);
+
+  const productNames = data.map(item => item.productName);
+  const totalSold = data.map(item => item.totalSold);
+
+  if (topSellingChart) {
+    topSellingChart.destroy();
+  }
+
+  topSellingChart = new Chart(topSellingChartCanvas, {
+    type: chartType, // Dynamic chart type
+    data: {
+      labels: productNames, // Product names
+      datasets: [{
+        label: 'Total Sold',
+        data: totalSold, // Quantities sold
+        borderColor: 'rgba(33, 136, 56, 1)',
+        backgroundColor: chartType === 'pie' ? 'rgba(33, 136, 56, .8)' : 'rgba(33, 136, 56, .8)',
+        fill: chartType !== 'line' // Only fill for bar and pie charts
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false, // Allow resizing
+      scales: chartType === 'line' ? {
+        y: { beginAtZero: true }
+      } : undefined,
+      plugins: {
+        legend: {
+          display: true // Hide legend if needed
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            display: true // Hide x-axis labels
+          }
+        }
+      }
+    }
+  });
+}
+
+// Event listeners to update chart based on filter or chart type change
+document.addEventListener('DOMContentLoaded', () => {
+  updateTopSellingChart();
+});
+
+document.getElementById('filter1').addEventListener('change', updateTopSellingChart);
+document.getElementById('chartType1').addEventListener('change', updateTopSellingChart);
+
+
+// Category chart 
+
+const topCategoriesChartCanvas = document.getElementById('topCategoriesChart');
+let topCategoriesChart;
+
+async function updateTopCategoriesChart() {
+  const filter = document.getElementById('filter2').value;
+  const chartType = document.getElementById('chartType2').value;
+
+  const response = await fetch(`/admin/top-selling-categories?filter=${filter}`);
+  const data = await response.json();
+  
+  console.log(data);
+
+  const categoryNames = data.map(item => item.categoryName);
+  const totalSold = data.map(item => item.totalSold);
+
+  if (topCategoriesChart) {
+    topCategoriesChart.destroy();
+  }
+
+  topCategoriesChart = new Chart(topCategoriesChartCanvas, {
+    type: chartType, // Dynamic chart type
+    data: {
+      labels: categoryNames, // Category names
+      datasets: [{
+        label: 'Total Sold',
+        data: totalSold, // Quantities sold
+        borderColor: 'rgba(33, 136, 56, 1)',
+        backgroundColor: chartType === 'pie' ? 'rgba(33, 136, 56, .8)' : 'rgba(33, 136, 56, .8)',
+        fill: chartType !== 'line' // Only fill for bar and pie charts
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false, // Allow resizing
+      scales: chartType === 'line' ? {
+        y: { beginAtZero: true }
+      } : undefined,
+      plugins: {
+        legend: {
+          display: true // Hide legend if needed
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            display: true // Hide x-axis labels
+          }
+        }
+      }
+    }
+  });
+}
+
+// Event listeners to update chart based on filter or chart type change
+document.addEventListener('DOMContentLoaded', () => {
+  updateTopCategoriesChart();
+});
+
+document.getElementById('filter2').addEventListener('change', updateTopCategoriesChart);
+document.getElementById('chartType2').addEventListener('change', updateTopCategoriesChart);
+
+
+//product table 
+
+// Product Table update
+async function updateTopSellingProductsTable() {
+  const filter = document.getElementById('filter1').value;
+
+  const response = await fetch(`/admin/top-selling-products?filter=${filter}`);
+  const data = await response.json();
+  console.log("Top Selling Products Data:");
+  console.log(data);
+
+  const productNames = data.map(item => item.productName);
+  const totalSold = data.map(item => item.totalSold);
+
+  const tableBody = document.getElementById('topSellingProductsTable').getElementsByTagName('tbody')[0];
+  
+  tableBody.innerHTML = ''; // Clear any existing rows
+
+  
+  productNames.forEach((productName, index) => {
+  const row = tableBody.insertRow();
+
+  // Add border to the row and cells
+  row.style.border = '1px solid black';
+
+  const cell1 = row.insertCell(0);
+  const cell2 = row.insertCell(1);
+
+  // Add border to cells
+  cell1.style.border = '1px solid black';
+  cell2.style.border = '1px solid black';
+
+  // Add padding for better spacing
+  cell1.style.padding = '8px';
+  cell2.style.padding = '8px';
+
+  // Set cell content
+  cell1.textContent = productName;
+  cell2.textContent = totalSold[index];
+
+  });
+}
+
+// Category Table update
+async function updateTopCategoriesTable() {
+  const filter = document.getElementById('filter2').value;
+
+  const response = await fetch(`/admin/top-selling-categories?filter=${filter}`);
+  const data = await response.json();
+  console.log("Top Selling Categories Data:");
+  console.log(data);
+
+  const categoryNames = data.map(item => item.categoryName);
+  const totalSold = data.map(item => item.totalSold);
+
+  const tableBody = document.getElementById('topSellingCategoriesTable').getElementsByTagName('tbody')[0];
+  
+  tableBody.innerHTML = ''; // Clear any existing rows
+
+  categoryNames.forEach((categoryName, index) => {
+    const row = tableBody.insertRow();
+    row.style.border = '1px solid black';
+    const cell1 = row.insertCell(0);
+    const cell2 = row.insertCell(1);
+    cell1.style.border = '1px solid black';
+    cell2.style.border = '1px solid black';
+    cell1.style.padding = '8px';
+    cell2.style.padding = '8px';
+    cell1.textContent = categoryName;
+    cell2.textContent = totalSold[index];
+   
+  });
+}
+
+// Event listeners to update tables when the filter is changed
+document.getElementById('filter1').addEventListener('change', () => {
+  updateTopSellingProductsTable();
+ });
+
+document.getElementById('filter2').addEventListener('change', () => {
+   updateTopCategoriesTable();
+});
+
+// Initial load to populate the tables
+document.addEventListener('DOMContentLoaded', () => {
+  updateTopSellingProductsTable();
+  updateTopCategoriesTable();
+});
+
+
  </script>
+</body>
+</html>

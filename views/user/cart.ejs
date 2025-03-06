@@ -175,7 +175,7 @@
                 <div class="d-flex justify-content-between">
                   <h5 class="mb-0 me-4">Shipping</h5>
                   <div class="">
-                    <p class="mb-0" id="shipping">Charge: ₹<%= (total ? 100 : 0) %></p>
+                    <p class="mb-0" id="shipping">Charge: ₹<%= (total>=1000 ? 0 : 50) %></p>
                   </div>
                 </div>
                 <p class="mb-0 text-end"></p>
@@ -185,7 +185,7 @@
               >
                 <h5 class="mb-0 ps-4 me-4">Total</h5>
                
-                <p class="mb-0 pe-4"id="totalprice">₹<%= (total ? total + 100 : 0) %></p>
+                <p class="mb-0 pe-4"id="totalprice">₹<%= (total>1000 ? total : total+50) %></p>
               </div>
               <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button" onclick="window.location.href='/getcheckout'" >Proceed Checkout</button>
             </div>
@@ -297,10 +297,19 @@ if ($productRow.length) {
       subtotal=(subtotal-oldprice)+newTotal;
         console.log("After Update - Subtotal:", subtotal);
         $(`#subtotal`).text(`₹${subtotal.toFixed(2)}`); // Keep 2 decimal places
-        $(`#totalprice`).text(`₹${(subtotal + 100).toFixed(2)}`); // Assuming 100 is shipping fee
-
+//       
+if (subtotal >= 1000) {
+  $("#shipping").text(`₹ 0`);
+  $("#totalprice").text(`₹${(subtotal).toFixed(2)}`); // No shipping fee for orders ≥1000
+  // alert($("#shipping").text());
+  // alert(subtotal);
+} else {
+  $("#shipping").text(`₹ 50`);
+  $("#totalprice").text(`₹${(subtotal + 50).toFixed(2)}`); // Add shipping fee for orders <1000
+//   alert($("#shipping").text());
+//   alert(subtotal);
 }
-
+}
     //window.location.reload()
 
      
@@ -345,9 +354,7 @@ function removeFromCart(productId,price) {
       console.log("Product removed successfully:", response);
       
       var total=currentQty * price
-    // alert(currentQty)
-    // alert(price)
-    // alert(total)
+   
       if ($productRow.length) {
         
       
@@ -360,8 +367,8 @@ function removeFromCart(productId,price) {
         console.log("After Update - Subtotal:", subtotal);
         // Update the displayed values
         let shipping=0;
-        if(subtotal!=0)
-        shipping=100
+        if(subtotal>1000)
+        shipping=50
         
         $(`#shipping`).text(`Charge: ₹${( shipping)}`);
         $(`#subtotal`).text(`₹${subtotal.toFixed(2)}`); 

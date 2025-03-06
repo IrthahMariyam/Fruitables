@@ -191,9 +191,10 @@
 <body>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-       const orderId = "<%= order._id %>";
+       const orderId = "<%= order._id %>"
        let orderStatus="<%=order.status%>"
-       if(orderStatus=='Return Request'){
+       if(orderStatus=='Return Request')
+       {
        let returnReason="<%=order.returnReason%>"
        }
     </script>
@@ -207,7 +208,8 @@
       <p id="ordersId"><strong>ORDER ID:</strong> <%= order.orderId %></p>
       <p><strong>Status:</strong> <%= order.status %></p>
       <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
-      <input type="hidden" id="returnReason" value="<%=order.returnReason%>"
+      <p><strong>Order Date:</strong><%= order.createdOn.toLocaleDateString() %></p>
+      <input type="hidden" id="returnReason" value="<%=order.returnReason%>">
     </div>
      <!-- Tracking Progress -->
   <div class="tracking-progress">
@@ -244,13 +246,31 @@
       <p>Delivered</p>
   </div>
 </div>
+  <!-- Price Details -->
+  <div class="card">
+    <div class="card-header">Price Details</div>
+    <p>Total Price: ₹<%= order.subtotal %></p>
+    <p>Coupon Discount: ₹<%= order.discount %></p>
+    <p>Shipping Charge: ₹100</p>
+    <p><strong>Payable Amount:</strong>₹<%= order.finalAmount %></p>
+  </div>
 
+  <!-- Shipping Address -->
+  <div class="card">
+    <div class="card-header">Shipping Details</div>
+    <p>Name: <%= order.address.name %></p>
+    <p>Address: <%= order.address.landmark %>, 
+      <%= order.address.district %>,
+       <%= order.address.state %> 
+        <%= order.address.pincode %></p>
+    <p>Contact: <%= order.address.phone %></p>
+  </div>
 
     <!-- Product Details -->
     <div class="card">
       <div class="card-header">Product Details</div>
 
-      <% order.orderedItems.forEach((item) => { %>
+      <% order.orderedItems.forEach((item,index) => { %>
         <%let it=item.productId %>
         <div class="product-card">
        
@@ -260,30 +280,41 @@
             <p>Quantity: <%= item.quantity %></p>
             <p>Price: ₹<%= item.price %></p>
             <p>Product Total: ₹<%= item.totalPrice %></p>
+            <p>Status:<%= item.status %></p>
           </div>
-        </div>
-      <%  }); %>
+       </div>
+        <!-- ////////////////////////////////////// -->
+        <% if (item.status==='Return Request' ) { %>
+          <h3>Return RequestDetails</h3>
+        <p><strong>Return Reason:</strong><%= item.returnReason %></p>
+        <form action="/admin/order/approve-return/<%= order._id %>"
+        method="POST" >
+        <input type="hidden" name="productId"
+            value="<%= item._id %>">
+        <button type="submit"
+        class="btn btn-success">
+            Approve Return Request
+        </button>
+    </form>
+    <br>
+    <form
+        action="/admin/order/decline-return/<%= order._id %>"
+        method="POST">
+        <input type="hidden" name="productId"
+            value="<%= item._id %>">
+        <button type="submit"
+            class="btn btn-danger">
+            Decline Return Request
+        </button>
+    </form>
+<!-- //////////////////////////////////////////////// -->
+</div>
+<%  }}) %>
+
+      
     </div>
 
-    <!-- Price Details -->
-    <div class="card">
-      <div class="card-header">Price Details</div>
-      <p>Total Price: ₹<%= order.subtotal %></p>
-      <p>Coupon Discount: ₹<%= order.discount %></p>
-      <p>Shipping Charge: ₹100</p>
-      <p><strong>Payable Amount:</strong>₹<%= order.finalAmount %></p>
-    </div>
-
-    <!-- Shipping Address -->
-    <div class="card">
-      <div class="card-header">Shipping Details</div>
-      <p>Name: <%= order.address.name %></p>
-      <p>Address: <%= order.address.landmark %>, 
-        <%= order.address.district %>,
-         <%= order.address.state %> 
-          <%= order.address.pincode %></p>
-      <p>Contact: <%= order.address.phone %></p>
-    </div>
+   
     <% if(order.status=="Cancelled") {%>
       <div class="card">
         <div class="card-header">Cancel Reason</div>
@@ -325,13 +356,13 @@
   document.addEventListener("DOMContentLoaded", function () {
     let statusSelect = document.getElementById("orderStatus");
     let orderStatus = statusSelect ? statusSelect.value : "";
-    let orderId = document.getElementById("statusForm").dataset.orderId; // Make sure to pass orderId correctly
+    let orderId = document.getElementById("statusForm").dataset.orderId; 
 
-    // Fetch return reason if available
+   
     let returnReason = document.getElementById("returnReason").value
-   // let returnReason = returnReasonElement ? returnReasonElement.innerText.trim() : "No reason provided.";
+   
 
-    // Show Swal if the order is in "Return Request" status
+    
     if (orderStatus === "Return Request") {
         setTimeout(() => {
             Swal.fire({
@@ -343,10 +374,10 @@
                 cancelButtonText: "Reject Return",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    statusSelect.value = "Returned"; // Change status
+                    statusSelect.value = "Returned"; 
                     disableInvalidOptions("Returned");
                 } else {
-                    statusSelect.value = "Return Request"; // Keep it as "Return Request"
+                    statusSelect.value = "Return Request"; 
                     disableInvalidOptions("Return Request");
                 }
             });
@@ -400,8 +431,8 @@
             Swal.fire("Error!", "Order ID is missing. Cannot update status.", "error");
             return;
         }
-
-        fetch(`/admin/orders/update-status/${orderId}`, {
+console.log("status: statusSelect.value",statusSelect.value)
+        fetch(`/admin/orders/updateorderstatus/${orderId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: statusSelect.value }),

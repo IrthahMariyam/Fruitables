@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const getCartPage = async (req, res) => {
-       try {
+       try {console.log('getCartPage11111=========================================================================')
       
        if (!req.session.user) {
         return res.redirect('/login'); 
@@ -14,11 +14,7 @@ const getCartPage = async (req, res) => {
        const userId = req.session.user._id;
         
       const carts = await Cart.findOne({ userId }).populate('items.productId');
-      // const carts = await Cart.findOne({ userId }).populate({
-      //   path: 'items.productId',
-      //   match: { isListed: true }  // assuming you have an isListed field in your product schema
-      // });
-           //console.log(cart,"cart")
+     
             
        if (!carts) { 
        
@@ -46,7 +42,7 @@ const getCartPage = async (req, res) => {
   
 
  const addToCart = async (req, res) => {
-  try {
+  try {console.log('addToCart1111=========================================================================')
     const { productId } = req.body; 
     console.log("product",req.body)
     const userId = req.session.user; 
@@ -100,10 +96,7 @@ const getCartPage = async (req, res) => {
 
         existingProduct.quantity += 1;
         existingProduct.totalPrice = existingProduct.quantity * existingProduct.salesPrice;
-      //   await cart.save();
-      //  cart = await Cart.findOne({ userId :userId._id})
-      //   cartitemcount=cart.items.length
-      //   res.status(200).json({ message: 'Product already added in cart!', cart,cartitemcount:cartitemcount });
+      
       }
        else {
        
@@ -135,7 +128,7 @@ const getCartPage = async (req, res) => {
   
 
 const removeFromCart = async (req, res) => {
-    try {
+    try {console.log('removeFromCart11111=========================================================================')
       const user = req.session.user;
       if (!user) {
         return res.status(401).json({ error: 'User not logged in' });
@@ -175,7 +168,7 @@ const removeFromCart = async (req, res) => {
   
 
 const updateCartQuantity = async (req, res) => {
-  try {
+  try {console.log('updateCartQuantity11111n=========================================================================')
     const { productId, quantity } = req.body;
 
     const parsedQuantity = parseInt(quantity);

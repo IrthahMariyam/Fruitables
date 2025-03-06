@@ -177,17 +177,14 @@ const updateOffer = async (req, res) => {
                    // $unset: { offer: existingOffer._id }
                 }
             );
-            // await Product.updateMany(
-            //     { category: { $in: existingOffer.applicableItems } },
-            //     { $pull: { offer: existingOffer._id } }
-            // );
+           
         } if (existingOffer.applicableType ==='product') {
             await Product.updateMany(
                 { _id: { $in: existingOffer.applicableItems } },
                 { 
                     $set: { productOffer: 0 }, // Reset previous discount
                     $unset:  { offer: 1 } 
-                   //  $pull: { offer: existingOffer._id }
+                  
                 }
             );
         }

@@ -311,22 +311,12 @@ res.status(500).json({ error: 'Internal server error' });
         const fileNameWithVersion = segments.pop(); // "hcejfhvf45ll5wrofzbh.jpg"
         const publicId = fileNameWithVersion.split('.')[0]; // "hcejfhvf45ll5wrofzbh"
 
-        // Delete the image from Cloudinary
-        // cloudinary.uploader.destroy(publicId, async (error, result) => {
-        //     if (error) {
-        //         console.error("Error deleting image from Cloudinary:", error);
-        //         return res.status(500).json({ status: false, message: "Error deleting image" });
-        //     }
-            
-        //     console.log("Cloudinary deletion result:", result);
-        // })
         
         const product = await Product.findByIdAndUpdate(
             productIdToServer,
             { $pull: { productImage: imageNameToServer } }
         );
-        // const publicId = imageNameToServer.split('/').pop().split('.')[0]; // Extract public_id from the URL
-        // await cloudinary.uploader.destroy(publicId);
+       
         const imagePath = path.join("public", imageNameToServer);
         console.log('Image path:', imagePath);
        

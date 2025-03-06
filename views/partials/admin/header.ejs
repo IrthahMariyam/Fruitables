@@ -13,7 +13,20 @@
     <!-- End layout styles -->
   
     <style>
-         
+     /* Sidebar Menu Hover Effect */
+.sidebar ul li a:hover {
+    background-color: #e9ecef; /* Light gray background on hover */
+    color: #28a745; /* Green text on hover */
+    border-radius: 5px; /* Optional: adds rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition effect */
+}
+
+/* Optional: Active/Selected state */
+.sidebar ul li a.active {
+    background-color: #28a745; /* Green background for active item */
+    color: white; /* White text for active item */
+    border-radius: 5px;
+}   
    .search-form {
   margin-bottom: 20px;
   display: flex;
@@ -31,6 +44,8 @@
   border: 1px solid #ccc;
   border-radius: 5px 0 0 5px;
   padding: 10px;
+  background-color: aliceblue;
+  color: black;
 }
 
 .search-form .btn {
@@ -40,8 +55,8 @@
 
       body {
   font-family: Arial, sans-serif;
-  background-color: #f4f5f7;
-  color: #333;
+  background-color: #f4f5f7 !important;
+  color:black;
   margin: 0;
   padding: 0;
   height:100%
@@ -49,7 +64,7 @@
 
 h1 {
   font-size: 50px;
-  color: #333;
+  color: #b81919;
   text-align: center;
   margin-top: 20px;
 }
@@ -63,7 +78,7 @@ form {
 
 
 button[type="submit"] {
-  background-color: #81C408;
+  background-color: #28A745;
   color: #fff;
   border: none;
   padding: 10px 15px;
@@ -74,27 +89,33 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-  background-color: #0056b3;
+  background-color:  #28A745;
 }
 .table {
   width: 100%;
   margin-top: 20px;
   border-collapse: separate; /* Ensures border radius works */
-  border-spacing: 0; /* Removes gaps between table cells */
+  /* border-spacing: 0; Removes gaps between table cells */
   overflow: hidden; /* Ensures rounded corners */
   border-radius: 8px; /* Adjust this value for more/less rounding */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better appearance */
+  color: black;
+  border-color: #28A745;
 }
 
 .table th, .table td {
+  color:white;
   padding: 10px;
   text-align: left;
   border: 1px solid #ddd;
+  color: black;
+  border-color: #28A745;
 }
 
 .table th {
-  background-color: #81C408;
-  color: white;
+  background-color: #28A745;
+  color:white;
+  border-color: #28A745;
 }
 .btn {
   padding: 8px 15px;
@@ -115,17 +136,18 @@ button[type="submit"]:hover {
 }
 
 .btn-success {
-  background-color: #28a745;
+  background-color: #28A745;
   color: #fff;
 }
 
 .btn-success:hover {
-  background-color: #218838;
+  background-color:  #28A745;
 }
 .pagination {
   display: flex;
   justify-content: center;
   margin-top: 20px;
+  color: #28A745;
 }
 
 .page-item {
@@ -133,7 +155,7 @@ button[type="submit"]:hover {
 }
 
 .page-link {
-  color: #007bff;
+  color: #28A745;
   text-decoration: none;
   padding: 8px 12px;
   border: 1px solid #ddd;
@@ -142,12 +164,12 @@ button[type="submit"]:hover {
 }
 
 .page-link:hover {
-  background-color: #007bff;
+  background-color:  #28A745;
   color: #fff;
 }
 
 .page-item.active .page-link {
-  background-color: #007bff;
+  background-color:  #28A745;
   color: white;
   border: none;
 }
@@ -162,7 +184,7 @@ button[type="submit"]:hover {
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-          <a class="sidebar-brand brand-logo text-white" href="dashboard">FRUITABLES</a>
+          <a class="sidebar-brand brand-logo text-dark" href="dashboard">FRUITABLES</a>
           <a class="sidebar-brand brand-logo-mini" href="dashboard"><img src="/assets/images/logo-mini.svg" alt="logo" /></a>
         </div>
         <ul class="nav">
@@ -174,7 +196,7 @@ button[type="submit"]:hover {
                   <span class="count bg-success"></span>
                 </div>
                 <div class="profile-name">
-                  <h5 class="mb-0 font-weight-normal">Admin</h5>
+                  <h5 class="mb-0 font-weight-normal text-dark" >Admin</h5>
                   
                 </div>
               </div>
@@ -184,14 +206,14 @@ button[type="submit"]:hover {
           <li class="nav-item nav-category">
             <span class="nav-link">Navigation</span>
           </li>
-          <li class="nav-item menu-items">
+          <!-- <li class="nav-item menu-items">
             <a href="/admin/loadSalesPage" class="nav-link">
               <span class="menu-icon">
                 <i class="mdi mdi-speedometer"></i>
               </span>
               <span class="menu-title">Reports</span>
             </a>
-          </li>
+          </li> -->
           <li class="nav-item menu-items">
             <a href="/admin/dashboard" class="nav-link">
               <span class="menu-icon">
@@ -210,12 +232,12 @@ button[type="submit"]:hover {
             
            
           </li>
-          <li class="nav-item menu-items">
+          <li class="nav-item menu-item">
             <a href="/admin/products" class="nav-link" >
               <span class="menu-icon">
                 <i class="fas fa-box"></i>
               </span>
-              <span class="menu-title">products</span>
+              <span class="menu-title">Products</span>
             </a>
           </li>
           <li class="nav-item menu-items">

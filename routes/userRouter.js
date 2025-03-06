@@ -85,12 +85,19 @@ router.get("/orders/history",userAuth,orderController.orderHistory)
 router.post('/orders/cancel/:id',userAuth,orderController.cancelOrder)
 router.post('/orders/reutrnrequest/:id', orderController.returnOrder);
 router.get('/viewOrderDetails/:orderId',userAuth,orderController.getOrderDetails)
+router.post("/getOrderDetails",userAuth,orderController.getOrder);
 
-//router.post('/verify-payment/:id',userAuth,orderController.verifyPayment);
-//router.post('/createOrder',userAuth,orderController.createOrder)
+
+router.post('/order/cancel-product',userAuth,orderController.cancelProductOrder);
+router.post('/order/return-product',userAuth,orderController.returnProductOrder);
+router.get('/payment-failed/:orderId',userAuth,orderController.handleFailedPayment);
+// router.post('/retry-payment',userAuth,orderController.retryPayment);
+// router.post('/verify-retry-payment',userAuth,orderController.verifyRetryPayment)
+router.get('/failedPayment',orderController.loadFailedPaymentPage)
+
 router.post('/placeOrder',userAuth,orderController.placeOrder)
 router.post('/razorpayverifyPayment',userAuth,orderController.verifyPayment)
-//router.post('/paywithWallet',userAuth,orderController.paywithWallet)
+
 
 //cart routes
 router.get('/getcart',userAuth,cartController.getCartPage)
@@ -98,7 +105,7 @@ router.post("/cart/add",userAuth,cartController.addToCart);
 router.post('/cart/update', userAuth, cartController.updateCartQuantity);
 router.post('/cart/remove', userAuth, cartController.removeFromCart);
 router.get('/getcheckout',userAuth,orderController.getCheckoutPage);
-
+router.get('/download-invoice/:orderId',userAuth,orderController.generateInvoice )
 
 //whishlist routes
 router.post('/wishlist/add',userAuth,whishlistController.addtoWishlist)

@@ -22,7 +22,7 @@ const securePassword = async (password) => {
 };
 
 const loadProfile=async (req, res) => {
-    try {
+    try {console.log('/login,userController.loadLogin=========================================================================')
        const id=req.params.userId;
        console.log(id,"inside loadprofile params id value")
         const user = req.session.user
@@ -72,7 +72,7 @@ const loadProfile=async (req, res) => {
 
 const deleteAccount=async(req,res)=>{
     try 
-        {
+        {console.log('/login,userController.loadLogin=========================================================================')
             const id=req.params;
             console.log(id,"inside deleteProfile params id value")
              const user = req.session.user;
@@ -95,7 +95,7 @@ const deleteAccount=async(req,res)=>{
 }
 
 const changePassword = async (req, res) => {
-    try {
+    try {console.log('/login,userController.loadLogin=========================================================================')
       const { userId, oldPassword, newPassword } = req.body;
       console.log("inside change Password", userId, oldPassword, newPassword);
   
@@ -137,7 +137,7 @@ const changePassword = async (req, res) => {
   
   
     const addAddress = async (req, res) => {
-        try {
+        try {console.log('/login,userController.loadLogin=========================================================================')
             //console.log("added")
             const { Id,name, landmark, district, state, pincode, phone } = req.body;
             //const userId = req.user.id; // Assuming userAuth middleware sets `req.user`
@@ -172,7 +172,7 @@ const changePassword = async (req, res) => {
     };
     
     const getAddress=async(req,res)=>{
-        try {
+        try {console.log('/login,userController.loadLogin=========================================================================')
           console.log("inside getaddress")
          
             const address = await Address.findById(req.params.id);
@@ -184,7 +184,7 @@ const changePassword = async (req, res) => {
          }
 
 const updateAddress = async (req, res) => {
-    try {
+    try {console.log('/login,userController.loadLogin=========================================================================')
       // Extract ID from params and fields from body
       const { id } = req.params;
       const { name, landmark, district, state, pincode, phone } = req.body;
@@ -236,7 +236,7 @@ const updateAddress = async (req, res) => {
   };
   
 const deleteAddress = async (req, res) => {
-    try {
+    try {console.log('deleteAddress=========================================================================')
       const addressid = req.params.addressId;
       const userId = req.session.user?._id;
   //console.log(addressid,"addressidddddd")
@@ -274,23 +274,7 @@ const deleteAddress = async (req, res) => {
       res.status(500).json({ message: 'Error deleting address!' });
     }
   };
-  
-// const history=async (req,res) => {
-//   try {
-//     // Fetch the logged-in user's orders
-//     const orders = await Order.find({ userId: req.session._id })
-//         .populate("orderedItems.product")
-//         .populate("address")
-//         .sort({ createdOn: -1 });
-
-//     // Render the template and pass the orders
-//     res.render("orders/history", { orders });
-// } catch (err) {
-//     console.error("Error fetching orders:", err);
-//     res.status(500).send("Internal Server Error");
-// }
-// }
-
+ 
 
 const history=async (req,res) => 
 {try {
@@ -353,7 +337,7 @@ try {
 
 
 const getProfileDetail=async(req,res)=>{
-  try{
+  try{console.log('getProfileDetail=========================================================================')
   console.log("inside getDetail")
 
   console.log(req.params)
@@ -366,18 +350,10 @@ const getProfileDetail=async(req,res)=>{
 }
 
   const updateProfileDetail=async(req,res)=>{
-    try {
-      // Extract ID from params and fields from body
-    //  console.log("updatedddd")
-     // console.log(req.params)
-    //  const { Id} = req.params.userId;
+    try {console.log('updateProfileDetail=========================================================================')
+    
       const { name, phone } = req.body;
- // console.log(name,email,phone)
-  //console.log(req.params.userId)
-   //   console.log("Request Body:", req.body);
-     // console.log("Address ID:", Id);
-  
-      // Find the old 
+ 
       const oldData = await User.findById(req.params.userId);
   
       if (!oldData) {

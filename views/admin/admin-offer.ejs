@@ -14,16 +14,18 @@
    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- End layout styles -->
     
     <style>
         body {
         font-family: "Arial", sans-serif;
-        background-color:#000000 !important;
+        background: color #f2f2ff !important;
         padding-top: 30px;
         padding-left:  0px;
         color: #333;
       }
+      
   .sidebar{
     padding:0px;
     margin-left: 0px;
@@ -40,17 +42,20 @@
     overflow: hidden; /* Ensures rounded corners */
     border-radius: 8px; /* Adjust this value for more/less rounding */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better appearance */
+    border-color: #28A745;
   }
   
   .table th, .table td {
     padding: 10px;
     text-align: left;
     border: 1px solid #ddd;
+    border-color: #28A745;
   }
      
   .table thead th, 
 .table-responsive .table th {
-  background-color: #81C408 !important;
+  background-color: #28A745 !important;
+  border-color: #28A745;
   color: white !important;
 }
 .content-main {
@@ -84,12 +89,12 @@
         }
   
         .btn-primary {
-          background-color: #81c408;
+          background-color: #28A745;
           border: none;
         }
   
         .btn-primary:hover {
-          background-color: #68a007;
+          background-color:#28A745;
         }
   
         .btn-danger {
@@ -133,14 +138,14 @@
           <li class="nav-item nav-category">
             <span class="nav-link">Navigation</span>
           </li>
-          <li class="nav-item menu-items">
+          <!-- <li class="nav-item menu-items">
             <a href="/admin/loadSalesPage" class="nav-link">
               <span class="menu-icon">
                 <i class="mdi mdi-speedometer"></i>
               </span>
               <span class="menu-title">Reports</span>
             </a>
-          </li>
+          </li> -->
           <li class="nav-item menu-items">
             <a href="/admin/dashboard" class="nav-link">
               <span class="menu-icon">
@@ -164,7 +169,7 @@
               <span class="menu-icon">
                 <i class="fas fa-box"></i>
               </span>
-              <span class="menu-title">products</span>
+              <span class="menu-title">Products</span>
             </a>
           </li>
           <li class="nav-item menu-items">
@@ -266,18 +271,18 @@
             </button>
           </div>
         </nav>
-<div class="main-panel">
-    <div class="content-wrapper">
+<div class="main-panel  bg-white">
+    <div class="content-wrapper bg-white">
       <div class="row">
         <div class="col-lg-12 grid-margin stretch-card">
-          <div class="card bg-dark">
+          <div class="card ">
             <div class="card-body">
-                <h2 class="card-title text-center">Offers List</h2>
-                <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createOfferModal">+ Add New Offer</button>
+                <h2 class="card-title text-center text-dark">Offers List</h2>
+                <button class="btn mb-3" style="background-color: #28A745;" data-bs-toggle="modal" data-bs-target="#createOfferModal">+ Add New Offer</button>
                 
             <div class="table-responsive bg-white">
                 <table class="table" border="1">
-                                    <thead>
+                                    <thead >
                                         <tr>
                                             <th>Offer Title</th>
                                             <th>Description</th>
@@ -326,9 +331,9 @@
                                                     data-start-date="<%= new Date(offer.startDate).toISOString().split('T')[0] %>" 
                                                     data-end-date="<%= new Date(offer.endDate).toISOString().split('T')[0] %>"
                                                     data-toggle="modal" 
-                                                    data-target="#editOfferModal">Edit</button>
+                                                    data-target="#editOfferModal"> <span class="material-icons">edit</span> </button>
                                                 </td>
-                                            </tr>
+                                            </tr> 
                                         <% }); %>
                                     </tbody>
                                 </table>
@@ -429,7 +434,7 @@
                             <input type="date" class="form-control" id="endDate" required>
                             <small id="endDateError" class="text-danger" style="display: none;">End Date is required.</small>
                         </div>
-                        <button type="submit" class="btn btn-primary">Create Offer</button>
+                        <button type="submit" class="btn " style="background-color:  #28A745;;">Create Offer</button>
                     </form>
                 </div>
             </div>

@@ -27,18 +27,18 @@
         body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f5f7;
-    color: #333;
+    color: #121111;
     padding: 20px;
     margin: 0;
     margin-top: 20px;
 }
 
 .content-main {
-    background-color:black;
+    background-color:#ddd;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    color:wheat;
+    color:black;
     margin-top: 50px;
     
 }
@@ -72,15 +72,18 @@ form {
 
 .form-control {
     padding: 12px;
+    background-color: #ddd;
     border-radius: 6px;
     border: 1px solid #ddd;
     font-size: 14px;
     color: #333;
     width: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .form-control:focus {
-    border-color: #81C408;
+    border-color: #218838;
     box-shadow: 0 0 5px rgba(129, 196, 8, 0.5);
 }
 
@@ -93,7 +96,7 @@ form {
 
 /* Button styling */
 button[type="submit"] {
-    background-color: #81C408;
+    background-color: #218838;
     color: white;
     padding: 12px 20px;
     border: none;
@@ -105,12 +108,13 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color:#218838;
 }
 
 /* Select dropdown styling */
 .select-dropdown {
     padding: 12px;
+    
     border-radius: 6px;
     border: 1px solid #ddd;
     font-size: 14px;
@@ -148,7 +152,7 @@ button[type="submit"]:hover {
 
 #saveButton {
     margin-top: 10px;
-    background-color: #81C408;
+    background-color:#218838;
     color: white;
     padding: 8px 15px;
     border: none;
@@ -157,7 +161,7 @@ button[type="submit"]:hover {
 }
 
 #saveButton:hover {
-    background-color: #0056b3;
+    background-color:#218838;
 }
 
 /* Flex layout for row elements */
@@ -218,11 +222,11 @@ button[type="submit"]:hover {
 
 <%- include("../../views/partials/admin/header") %>
 
-<section class="content-main">
+<section class="content-main  bg-white">
     <div class="row" >
         <div class="col-9">
             <div class="content-header ">
-                <h2  class="card-title text-center">Edit Product</h2>
+                <h2  class="card-title text-center text-dark">Edit Product</h2>
             </div>
         </div>
 
@@ -235,66 +239,64 @@ button[type="submit"]:hover {
                         <input type="hidden" name="productId" id="productId"value="<%= product._id %>">
                         <div class="row">
                         <div class="mb-8">
-                            <label for="product_name" class="form-label text-white">Product Name</label>
-                            <input type="text" name="productName" class="form-control border" id="product_name" value="<%= product.productName %>">
+                            <label for="product_name" class="form-label ">Product Name</label>
+                            <input type="text" name="productName" class="form-control border bg-white text-dark" id="product_name" value="<%= product.productName %>">
                             <div id="productNameError" class="error-message"></div>
                         </div>
 
                         </div>
-                        </div>
+                        
                         <div class="row">
                         <div class="mb-8">
-                            <label class="form-label text-white">Full description</label>
-                            <textarea name="descriptionData" class="form-control border" rows="10" id="descriptionid"><%= product.description %></textarea>
+                            <label class="form-label ">Full description</label>
+                            <textarea name="descriptionData" class="form-control border bg-white text-dark" rows="10" id="descriptionid"><%= product.description %></textarea>
                             <div id="descriptionError" class="error-message"></div>
                         </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-4">
-                                <label class="form-label text-white">Regular price ( / kg)</label>
-                                <input type="text" name="regularPrice" class="form-control border" value="<%= product.price %>">
+                                <label class="form-label ">Regular price ( / kg)</label>
+                                <input type="text" name="regularPrice" class="form-control border bg-white text-dark" value="<%= product.price %>">
                                 <div id="regularPriceError" class="error-message"></div>
                             </div>
                             <div class="col-lg-4">
-                                <label class="form-label text-white">Sale Price ( / kg)</label>
-                                <input type="text" name="salePrice" class="form-control border" value="<%= product.salesPrice %>">
+                                <label class="form-label ">Sale Price ( / kg)</label>
+                                <input type="text" name="salePrice" class="form-control border bg-white text-dark" value="<%= product.salesPrice %>">
                                 <div id="salePriceError" class="error-message"></div>
                             </div>
                             <div class="col-lg-4">
-                                <label class="form-label text-white">Stock</label>
-                                <input type="text" name="stock" class="form-control border" value="<%= product.stock %>">
+                                <label class="form-label ">Stock</label>
+                                <input type="text" name="stock" class="form-control border bg-white text-dark" value="<%= product.stock %>">
                                 <div id="stockError" class="error-message"></div>
                             </div>
                             <div class="col-lg-4">
-                                <label class="form-label text-white">Color</label>
-                                <input type="text" name="color" class="form-control border" value="<%= product.color %>">
+                                <label class="form-label">Color</label>
+                                <input type="text" name="color" class="form-control border bg-white text-dark" value="<%= product.color %>">
                                 <div id="colorError" class="error-message"></div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            
-                        </div>
-                       
+                      
+                       <br>
                         <div class="row">
                             <div class="col-lg-2">
                               <div class="mb-4">
-                                <label class="form-label text-white">Item</label>
+                                <label class="form-label ">Item</label>
 
                               </div>
                             </div>
                             <div class="col-lg-4">
                               <div class="mb-4">
-                                <input class="form-check-input" type="radio" name="item" id="item1" value="Fruit" <%= product.item === 'Fruit' ? 'checked' : '' %>>
-                                <label class="form-check-label text-white" for="item1">
+                                <input class="form-check-input text-dark" type="radio" name="item" id="item1" value="Fruit" <%= product.item === 'Fruit' ? 'checked' : '' %>>
+                                <label class="form-check-label " for="item1">
                                   Fruit
                                 </label>
                               </div>
                             </div>
                             <div class="col-lg-4">
                               <div class="mb-4">
-                                <input class="form-check-input" type="radio" name="item" id="item2" value="Vegetable" <%= product.item === 'vegetable' ? 'checked' : '' %>>
-                                <label class="form-check-label text-white" for="item2">
+                                <input class="form-check-input text-dark" type="radio" name="item" id="item2" value="Vegetable" <%= product.item === 'vegetable' ? 'checked' : '' %>>
+                                <label class="form-check-label " for="item2">
                                   Vegetable
                                 </label>
                               </div>
@@ -364,6 +366,7 @@ button[type="submit"]:hover {
                             <button class="btn btn-md btn-primary" type="submit">Update Product</button>
                         </div>
                     </form>
+                </div>
                 </div>
             </div>
         </div>

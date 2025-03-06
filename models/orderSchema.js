@@ -9,8 +9,8 @@
  
  razorpayOrderId: { type: String },  
  razorpayPaymentId: { type: String }, 
- razorpayPaymentStatus: { type: String, enum: ['pending', 'Paid', 'Failed'] },
- paymentStatus: { type: String, enum: ['pending', 'Paid', 'Failed'] },
+ razorpayPaymentStatus: { type: String, enum: ['Pending', 'Paid', 'Failed'] },
+ paymentStatus: { type: String, enum: ['Pending', 'Paid', 'Failed'] },
  orderedItems: [
     {
       productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
@@ -20,30 +20,40 @@
       price: { type: Number, default: 0 },
       discountApplied: { type: Number, default: 0 },
       totalPrice:{type:Number,},
-      status: {
+      status: { 
         type: String,
         required: true,
-        default:"Pending",
+
         enum: [
-          "Pending",
-          "Processing",
-          "Shipped",
-          "Out for Delivery",
-          "Delivered",
-          "Cancelled",
-          "Return Request",
-          'Return Approved',
-          'Return Rejected',
-          "Returned",
-        ],
+          "Pending", "Processing", "Shipped","Out for Delivery", "Delivered", "Cancelled", "Return Request",'Return Approved', 'Return Rejected', "Returned", ],
+    },
+    cancellationReason: {
+        type: String,
+        default: null
       },
+      returnRequestDate:{
+        type:Date
+      },
+      returnReason: {
+        type: String,
+        default: null
+    },
+    returnDeclinedReason: {
+        type: String
+    },
+    deliveredDateTime:{
+        type:Date
+    }
     },
   ],
- 
+  deliveredDateTime:{
+    type:Date
+},
    discount: { type: Number, default: 0 },
-     subtotal:{type:Number},
-     finalAmount: { type: Number, },
+     subtotal:{type:Number,default:0},
+     finalAmount: { type: Number, default:0},
    couponCode:{type:String,default:null},
+   deliveryCharge:{type:Number,default:0},
  //  couponDiscount:{type:Number},
       addressId: {
     type: Schema.Types.ObjectId,
@@ -65,6 +75,7 @@
    invoiceDate: { type: Date, default: Date.now },
    status: {
     type: String,
+    default:"Pending",
     required: true,
     enum: [
       "Pending",
@@ -84,6 +95,14 @@
   returnReason: { type: String },
   cancelReason: { type: String },
   paymentMethod: { type: String, required: true,enum:["COD","WALLET","RAZORPAY"] },
+  refundStatus: {
+    type: String,
+    enum: ['Not Initiated', 'Processing', 'Completed', 'Failed'],
+    default: 'Not Initiated'
+}, refundedAmount: {
+    type: Number,
+    default: 0  // To track the refunded amount in case of return or cancellation
+},
   createdOn: { type: Date, default: Date.now, required: true },
  }, {
     timestamps: true

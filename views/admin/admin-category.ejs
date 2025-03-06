@@ -1,15 +1,23 @@
 <head>
- 
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+<style>
+  .a.nav-link{
+background-color: #28a745;
+  }
+  .th{
+color:white
+  }
+</style>
 </head>
 <%- include("../../views/partials/admin/header") %> 
  
 <div class="main-panel">
-  <div class="content-wrapper">
+  <div class="content-wrapper  bg-white">
     <div class="row">
       <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
-            <h2 class="card-title text-center">Category Details</h2>
+            <h2 class="card-title text-center text-dark">Category Details</h2>
           <form action="/admin/searchCategory" method="GET" id=form1 class="search-form mb-4" >
             <div class="input-group">
              <input type="text" id="search" name="searchCategory" placeholder="Search by name"  class="form-control" required>
@@ -59,9 +67,9 @@
            <%}%> 
         </td>
          <td>
-          <button class="btn btn-warning edit-btn" onclick="enableEdit(this.closest('tr'), '<%= cat[i]._id %>')">Edit</button>
+          <button class="btn btn-warning edit-btn" onclick="enableEdit(this.closest('tr'), '<%= cat[i]._id %>')"> <span class="material-icons">edit</span> </button>
                           
-            <button class="btn btn-danger delete-btn" onclick="softDeleteCategory(this.closest('tr'), '<%= cat[i]._id %>')">Delete</button>
+            <button class="btn btn-danger delete-btn" onclick="softDeleteCategory(this.closest('tr'), '<%= cat[i]._id %>')"><span class="material-icons">delete</span></button>
           
           
            </td>

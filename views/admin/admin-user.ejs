@@ -1,11 +1,11 @@
 <%- include("../../views/partials/admin/header") %> 
-<div class="main-panel">
-  <div class="content-wrapper">
+<div class="main-panel bg-white">
+  <div class="content-wrapper bg-white">
     <div class="row">
       <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
-            <h2 class="card-title text-center">User Details</h2>
+            <h2 class="card-title text-center text-dark">User Details</h2>
 
             <!-- Move Search Form Here -->
             <form action="/admin/searchUser" method="GET" class="search-form mb-4">
@@ -18,13 +18,13 @@
                   placeholder="Search by name"
                   required
                 />
-                <button type="submit" class="btn btn-primary">Search</button>
+                <button type="submit" class="btn" style="background-color: #28A745;">Search</button>
               </div>
             </form>
 
             <div class="table-responsive">
               <table class="table table-hover" border="1">
-                <thead>
+                <thead style="background-color: #28A745;">
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
@@ -127,8 +127,7 @@
             "Blocked successfully",
             'success'
           );
-          //buttonlabel.innerHTML = currentText === "Block" ? "Unblocked" : "Blocked";
-         // row.style.opacity = '0.5';  // Visual feedback (dim the row)
+         
           window.location.href = '/admin/user';
         })
         .catch(error => {

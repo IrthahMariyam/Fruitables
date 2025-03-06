@@ -20,7 +20,7 @@
 
       .content-main {
         margin-top: 50px;
-        background-color: black;
+        background-color: white;
         border-radius: 8px;
         padding: 20px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -46,11 +46,12 @@
       .mb-4 {
         margin-bottom: 20px;
       }
-
+     
       .form-label {
         font-size: 14px;
         font-weight: 600;
         color: #555;
+       
       }
 
       .form-control {
@@ -60,10 +61,11 @@
         font-size: 14px;
         color: #333;
         width: 100%;
+        background-color: #dacfd0;
       }
 
       .form-control:focus {
-        border-color: #81c408;
+        border-color: #218838;
         box-shadow: 0 0 5px rgba(129, 196, 8, 0.5);
       }
 
@@ -76,7 +78,7 @@
 
       /* Button styling */
       button[type="submit"] {
-        background-color: #81c408;
+        background-color: #218838;
         color: white;
         padding: 12px 20px;
         border: none;
@@ -88,7 +90,7 @@
       }
 
       button[type="submit"]:hover {
-        background-color: #0056b3;
+        background-color: #218838;
       }
 
       /* Select dropdown styling */
@@ -103,6 +105,8 @@
       /* Radio buttons and labels styling */
       .form-check-input {
         margin-right: 10px;
+        background-color: #dacfd0;
+
       }
 
       .form-check-label {
@@ -128,10 +132,6 @@
         width: 250px;
       }
 
-      /* #cropperContainer1 {
-        display: none;
-        margin-top: 20px;
-      } */
       .thumbnails-container {
         display: flex;
         flex-wrap: wrap;
@@ -162,7 +162,7 @@
     />
     <%- include("../../views/partials/admin/header") %>
 
-    <section class="content-main">
+    <section class="content-main  bg-white">
       <div class="row">
         <div class="col-9">
           <div class="content-header">
@@ -181,7 +181,7 @@
                     type="text"
                     placeholder="Type here"
                     name="productName"
-                    class="form-control"
+                    class="form-control bg-white "
                     id="product_name"
                   />
                   <div id="productNameError" class="error-message"></div>
@@ -193,7 +193,7 @@
                     placeholder="Type here"
                     id="descriptionid"
                     name="description"
-                    class="form-control"
+                    class="form-control bg-white"
                     rows="4"
                   ></textarea>
                   <div id="descriptionError" class="error-message"></div>
@@ -207,7 +207,7 @@
                         placeholder="₹"
                         name="regularPrice"
                         type="text"
-                        class="form-control"
+                        class="form-control bg-white"
                       />
                       <div id="regularPriceError" class="error-message"></div>
                     </div>
@@ -219,7 +219,7 @@
                         placeholder="₹"
                         name="salePrice"
                         type="text"
-                        class="form-control"
+                        class="form-control bg-white"
                       />
                       <div id="salePriceError" class="error-message"></div>
                     </div>
@@ -227,14 +227,14 @@
                   <div class="col-lg-4">
                     <div class="mb-4">
                       <label class="form-label">Stock</label>
-                      <input name="stock" type="text" class="form-control" />
+                      <input name="stock" type="text" class="form-control bg-white" />
                       <div id="stockError" class="error-message"></div>
                     </div>
                   </div>
                   <div class="col-lg-4">
                     <div class="mb-4">
                       <label class="form-label">Color</label>
-                      <input name="color" type="text" id="color" class="form-control" />
+                      <input name="color" type="text" id="color" class="form-control bg-white" />
                       <div id="colorError" class="error-message"></div>
                     </div>
                   </div>
@@ -247,7 +247,7 @@
                   <div class="col-lg-4">
                     <div class="mb-4">
                       <input
-                        class="form-check-input"
+                        class="form-check-input bg-white"
                         type="radio"
                         name="item"
                         id="item1"
@@ -301,13 +301,13 @@
                 <!-- Image upload section -->
                 <div class="row">
                   <div class="col-lg-4">
-                    <label class="form-label">Choose Images</label>
+                    <label class="form-label text-dark">Choose Images</label>
                     <input
                       type="file"
                       id="upload"
                       multiple
                       onchange="handleImage(event)"
-                      class="form-control"
+                      class="form-control bg-white text-dark"
                     />
                   </div>
                   <div id="imageError" class="error-message"></div>

@@ -205,7 +205,108 @@
         .tracking-line.completed {
             background-color: #28a745;
         }
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
 
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+
+        /* Order Details Layout Improvements */
+        .order-details-section {
+            margin-bottom: 20px;
+        }
+
+        .order-details-section p {
+            margin: 0;
+        }
+
+        .order-details-section strong {
+            color: #333;
+        }
+
+        .cancel-reason {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .company-details {
+            flex: 1;
+        }
+        .company-details img {
+            max-height: 60px;
+            margin-bottom: 10px;
+        }
+        .invoice-details {
+            text-align: right;
+        }
+        .invoice-details h1 {
+            color: #088178;
+            margin: 0 0 10px 0;
+        }
+        .shipping-address {
+            margin-bottom: 30px;
+        }
+        .order-details table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .order-details th {
+            background: #f8f9fa;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #ddd;
+        }
+        .order-details td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .total-section {
+            width: 300px;
+            margin-left: auto;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+        .total-row.final {
+            font-weight: bold;
+            border-top: 2px solid #ddd;
+            margin-top: 8px;
+            padding-top: 12px;
+        }
+        .discount {
+            color: #28a745;
+        }
+        @media print {
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            .no-print {
+                display: none;
+            }
+        }
 
 
   </style>
@@ -224,75 +325,15 @@
       <p><strong>Status:</strong><%= order.status %></p>
       <p><strong>Payment Method : </strong><%= order.paymentMethod %></p>
     </div>
-  <!-- Tracking Progress -->
-  <div class="tracking-progress">
-    <!-- Order Placed -->
-    <div class="tracking-step <%= ['Pending', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
-        <div class="icon">✔</div>
-        <p>Order Placed</p>
-    </div>
-    <div class="tracking-line <%= ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>"></div>
-
-    <!-- Order Processed -->
-    <div class="tracking-step <%= ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
-        <div class="icon">✔</div>
-        <p>Order Processed</p>
-    </div>
-    <div class="tracking-line <%= ['Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>"></div>
-
-    <!-- Shipped -->
-    <div class="tracking-step <%= ['Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
-        <div class="icon">🚚</div>
-        <p>Shipped</p>
-    </div>
-    <div class="tracking-line <%= ['Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>"></div>
-    <!-- Out for Delivery -->
-    <div class="tracking-step <%= ['Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
-      <div class="icon">📦</div>
-      <p>Out for Delivery</p>
-  </div>
-  <div class="tracking-line <%= order.status === 'Delivered' ? 'completed' : '' %>"></div>
-
-  <!-- Delivered -->
-  <div class="tracking-step <%= order.status === 'Delivered' ? 'completed' : '' %>">
-      <div class="icon">✔</div>
-      <p>Delivered</p>
-  </div>
-</div>
-
-
-    <!-- Product Details -->
-    <div class="card">
-      <div class="card-header">Product Details</div>
-     
-      <% order.orderedItems.forEach((item) => { %>
-        <div class="product-card">
-          <img src="<%= item.productImage %>" alt="Product Image">
-          <div class="product-details">
-            <h4><%= item.productName %></h4>
-            <p>Quantity: <%= item.quantity %></p>
-            <p>Price: ₹<%= item.price %></p>
-            <p>Product Total:₹<%= item.totalPrice %></p>
-          </div>
-        </div>
-      <% }); %>
-    </div>
-
-    <!-- Price Details -->
-    <div class="card">
-      <div class="card-header">Price Details</div>
-      <p>Total Price: ₹<%= order.subtotal %></p>
-
-      <P>Coupon Code:<%=order.couponCode%><p>Coupon Discount: ₹<%= order.discount %></p>
-      <p>Shipping Charge: ₹100</p>
-      <p><strong>Payable Amount:</strong>₹ <%= order.finalAmount%></p>
-    </div>
-
+    
     <!-- Shipping Address -->
     <div class="card">
       <div class="card-header">Shipping Details</div>
       <p>Name: <%= order.address.name %></p>
-      <p>Address: <%= order.address.landmark %>, <%= order.address.district %>, <%= order.address.state %> - <%= order.address.pincode %></p>
+      <p>Address: <%= order.address.landmark %>,</p>
+      <p> <%= order.address.district %>,</p>
+      <p> <%= order.address.state %> </p>
+      <p> <%= order.address.pincode %></p>
       <p>Contact: <%= order.address.phone %></p>
     </div>
 <% if(order.status=="Cancelled") {%>
@@ -301,43 +342,214 @@
 <p><%=order.cancelReason%></p>
 </div>
 <%}%>
+
+
+ <!-- Order Placed -->
+
+<% for(let i=0; i < order.orderedItems.length; i++) { %>
+  <div class="order-item card">
+      <!-- Individual Product Tracking -->
+      <div class="tracking-progress card-header">
+          <!-- Order Placed -->
+          <div
+              class="tracking-step <%= ['Pending', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.orderedItems[i].status) ? 'completed' : '' %>">
+              <div class="icon">✔</div>
+              <p>Order Placed</p>
+          </div>
+          <div
+              class="tracking-line <%= ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.orderedItems[i].status) ? 'completed' : '' %>">
+          </div>
+
+          <!-- Order Processed -->
+          <div
+              class="tracking-step <%= ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.orderedItems[i].status) ? 'completed' : '' %>">
+              <div class="icon">✔</div>
+              <p>Processing</p>
+          </div>
+          <div
+              class="tracking-line <%= ['Shipped', 'Out for Delivery', 'Delivered'].includes(order.orderedItems[i].status) ? 'completed' : '' %>">
+          </div>
+
+          <!-- Shipped -->
+          <div
+              class="tracking-step <%= ['Shipped', 'Out for Delivery', 'Delivered'].includes(order.orderedItems[i].status) ? 'completed' : '' %>">
+              <div class="icon">🚚</div>
+              <p>Shipped</p>
+          </div>
+          <div
+              class="tracking-line <%= ['Out for Delivery', 'Delivered'].includes(order.orderedItems[i].status) ? 'completed' : '' %>">
+          </div>
+
+          <!-- Out for Delivery -->
+          <div
+              class="tracking-step <%= ['Out for Delivery', 'Delivered'].includes(order.orderedItems[i].status) ? 'completed' : '' %>">
+              <div class="icon">📦</div>
+              <p>Out for Delivery</p>
+          </div>
+          <div
+              class="tracking-line <%= order.orderedItems[i].status === 'Delivered' ? 'completed' : '' %>">
+          </div>
+
+          <!-- Delivered -->
+          <div
+              class="tracking-step <%= order.orderedItems[i].status === 'Delivered' ? 'completed' : '' %>">
+              <div class="icon">✔</div>
+              <p>Delivered</p>
+          </div>
+      </div>
+
+     <!-- Product Details -->
+     <div class="card">
+      <div class="card-header">Product Details</div>
+      
+       <div class="product-card">
+          <img src="<%= order.orderedItems[i].productImage %>" alt="no image" >
+          <div class="product-details">
+              <h4><%= order.orderedItems[i].productName %></h4>
+              <p><strong>Quantity:</strong><%= order.orderedItems[i].quantity %> </p>
+              <p><strong>Price:</strong> ₹<%= order.orderedItems[i].price %> </p>
+              <p><strong>Product Total:</strong> ₹<%= order.orderedItems[i].totalPrice %> </p>
+              <p><strong>Status:</strong><%= order.orderedItems[i].status %></p>
+        </div>
+          </div>
+  
+<!-- Cancel/Return Button Section -->
+<div class="d-flex flex-column align-items-end">
+  <% if (order.orderedItems[i].status === 'Pending' ||
+         order.orderedItems[i].status === 'Processing'){ %>
+               <select class="form-select mb-2 cancel-reason"
+                data-order-id="<%= order._id %>"
+               data-product-id="<%= order.orderedItems[i].productId %>">
+              <option value="">Select Cancellation Reason</option>
+              <option value="Changed My Mind">Changed My Mind</option>
+              <option value="Found a Cheaper Alternative">Found a Cheaper Alternative</option>
+              <option value="Incorrect Item Ordered">Incorrect Item Ordered</option>
+              <option value="Delivery Taking Too Long">Delivery Taking Too Long</option>
+              <option value="Product Quality Concern">Product Quality Concern</option>
+              <option value="Other Reason">Other Reason</option>
+      </select>
+      <button class="btn btn-danger btn-sm cancel-product"
+              data-order-id="<%= order._id %>"
+              data-product-id="<%= order.orderedItems[i].productId._id%>">
+          Cancel Order
+      </button>
+  <% } else if (order.orderedItems[i].status === 'Delivered') { %>
+      <% if (order.orderedItems[i].returnDeclinedReason||0) { %>
+          <button class="btn btn-danger btn-sm" disabled>
+              Return Declined
+          </button>
+          <small class="text-muted d-block mt-1">
+              Reason: <%= order.orderedItems[i].returnDeclinedReason %>
+          </small>
+      <% } else { %>
+          <select class="form-select mb-2 return-reason" 
+                  data-order-id="<%= order._id %>" 
+                  data-product-id="<%= order.orderedItems[i].productId._id %>">
+              <option value="">Select Return Reason</option>
+              <option value="Defective Product">Defective Product</option>
+              <option value="Not as Described">Not as Described</option>
+              <option value="Better Alternative Found">Better Alternative Found</option>
+              <option value="Quality Issues">Quality Issues</option>
+              <option value="Other">Other</option>
+          </select>
+          <button class="btn btn-warning btn-sm return-product" 
+                  data-order-id="<%= order._id %>" 
+                  data-product-id="<%= order.orderedItems[i].productId._id %>">
+              Return
+          </button>
+          <button class="btn btn-warning btn-sm return-product" 
+        data-order-id="<%= order._id %>" 
+        data-product-id="<%= order.orderedItems[i].productId._id || order.orderedItems[i].productId %>">
+    Return
+</button>
+      <% } %>
+  <% } else { %>
+      <button class="btn btn-secondary btn-sm" disabled>
+          <%= order.orderedItems[i].status %>
+      </button>
+  <% } %>
+</div>
+                                      </div>
+                                  </div>
+                                  <% } %>
+                                             
+                      
+
+                      <!-- Order Summary Section -->
+                    <!-- Order Summary Section -->
+                    <div class="card">
+  <div class="card-header">
+      Order Summary
+  </div>
+  <!-- <div class="card-body"> -->
+      <p><strong>Order Date:</strong> <%= order.createdOn.toLocaleDateString() %></p>
+      <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+      <p><strong>Subtotal:</strong> ₹<%= order.subtotal %></p>
+      <% if(order.discount > 0) { %>
+        <P><strong>Coupon Code:</strong><%=order.couponCode%><p><strong>Coupon Discount:</strong>  <span class="text-success">-₹<%= order.discount %></span></p>
+        </p>
+      <% } %>
+     
+      <p><strong>Delivery Charge:</strong> ₹<%= order.deliveryCharge %></p>
+      <p><strong>Total:</strong> ₹<%= order.finalAmount %></p>
+      <% if (order.paymentMethod === 'RAZORPAY' && order.paymentStatus === 'Pending') { %>
+        <div class="payment-actions">
+                <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                <button class="btn btn-danger" onclick="handlePayment('<%= order.orderId %>')">Complete Payment</button>
+            </div>
+    <% } %>
+
+<%if(order.paymentStatus=='Paid'){%>
+      <!-- Add the download button right here, after the total -->
+      <div class="mt-3">
+          <a href="/download-invoice/<%= order._id %>" class="btn btn-primary">
+              <i class="bi bi-download me-2"></i>Download Invoice
+          </a>
+       </div>
+  
+   <%}%>
+
     <!-- Cancellation Section -->
-     <% if(order.status == "Processing"){ %>
-    <div style="text-align: center;">
-      <button id="button-cancel" class="btn btn-danger">Cancel Order</button>
-    </div>
-
-    <div id="reasondiv" class="cancellation-reason-container">
-      <h3>Reason for Cancellation</h3>
-      <input type="text" id="cancellation-reason" placeholder="Enter reason for cancellation">
+    <% if(order.status == "Processing"||order.status =="Pending"){ %>
       <div style="text-align: center;">
-        <button id="go-back" class="btn btn-secondary">Go Back</button>
-        <button id="cancel-order"class="btn btn-danger"  >Submit</button>
+        <button id="button-cancel" class="btn btn-danger">Cancel Order</button>
+      </div>
+  
+      <div id="reasondiv" class="cancellation-reason-container">
+        <h3>Reason for Cancellation</h3>
+        <input type="text" id="cancellation-reason" placeholder="Enter reason for cancellation">
+        <div style="text-align: center;">
+          <button id="go-back" class="btn btn-secondary">Go Back</button>
+          <button id="cancel-order"class="btn btn-danger"  >Submit</button>
+        </div>
       </div>
     </div>
-  </div>
- <%}%>
-
-    <!-- Return Section -->
-     <% if(order.status == "Delivered"){ %>
-    <div style="text-align: center;">
-      <button id="button-return" class="btn btn-danger">Return Order</button>
-    </div>
-
-    <div id="returnreasondiv" class="return-reason-container">
-      <h3>Reason for Return</h3>
-      <input type="text" id="return-reason" placeholder="Enter reason for return">
+   <%}%>
+  
+      <!-- Return Section -->
+       <% if(order.status == "Delivered"){ %>
       <div style="text-align: center;">
-        <button id="go-back-return" class="btn btn-secondary">Go Back</button>
-        <button id="return-order"class="btn btn-danger"  >Submit</button>
+        <button id="button-return" class="btn btn-danger">Return Order</button>
+      </div>
+  
+      <div id="returnreasondiv" class="return-reason-container">
+        <h3>Reason for Return</h3>
+        <input type="text" id="return-reason" placeholder="Enter reason for return">
+        <div style="text-align: center;">
+          <button id="go-back-return" class="btn btn-secondary">Go Back</button>
+          <button id="return-order"class="btn btn-danger"  >Submit</button>
+        </div>
       </div>
     </div>
+   <%}%>
   </div>
- <%}%>
+   
+</div></div></div>
+</body>
+</html>
 
 
-
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -442,8 +654,249 @@
 
 
 
+// return and cancel
+                    document.querySelectorAll('.cancel-product').forEach(button => {
+                    button.addEventListener('click', async () => {
+                        const orderId = button.getAttribute('data-order-id');
+                        const productId = button.getAttribute('data-product-id');
+                        console.log('Return request - Order ID:', orderId);
+                        console.log('Return request - Product ID:', productId);
+                        // Find the corresponding reason dropdown
+                        const reasonDropdown = document.querySelector(`.cancel-reason[data-order-id="${orderId}"][data-product-id="${productId}"]`);
+                        const cancellationReason = reasonDropdown.value;
+
+                        // Validate that a reason is selected
+                        if (!cancellationReason) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Oops...',
+                                text: 'Please select a cancellation reason',
+                                confirmButtonText: 'OK'
+                            });
+                            return;
+                        }
+
+                        // SweetAlert2 confirmation dialog
+                        const result = await Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this cancellation!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, cancel it!'
+                        });
+
+                        // If user confirms, proceed with the cancellation
+                        if (result.isConfirmed) {
+                            try {
+                                const response = await fetch('/order/cancel-product', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        orderId,
+                                        productId,
+                                        cancellationReason
+                                    }),
+                                });
+
+                                const result = await response.json();
+
+                                if (result.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: result.message,
+                                        confirmButtonText: 'OK',
+                                    }).then(() => {
+                                        location.reload(); // Refresh the page to reflect changes
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: result.message,
+                                        confirmButtonText: 'OK',
+                                    });
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'An error occurred while canceling the product.',
+                                    confirmButtonText: 'OK',
+                                });
+                            }
+                        }
+                    });
+                });
+
+                //return
+                document.querySelectorAll('.return-product').forEach(button => {
+                button.addEventListener('click', async () => {
+        try {
+            const orderId = button.getAttribute('data-order-id');
+            const productId = button.getAttribute('data-product-id');
+
+            // Find the corresponding reason dropdown for this specific product
+            const reasonDropdown = button.closest('.d-flex').querySelector('.return-reason');
+            
+            if (!reasonDropdown) {
+                throw new Error('Return reason dropdown not found');
+            }
+
+            const returnReason = reasonDropdown.value;
+
+            // Validate return reason
+            if (!returnReason) {
+                await Swal.fire({
+                    icon: 'warning',
+                    title: 'Return Reason Required',
+                    text: 'Please select a reason for returning this product',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            // Confirmation dialog
+            const confirmResult = await Swal.fire({
+                title: 'Confirm Return',
+                text: 'Are you sure you want to return this product?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, return it!'
+            });
+
+            if (!confirmResult.isConfirmed) {
+                return;
+            }
+
+            // Submit return request
+            const response = await fetch('/order/return-product', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    orderId,
+                    productId,
+                    returnReason
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Return Requested',
+                    text: result.message,
+                    confirmButtonText: 'OK'
+                });
+                location.reload();
+            } else {
+                throw new Error(result.message || 'Return request failed');
+            }
+
+        } catch (error) {
+            console.error('Return request error:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Return Request Failed',
+                text: error.message || 'An error occurred while processing your return request',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+});
 
 
+
+async function handlePayment(orderId) {
+    try {
+        const response = await fetch("/getOrderDetails", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId }),
+        });
+
+        const orderData = await response.json();
+
+        if (!response.ok || !orderData.id) {
+            throw new Error(orderData.message || "Failed to fetch order details");
+        }
+console.log("orderData",orderData)
+        // Initialize Razorpay checkout
+        const options = {
+          key: "rzp_test_lcQt1KNawGzBhX",
+          //  amount: orderData.amount,
+           amount: orderData.amount * 100,
+            currency: "INR",
+            name: "Fruitables",
+            description: "Order Payment",
+            order_id: orderData.id,
+            handler: async function (response) {
+                const verifyResponse = await fetch("/razorpayverifyPayment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        paymentData: response,
+                        orderId: orderId,  // Use orderId instead of cartId
+                    }),
+                });
+
+                const verifyResult = await verifyResponse.json();
+                 console.log(verifyResult,"==============")
+                if (verifyResult.success) {
+                  await Swal.fire({
+                icon: "success",
+                text: "Payment successful! Redirecting...",
+                showConfirmButton: false,
+                timer: 1500
+                
+            });
+           
+            setTimeout(() => {
+                window.location.href = `/success?id=${verifyResult.orderId}`;
+            }, 1500);
+                } else {
+                    await Swal.fire({
+                        icon: "error",
+                        title: "Payment Failed!",
+                        text: "Payment verification failed. Please try again.",
+                        confirmButtonColor: "#d33",
+                        confirmButtonText: "Retry",
+                    });
+                }
+            },
+            prefill: {
+                name: orderData?.address?.name||"customer",
+                contact: orderData?.address?.phone||'9400511584'
+            },
+            theme: {
+                color: "#3399cc",
+            },
+        };
+
+        const razorpay = new Razorpay(options);
+        console.log("Amount sent to Razorpay:", options.amount);
+        razorpay.open();
+    } catch (error) {
+        console.error("Payment error:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Insufficient stock",
+            text: error.message || "Something went wrong. Please try again!",
+            confirmButtonColor: "#d33",
+            confirmButtonText: "OK",
+        });
+    }
+}
 
   </script>
 

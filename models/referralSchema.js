@@ -6,7 +6,7 @@ const referralSchema=new Schema({
         type:mongoose.Schema.Types.ObjectId,ref:"User",required:true,
     },
     referredUser:{
-        type:mongoose.Schema.Types.ObjectId,ref:"User",
+        type:mongoose.Schema.Types.ObjectId,ref:"User",default:null,
     },
     referralCode:{
         type:String,
@@ -16,3 +16,6 @@ const referralSchema=new Schema({
     },
    
 }, {timestamps:true},)
+
+const Referrel = mongoose.model("Referrel", referralSchema);
+module.exports = Referrel;

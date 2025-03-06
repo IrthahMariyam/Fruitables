@@ -355,19 +355,7 @@
             </div>
           </section>
         </main>
-        
-  <!-- <div class="container-fluid copyright bg-dark py-4">
-      <div class="container">
-          <div class="row">
-              <div class="col-md-12 text-center text-md-start mb-3 mb-md-0 ">
-              Fruitables
-              </div>
-            
-          </div>
-      </div>
-  </div> -->
-  
-  
+   
    <!-- Change Password Modal -->
    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true"> 
     <div class="modal-dialog"> 
@@ -804,15 +792,7 @@
           },})
       .then((res) => res.json())
       .then((data) => {
-        // Populate form fields with address data
-     //alert(data.name);
-    //  alert(data.landmark);
-    //  alert(data.district);
-    //  alert(data.state);
-    //  alert(data.pincode);
-    //  alert(data.phone);
-    //  alert(addressId);
-  
+      
         document.getElementById('addressId1').value = addressId;
         document.getElementById('name1').value=data.name;
         document.getElementById('landmark1').value = data.landmark;

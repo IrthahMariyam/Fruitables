@@ -79,7 +79,7 @@ border: 1px solid #ddd;
 }
 
 .table th {
-background-color: #81C408;
+background-color:  #28a745;
 color: white;
 }
 .btn {
@@ -119,7 +119,7 @@ margin: 0 5px;
 }
 
 .page-link {
-color: #007bff;
+color:  #28a745;
 text-decoration: none;
 padding: 8px 12px;
 border: 1px solid #ddd;
@@ -128,12 +128,12 @@ transition: background-color 0.3s, color 0.3s;
 }
 
 .page-link:hover {
-background-color: #007bff;
+background-color: #28a745;
 color: #fff;
 }
 
 .page-item.active .page-link {
-background-color: #007bff;
+background-color:  #28a745;
 color: white;
 border: none;
 }

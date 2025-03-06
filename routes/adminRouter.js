@@ -15,17 +15,17 @@ const { loadSalesPage } = require('../controllers/admin/salesController');
 const {salesReport}= require('../controllers/admin/salesController');
 router.get("/loadSalesPage",adminAuth,salesController.loadSalesPage);
 router.get("/sales-report",adminAuth,salesController.salesReport)
+router.get('/top-selling-products',adminAuth,salesController.getTopSellingProducts);
+router.get('/top-selling-categories',adminAuth,salesController.getTopCategories)
+
 
 router.get("/pageerror",adminController.pageerror)
 router.get("/login",adminController.loadLogin)
 router.post("/login",adminController.login)
-router.get("/",adminAuth,adminController.loadDashboard)
-router.get("/dashboard",adminAuth,adminController.loadDashboard)
+router.get("/",adminAuth,salesController.loadSalesPage)
+router.get("/dashboard",adminAuth,salesController.loadSalesPage)
 router.get("/logout",adminController.logout)
 
-//router.get('/salesreport',adminAuth,salesController.salesReport)
-//router.get('/sales-report', salesController.salesReport);
-//router.get('/download-report/:format', salesController.downloadReport);
 
 
 router.get("/user",adminAuth,userController.findUsers)
@@ -61,9 +61,16 @@ router.delete('/deleteImage',adminAuth,productController.deleteSingleImage);
 
 // Order Management
 router.get('/orders',adminAuth, orderController.listOrders);
-router.post('/orders/update-status/:orderId', adminAuth,orderController.updateOrderStatus);
+router.post('/orders/updateorderstatus/:orderId', adminAuth,orderController.updateOrderStatus);
 router.post('/orders/cancel/:id',adminAuth, orderController.cancelOrder);
 router.get('/getorderdetails/:orderid',adminAuth,orderController.getordedetailspage)
+router.post('/order/approve-return/:orderId', adminAuth, orderController.approveReturnRequest);
+router.post('/order/decline-return/:orderId',adminAuth,orderController.declineReturnRequest)
+
+
+router.post('/order/status-update/:id',adminAuth,orderController.updateStatus);
+router.post('/order/approve-return/:orderId', adminAuth, orderController.approveReturnRequest);
+router.post('/order/decline-return/:orderId',adminAuth,orderController.declineReturnRequest)
 
 // Inventory Management
 router.get('/inventory',adminAuth, productController.listInventory);

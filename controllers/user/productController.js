@@ -11,7 +11,7 @@ const session = require("express-session");
 
 
 const searchProducts = async (req, res) => {
- 
+  console.log('/login,userController.loadLogin=========================================================================')
     try {console.log("insise searchproducts===============")
       
       const id=req.session.user;
@@ -150,7 +150,7 @@ console.log("categoryWithIds=====",categoryWithIds)
   };
   
 const filterCategory=async(req,res)=>{
-    try {
+    try {console.log('/login,userController.loadLogin=========================================================================')
       const userId = req.session.user ? req.session.user._id : null;
       const category = req.query.category;
      
@@ -230,7 +230,7 @@ const filterCategory=async(req,res)=>{
 
   const filterProduct = async (req, res) => {
 
-
+    console.log('/login,userController.loadLogin=========================================================================')
     try {
       const userId = req.session.user ? req.session.user._id : null;
       const category = req.query.category;
@@ -343,7 +343,7 @@ const filterCategory=async(req,res)=>{
   
   
 const productDetails = async (req, res) => {
-  try {
+  try {console.log('/login,userController.loadLogin=========================================================================')
   //  console.log("inside detail page");
     const userId = req.session.user;
     // console.log(  userId,  "userid in product data started first in product details");
@@ -408,7 +408,7 @@ const productDetails = async (req, res) => {
     // console.error(error?.response?.data?.message || error?.message || 'Error adding product')
   }
 };
-const productReview = async (req, res) => {
+const productReview = async (req, res) => {console.log('productReview11111=========================================================================')
   const { productId, username, rating, reviewText } = req.body;
   console.log(req.body, "product review");
 

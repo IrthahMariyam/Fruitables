@@ -4,7 +4,7 @@ const Wishlist= require('../../models/whishlistSchema')
 
 
 const addtoWishlist = async (req, res) => {
-    try {
+    try {console.log('addtoWishlist1111=========================================================================')
         const user = req.session.user;
         console.log(user, "User in wishlist");
 
@@ -40,7 +40,7 @@ const addtoWishlist = async (req, res) => {
         const existingProduct = wishlistDoc.products.find((item) => item.productId.toString() === productId);
       
        if(existingProduct){
-            return res.status(200).json({ success: "Product already in wishlist" });
+            return res.status(200).json({ message:"Product already in wishlist" });
         }
 
        
@@ -51,13 +51,13 @@ const addtoWishlist = async (req, res) => {
 
     } catch (error) {
         console.error("Error adding to wishlist:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({error: "Internal server error" });
     };
 }  
 
     const getWishlistPage = async (req, res) => {
     try {
-   
+      console.log('getWishlistPage1111=========================================================================')
     if (!req.session.user) {
      return res.redirect('/login'); 
     }
@@ -88,7 +88,7 @@ const addtoWishlist = async (req, res) => {
  
 
 const removeFromWishlist = async (req, res) => {
-    try {
+    try {console.log('removeFromWishlist1111=========================================================================')
       const user = req.session.user;
       if (!user) {
         return res.status(401).json({ error: 'User not logged in' });
@@ -111,7 +111,7 @@ const removeFromWishlist = async (req, res) => {
       }
   
       const removedItem = wishlist.products[itemIndex];
-     // product.stock += removedItem.quantity;
+    
   
      wishlist.products.splice(itemIndex, 1);
   
@@ -128,7 +128,7 @@ const removeFromWishlist = async (req, res) => {
 
 
   const whishlistToCart = async (req, res) => {
-    try {
+    try {console.log('whishlistToCart1111=========================================================================')
       const { productId } = req.body; 
       console.log("product",req.body)
       const userId = req.session.user; 

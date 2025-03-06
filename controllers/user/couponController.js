@@ -9,7 +9,7 @@ const env = require("dotenv").config();
 
 
 const getCouponCodes= async(req, res)=>{
-    try {
+    try {console.log('getCouponCodes11111=========================================================================')
     console.log("inside getcoupon user")
     const currentDate = new Date();
       const cartTotal = parseFloat(req.query.cartTotal) || 0;
@@ -40,7 +40,8 @@ const getCouponCodes= async(req, res)=>{
 
 
 const applyCoupon = async (req, res) => {
-    try { console.log("inside appply coupons")
+    try { console.log('applyCoupon1111=========================================================================')
+        console.log("inside appply coupons")
         const { couponCode, cartTotal } = req.body;
       //  console.log(req.body,"rrrrrrrrrrrrrrrrrrrr")
         const userId = req.session.user._id;
@@ -162,7 +163,8 @@ if (!existingUserUsage) {
 
 
 const removeCoupon = async (req, res) => {
-    try {console.log("inside remove coupon")
+    try {console.log('removeCoupon1111=========================================================================')
+        console.log("inside remove coupon")
         console.log("query",req.query)
         const code = req.query.couponCode;
         console.log(code,"code")

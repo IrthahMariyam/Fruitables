@@ -134,7 +134,7 @@ const salesReport = async (req, res) => {
             createdOn: { $gte: start, $lte: end },
             status: "Delivered"  // Filter for delivered orders only
         }).populate("userId", "name"); 
-console.log("orders in sales",orders)
+   // console.log("orders in sales",orders)
         // Format response data correctly
         const reportData = orders.map(order => ({
             orderId: order.orderId,   // Ensure you use the correct field name
@@ -152,10 +152,138 @@ console.log("orders in sales",orders)
     }
 };
 
+const getTopSellingProducts = async (req, res) => {
+    try {
+        const { filter } = req.query; 
+//console.log("date",req.query)
+        let startDate, endDate;
+        if (filter === 'daily') {
+            startDate = moment().startOf('day').toDate();
+            endDate = moment().endOf('day').toDate();
+        }else if (filter === 'weekly') {
+            startDate = moment().subtract(7, 'days').startOf('day').toDate();
+            endDate = moment().endOf('day').toDate()
+        } else if (filter === 'monthly') {
+            startDate = moment().startOf('month').toDate();
+            endDate = moment().endOf('month').toDate();
+        } else if (filter === 'yearly') {
+            startDate = moment().startOf('year').toDate();
+            endDate = moment().endOf('year').toDate();
+        }else {
+            startDate = new Date(0); // Default to all-time if no valid filter
+            endDate = new Date();
+        }
+
+        console.log(`Filtering orders between ${startDate} and ${endDate}`);
+
+        
+        const orders = await Order.find({
+            status: 'Delivered',
+            createdOn: { $gte: startDate, $lte: endDate }
+        }).populate('orderedItems.productId').limit(10)
+
+        console.log(`Found ${orders.length} orders`);
+
+        
+        const productSales = {};
+        orders.forEach(order => {
+            order.orderedItems.forEach(item => {
+                const productId = item.productId._id.toString();
+                if (productSales[productId]) {
+                    productSales[productId].totalSold += item.quantity;
+                } else {
+                    productSales[productId] = {
+                        productName: item.productName,
+                        totalSold: item.quantity
+                    };
+                }
+            });
+        });
+
+      //  console.log('Product sales data:', productSales);
+
+        
+        const topSellingProducts = Object.values(productSales);
+        topSellingProducts.sort((a, b) => b.totalSold - a.totalSold); 
+        
+
+      //  console.log('Sorted top selling products:', topSellingProducts);
+        const limitedTopSellingProducts = topSellingProducts.slice(0, 10); // Limit to top 10 products
+
+     //   console.log('Limited top selling products:', limitedTopSellingProducts);
+
+        res.json(limitedTopSellingProducts);
+
+       // res.json(topSellingProducts);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+  
+const getTopCategories = async (req, res) => {
+    try {
+      const { filter } = req.query; 
+  
+      const dateFilter = getDateFilter(filter); 
+  
+      const topCategories = await Order.aggregate([
+        { $unwind: '$orderedItems' },
+        { $lookup: { from: 'products', localField: 'orderedItems.productId', foreignField: '_id', as: 'productDetails' } },
+        { $unwind: '$productDetails' },
+        { $lookup: { from: 'categories', localField: 'productDetails.category', foreignField: '_id', as: 'categoryDetails' } },
+        { $unwind: '$categoryDetails' },
+        { $match: { createdAt: { $gte: dateFilter.startDate, $lt: dateFilter.endDate } } },
+        { $group: { _id: '$categoryDetails._id', categoryName: { $first: '$categoryDetails.name' }, totalSold: { $sum: '$orderedItems.quantity' } } },
+        { $sort: { totalSold: -1 } },
+        { $limit: 10 } 
+      ]);
+  
+      res.json(topCategories);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error fetching top categories' });
+    }
+  };
+  
+  const getDateFilter = (filter) => {
+    const now = new Date();
+    let startDate, endDate;
+  
+    switch (filter) {
+      case 'daily':
+        startDate = new Date(now.setHours(0, 0, 0, 0)); 
+        endDate = new Date(now.setHours(23, 59, 59, 999)); 
+        break;
+      case 'monthly':
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1); 
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); 
+        break;
+      case 'yearly':
+        startDate = new Date(now.getFullYear(), 0, 1); 
+        endDate = new Date(now.getFullYear(), 12, 31); 
+        break;
+      default:
+        startDate = new Date(0); 
+        endDate = new Date(); 
+    }
+  
+    return { startDate, endDate };
+  };
+  
+
+
+
 
 module.exports = {
     loadSalesPage,
     salesReport,
+    getTopSellingProducts,
+    getTopCategories,
+    getDateFilter,
+    
+
 }
 
 
