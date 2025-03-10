@@ -49,7 +49,7 @@ app.use('/admin',adminRouter)
 
 
 const PORT=process.env.PORT||3000
-app.listen(PORT,()=>console.log(`server running at http://localhost:${PORT}`))
+app.listen(PORT, '0.0.0.0',()=>console.log(`server running at http://localhost:${PORT}`))
 
 
 
