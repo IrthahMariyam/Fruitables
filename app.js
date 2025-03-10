@@ -48,7 +48,7 @@ app.use('/admin',adminRouter)
 
 
 
-const PORT=3000||process.env.PORT
+const PORT=process.env.PORT||3000
 app.listen(PORT,()=>console.log(`server running at http://localhost:${PORT}`))
 
 
