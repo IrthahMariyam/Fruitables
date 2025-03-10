@@ -26,6 +26,9 @@ const loadHomepage = async (req, res) => {
     .populate("category");
      const user = req.session.user;
 
+     const productReviews = await getProductReviewsForHomepage();
+     
+
      if (user) {
       const userData = await User.findOne({ _id: user._id });
       res.locals.name = userData.name;
@@ -35,7 +38,7 @@ const loadHomepage = async (req, res) => {
          name: req.session.user.name,
          products: products,
          category: category,
-         cart:cartitem
+         cart:cartitem, productReviews,
          });
      } else {
         res.render("home", {
@@ -43,9 +46,12 @@ const loadHomepage = async (req, res) => {
         name: false,
         products: products,
         category: category,
-        
+         productReviews,
+      
       });
     }
+   
+    
   } catch (error) {
     res.status(500).send("server error");
     console.log("not found", error.message);
@@ -53,6 +59,45 @@ const loadHomepage = async (req, res) => {
 };
 
 
+// Function to get reviews from all products for the homepage
+const getProductReviewsForHomepage = async () => {
+  try {
+    // Find all listed products that have at least one review
+    const productsWithReviews = await Product.find({
+      isListed: true,
+      isDeleted: false,
+      'review.0': { $exists: true } // Only products with at least one review
+    }).select('productName productImage review')
+    
+    // Format the review data for homepage display
+    const formattedReviews = [];
+    
+    productsWithReviews.forEach(product => {
+      product.review.forEach(review => {
+        formattedReviews.push({
+          productId: product._id,
+          productName: product.productName,
+          productImage: product.productImage[0], 
+          username: review.username,
+          text: review.text,
+          rating: review.rating,
+          date: review.date
+        });
+      });
+    });
+    
+    // Sort by newest reviews first
+    formattedReviews.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    // Optionally limit the number of reviews returned
+    const latestReviews = formattedReviews.slice(0, 10); // Return 10 most recent reviews
+    
+    return latestReviews;
+  } catch (error) {
+    console.error("Error fetching product reviews:", error);
+    return [];
+  }
+};
 
 const pageNotFound = async (req, res) => {
   try {

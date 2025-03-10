@@ -92,6 +92,7 @@
                                 <div class="col-md-12 col-lg-6"><br>
                                     <div class="form-item w-100">
                                         <input type="hidden" class="form-control" id="addressId" value="<%= address._id %>">
+                                        <div id="addresserror" class="text-danger text-center"></div>
                                         <label class="form-label my-6">Name<sup>*</sup></label>
                                         <input type="text" class="form-control" id="name" value="<%= address.name %>" >
                                     </div>
@@ -131,6 +132,7 @@
                             <div class="table-responsive">
                               <%if(carts){%>
                               <input type="text"  id="cartId" hidden value="<%=carts._id %>">
+
                               <%}%>
                                 <table class="table text-center">
                                     <thead>
@@ -231,7 +233,13 @@
                                             <td class="py-5"></td>
                                             <td class="py-5">
                                                 <div class="py-3 border-bottom border-top">
-                                                    <p class="mb-0 text-dark" id="totalorderamount"> ₹<%=total + 100 %></p>
+                                                    <p class="mb-0 text-dark" id="totalorderamount"> 
+                                                      <% if(total >= 1000) { %>
+                                                        ₹<%=total + 0 %>
+                                                    <% } else { %>
+                                                      ₹<%=total + 50 %>
+                                                    <% } %>
+                                                    </p>
                                                 </div>
                                             </td>
                                         </tr>
@@ -240,35 +248,37 @@
                             </div>
                             <!-- Payment Methods -->
                             <h5 class="my-4">Payment Method</h5>
-                           
-                           <!-- razorpay -->
-                            <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                                <div class="col-12">
-                                    <div class="form-check text-start my-3">
-                                        <input type="checkbox" class="form-check-input bg-primary border-0"  name="paymentMethod" id="razorpay" value="RAZORPAY">
-                                        <label class="form-check-label" >via Razorpay</label>
-                                    </div>
-                                </div>
-                            </div>
-                             <!-- Wallet -->
-                             <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                              <div class="col-12">
-                                <div class="form-check text-start my-3">
-                                  <input type="checkbox" class="form-check-input bg-primary border-0" id="wallet" name="paymentMethod" value="WALLET">
-                                  <label class="form-check-label" for="wallet">Wallet</label>
-                           
-                                </div> 
-                            </div>
-                          </div>
-                          <!-- COD -->
-                            <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                                <div class="col-12">
-                                    <div class="form-check text-start my-3">
-                                        <input type="checkbox" class="form-check-input bg-primary border-0" id="cod" name="paymentMethod" value="COD">
-                                        <label class="form-check-label" for="paymentMethodCOD">Cash on Delivery</label>
-                                    </div>
-                                </div>
-                            </div>
+                      
+                            <!-- Razorpay -->
+<div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+  <div class="col-12">
+      <div class="form-check text-start my-3">
+          <input type="radio" class="form-check-input bg-primary border-0" name="paymentMethod" id="razorpay" value="RAZORPAY">
+          <label class="form-check-label" for="razorpay">via Razorpay</label>
+      </div>
+  </div>
+</div>
+
+<!-- Wallet -->
+<div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+  <div class="col-12">
+      <div class="form-check text-start my-3">
+          <input type="radio" class="form-check-input bg-primary border-0" name="paymentMethod" id="wallet" value="WALLET">
+          <label class="form-check-label" for="wallet">Wallet</label>
+      </div> 
+  </div>
+</div>
+
+<!-- COD -->
+<div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+  <div class="col-12">
+      <div class="form-check text-start my-3">
+          <input type="radio" class="form-check-input bg-primary border-0" name="paymentMethod" id="cod" value="COD">
+          <label class="form-check-label" for="cod">Cash on Delivery</label>
+      </div>
+  </div>
+</div>
+
                             <div class="mt-5 d-flex align-items-center">
                                 <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" 
                                         type="button" id="viewCouponsButton"
@@ -318,10 +328,7 @@
         <script>
         document.addEventListener("DOMContentLoaded", function () {
         //coupons
-      
-
-
-        const couponButton = document.getElementById('viewCouponsButton');
+              const couponButton = document.getElementById('viewCouponsButton');
         const deletecouponButton = document.getElementById('deleteCouponsButton');
         if (couponButton) {
     couponButton.addEventListener('click', fetchAndDisplayCoupons);
@@ -393,15 +400,7 @@
                     const price = row.querySelector("td:nth-child(3)")?.textContent.replace("₹", "").trim();
                     const quantity = row.querySelector("td:nth-child(4)")?.textContent.trim();
                     const totalPrice = row.querySelector("td:nth-child(5)")?.textContent.replace("₹", "").trim();
-                    // alert(_id);
-                    // alert(productName)
-                    // alert(price)
-                    // alert(quantity)
-                    // alert(totalPrice)
-                    // console.log("productName",productName)
-                    // console.log("price:" ,parseFloat(price))
-                    // console.log("quantity",parseInt(quantity))
-                    // console.log("totalPrice",parseFloat(totalPrice))
+                 
                     if (productName && price && quantity && totalPrice) {
                         products.push({
                             _id,
@@ -423,15 +422,7 @@
                  const paymentCheckboxes = document.querySelectorAll('input[name="paymentMethod"]:checked');
                  const paymentMethod = Array.from(paymentCheckboxes).map(checkbox => checkbox.value)[0];
                  let couponCode = $('#couponapplied').text().trim()||"0";
-        // if(!couponCode)
-        // {couponCode="NIL"}
-        // console.log(couponCode,"dom loading");
-
-        
-        // const totalPrice=document.getElementById('totalorderamount').innerText
-        // console.log(totalPrice,"totalPrice")
-        // const couponDiscount=document.getElementById('discountprice').innerText;
-       
+      
 const tp=$(`#totalorderamount`).text()
 const totalPrice=parseFloat(tp.replace("₹", ""))
 console.log(totalPrice,"totalPrice")
@@ -469,20 +460,23 @@ console.log(cartt)
                 const validIndianPattern = /^[6-9]\d{9}$/;
   const invalidPattern = /^(.)\1{9}$/;
 if(!address)
-{
-  alert("Please give address")
+{document.getElementById('addresserror').textContent='Please give address'
+ // alert("Please give address")
   return
 }
   if (!address.name || !address.landmark || !address.district || !address.state || !address.pincode || !address.phone) {
-    alert('Please fill all fields!');
+    document.getElementById('addresserror').textContent='Please fill all fields!'
+    //alert('Please fill all fields!');
     return;
   }
   if (invalidPattern.test(address.phone)) {
-    alert('Phone number cannot be all the same digit');
+    document.getElementById('addresserror').textContent='Phone number cannot be all the same digit'
+    //alert('Phone number cannot be all the same digit');
     return;
   }
   if (!validIndianPattern.test(address.phone)) {
-    alert('Enter a valid Indian phone number');
+    document.getElementById('addresserror').textContent='Enter a valid Indian phone number'
+  //  alert('Enter a valid Indian phone number');
     return;
   }
  // alert("hai")
@@ -504,16 +498,7 @@ if(!address)
                     orderedItems: getProductDetails(), // Include product details
                 };
                 console.log(orderData,"ejs")
-                // Validate required fields
-                // if (!Object.values(orderData).every(Boolean) || !orderData.orderedItems.length) {
-                //     Swal.fire({
-                //         title: "Incomplete Details",
-                //         text: "Please fill all required fields and ensure products are present in the cart.",
-                //         icon: "warning",
-                //     });
-                //     return;
-                // }
-
+                
   //payment implemetation starts
   console.log("cartId before place",cartId)
   console.log("address",address)
@@ -592,9 +577,10 @@ fetch(`/removeCoupon?couponCode=${couponCode}`, {
       });
 
       $(`#discountprice`).text( `₹ 0`)
-      
-    
-      const finalTotal = 100 + parseFloat(total)
+      let delivery=0;
+      if(parseFloat(total)<1000)
+      delivery=50;
+      const finalTotal = delivery + parseFloat(total)
       $('#totalorderamount').text(`₹${finalTotal}`);
       $('#couponapplied').text("")
 
@@ -739,9 +725,13 @@ function applyCoupon(couponCode) {
 
 //console.log("seen")
       $(`#discountprice`).text( `₹${data.discount.toFixed(2)}`)
-      
+      let delivery=0;
+      if(parseFloat(data.finalAmount)<1000)
+      delivery=50;
+      const finalTotal = delivery + parseFloat(data.finalAmount)
+
     
-      const finalTotal = 100 + data.finalAmount;
+    //  const finalTotal = 100 + data.finalAmount;
       $('#totalorderamount').text(`₹${finalTotal.toFixed(2)}`);
 
 
@@ -868,7 +858,21 @@ const createOrder = async (orderData) => {
 
         const rzp = new Razorpay(options);
         console.log("Amount sent to Razorpay:", options.amount);
-        rzp.open();
+        /////////failure
+        rzp.on('payment.failed', function (response) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Payment Failed!',
+            html: `Reason: ${response.error.reason}<br>You can continue the order in your orders section and retry the payment.`,
+            confirmButtonText: 'Okey',
+            confirmButtonColor: '#d33'
+        }).then(() => {
+            window.location.href="/failedPayment"
+        });
+        
+        console.error("Payment failure details:", response.error); // Optional: Log detailed error information
+    });
+        rzp.open();//open
     } catch (error) {
         console.log("Error creating Razorpay order:", error);
         await Swal.fire({
@@ -902,23 +906,12 @@ const verifyPayment = async (paymentData, cartId) => {
                 timer: 1500
         
         
-        
-        
               });
             console.log("result",result)
             setTimeout(() => {
                 window.location.href = `/success?id=${result.orderId}`;
             }, 1500);
-        } else {
-            //throw new Error(result.message || "Payment verification failed");
-            await Swal.fire({
-                        icon: "error",
-                        title: "Payment Failed!",
-                        text: "Payment verification failed. Please try again.",
-                        confirmButtonColor: "#d33",
-                        confirmButtonText: "Retry",
-                    });
-          }
+        } 
     } catch (error) {
         console.error("Error verifying payment:", error);
         await Swal.fire({
@@ -929,10 +922,11 @@ const verifyPayment = async (paymentData, cartId) => {
         });
         
         setTimeout(() => {
-            window.location.href = '/paymentFailed';
+            window.location.href = '/failedPayment';
         }, 1500);
     }
 };
+
 
 const processWalletPayment = async (orderData) => {
     try {

@@ -162,7 +162,7 @@
     />
     <%- include("../../views/partials/admin/header") %>
 
-    <section class="content-main  bg-white">
+    <section class="content-main bg-white">
       <div class="row">
         <div class="col-9">
           <div class="content-header">
@@ -490,6 +490,11 @@
         document.getElementById("regularPriceError").innerText="regular Price must positive value"
         return
        }
+       if(regularPrice==0)
+       {
+        document.getElementById("regularPriceError").innerText="Price must be a value greater than zero"
+        return
+       }
 
   const salePrice = parseInt(document.querySelector('[name="salePrice"]').value);
   if(salePrice<0)
@@ -497,12 +502,14 @@
         document.getElementById("salePriceError").innerText="sale Price must positive value"
         return
        }
+       if(salePrice==0)
+       {
+        document.getElementById("salePriceError").innerText="sale Price must be a value greater than zero"
+        return
+       }
 if(parseInt( salePrice)>parseInt( regularPrice)){  
    document.getElementById("regularPriceError").innerText="regular price must be greater than sales price"
-  // Swal.fire({
-  //         icon: 'error',
-  //         title: 'salesprice must be less than price',
-  //         text: 'salesprice must be less than price'})
+       
 return 
 }
         const stock = document.querySelector('[name="stock"]').value;
@@ -541,13 +548,13 @@ return
         //  alert("negative values not allowed")
           return
         }
-        if(salePrice<0){
-          document.getElementById("salePriceError").innerText="Negative values not allowed";
+        if(salePrice<=0){
+          document.getElementById("salePriceError").innerText="Enter a valid price";
         //  alert("negative values not allowed")
           return
         }
-        if(regularPrice<0){
-          document.getElementById("regularPriceError").innerText="Negative values not allowed";
+        if(regularPrice<=0){
+          document.getElementById("regularPriceError").innerText="Enter a valid price";
         //  alert("negative values not allowed")
           return
         }
@@ -601,11 +608,7 @@ return
                 error?.message ||
                 "Error adding product"
         });
-            // alert(
-            //   error?.response?.data?.message ||
-            //     error?.message ||
-            //     "Error adding product"
-            // );
+            
           });
         document.getElementById("productForm").reset();
         const imageField = document.getElementById("cropperContainers");

@@ -139,8 +139,9 @@ const salesReport = async (req, res) => {
         const reportData = orders.map(order => ({
             orderId: order.orderId,   // Ensure you use the correct field name
             customerName: order.userId ? order.userId.name : "Guest",  // Fetch populated user name
-            PayableAmount: order.finalAmount || 0.00,  // Use correct schema field
+            TotalAmount:order.subtotal,
             discount: order.discount || 0,  // Ensure discount field is fetched correctly
+            PayableAmount: order.finalAmount || 0.00,  // Use correct schema field          
             date: order.createdOn.toISOString().split('T')[0] // Format date
         }));
 

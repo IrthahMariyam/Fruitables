@@ -54,7 +54,7 @@
      finalAmount: { type: Number, default:0},
    couponCode:{type:String,default:null},
    deliveryCharge:{type:Number,default:0},
- //  couponDiscount:{type:Number},
+ 
       addressId: {
     type: Schema.Types.ObjectId,
     ref: "Address",
@@ -95,11 +95,7 @@
   returnReason: { type: String },
   cancelReason: { type: String },
   paymentMethod: { type: String, required: true,enum:["COD","WALLET","RAZORPAY"] },
-  refundStatus: {
-    type: String,
-    enum: ['Not Initiated', 'Processing', 'Completed', 'Failed'],
-    default: 'Not Initiated'
-}, refundedAmount: {
+  refundedAmount: {
     type: Number,
     default: 0  // To track the refunded amount in case of return or cancellation
 },

@@ -26,39 +26,41 @@ const razorpayInstance = new Razorpay({
 
 })
 
-const history=async (req,res) => 
-    {try {console.log('history111=========================================================================')
-      const userId = req.session.user._id; // Get the logged-in user's ID
-      const cartitem=await Cart.findOne({userId:userId})
-      const orders = await Order.find({ userId })
-        .populate('orderedItems.productId')
-        .sort({ createdOn: -1 });
+// const history=async (req,res) => 
+//     {try {console.log('history111=========================================================================')
+//       const userId = req.session.user._id; // Get the logged-in user's ID
+//       const cartitem=await Cart.findOne({userId:userId})
+//       const orders = await Order.find({ userId })
+//         .populate('orderedItems.productId')
+//         .sort({ createdOn: -1 });
     
-      res.json(orders); // Return orders as JSON
-    } catch (err) {
-      console.error('Error fetching order history:', err);
-      res.status(500).json({ error: 'Failed to fetch order history' });
-    }}
+//       res.json(orders); // Return orders as JSON
+//     } catch (err) {
+//       console.error('Error fetching order history:', err);
+//       res.status(500).json({ error: 'Failed to fetch order history' });
+//     }}
     
-      const orderHistory=async(req,res)=>{
-        try {console.log('orderHistory11111=========================================================================')
-          //console.log("inside history+++++++++", req.session.user._id)
-          const orders = await Order.find({ userId:req.session.user._id })
-              .populate("orderedItems.productId")
-              .sort({ createdOn: -1 });
-              const cartitem=await Cart.findOne({userId:req.session.user._id})
-              res.render("orders/history", { orders ,cart:cartitem});
-      } catch (err) {
-          console.error("Error fetching orders:", err);
-          res.status(500).send("Internal Server Error");
-      }
-      }
+//       const orderHistory=async(req,res)=>{
+//         try {console.log('orderHistory11111=========================================================================')
+//           //console.log("inside history+++++++++", req.session.user._id)
+//           const orders = await Order.find({ userId:req.session.user._id })
+//               .populate("orderedItems.productId")
+//               .sort({ createdOn: -1 });
+//               const cartitem=await Cart.findOne({userId:req.session.user._id})
+//               res.render("orders/history", { orders ,cart:cartitem});
+//       } catch (err) {
+//           console.error("Error fetching orders:", err);
+//           res.status(500).send("Internal Server Error");
+//       }
+//       }
     
     const cancelOrder = async (req, res) => {
-      try {console.log('cancelOrder11111=========================================================================')
+      try {
+        console.log('cancelOrder ordercancel=========================================================================')
         const { id } = req.params;
         const { 
-          cancellationReason, status } = req.body;
+          cancelReason, status } = req.body;
+          console.log("req body",req.body)
         const userId = req.session.user?._id;
         console.log(userId,"userid")
     console.log("req",req.params)
@@ -67,18 +69,20 @@ const history=async (req,res) =>
         const order = await Order.findById(id);
 
         if (!order) {
-          return res.status(404).json({ message: "Order not found" });
+          return res.status(404).json({ success:false,message: "Order not found" });
         }
     console.log(order,"order=============")
+
+    const amount = order.finalAmount;
         // Prevent canceling a shipped order
         if (["Shipping", "Out for Delivery", "Delivered"].includes(order.status)) {
-          return res.status(400).json({ message: "Cannot cancel a shipped order." });
+          console.log("inside status checking")
+          return res.status(400).json({success:false, message: "Cannot cancel a shipped order." });
         }
     
-        // Ensure required fields exist
-        if (!
-          cancellationReason || !status) {
-          return res.status(400).json({ message: "Invalid request data" });
+        if (!cancelReason || !status) {
+          console.log("==============")
+          return res.status(400).json({success:false, message: "Invalid request data"});
         }
     
         // Refund to wallet if paid via Razorpay or Wallet
@@ -91,9 +95,8 @@ const history=async (req,res) =>
             wallet = new Wallet({ userId, balance: 0, transactions: [] });
             await wallet.save();
           }
-    
-        
-          const amount = order.finalAmount;
+           
+          
           console.log("orderid",order._id)
           // Add money to wallet
           wallet.balance += Number(amount);
@@ -115,31 +118,41 @@ const history=async (req,res) =>
     
         // Restore stock
         for (const item of order.orderedItems) {
+          if(item.status!='Cancelled'){
           await Product.findByIdAndUpdate(item.productId, {
             $inc: { stock: item.quantity }, // Increase stock by ordered quantity
           });
-        }
+        }}
     
         // Update order status
-        const updatedOrder = await Order.findByIdAndUpdate(
-          id,
-          { cancelReason, status ,refundedAmount:amount},
-          { new: true }
-        );
+        for (const item of order.orderedItems) {
+          if (item.status !== 'Cancelled') {
+              item.status = status;
+          }
+      }
+      
+          order.markModified("orderedItems");
+      
+      order.cancelReason = cancelReason;
+      order.status = status;
+      order.refundedAmount = amount;
+      
+      
+ const updatedOrder=  await order.save();
     
         if (!updatedOrder) {
-          return res.status(404).json({ message: "Order not found" });
+          return res.status(404).json({ success:false,message: "Order not found" });
         }
     
         //  Send only ONE response
-        res.json({
+        res.json({success:true,
           message: "Order cancelled successfully",
           order: updatedOrder,
           walletUpdated: walletRefundSuccess,
         });
       } catch (error) {
-        console.error("Error cancelling order:", error);
-        res.status(500).json({ message: "Server error", error });
+        console.log("Error cancelling order:", error);
+        res.status(500).json({success:false, message: "Server error" });
       }
     };
     const returnOrder=async(req,res)=>{
@@ -164,10 +177,7 @@ const history=async (req,res) =>
         if (!returnReason || !status) {
           return res.status(400).json({ success:false,message: 'Invalid request data' });
         }
-       
-
-
-        
+             
       
         const updatedOrder = await Order.findByIdAndUpdate(id, {
           returnReason,
@@ -214,18 +224,27 @@ const history=async (req,res) =>
       const getCheckoutPage=async(req,res)=>{
         try {console.log('getCheckoutPage11111=========================================================================')
           
-       const userId = req.session.user._id; 
-       //console.log(req.session,"user session")
-       //console.log(userId)
-       const carts = await Cart.findOne({ userId }).populate("items.productId");
-      const address=await Address.find({userId})
+    //   const userId = req.session.user?._id; 
+              const user = req.session.user
+               if(!user)
+                 res.redirect('/login')
+               console.log(user);
+                 const userData = await User.findOne({_id: user._id });
+                 const cartitem=await Cart.findOne({userId:user._id})
+      //                        user:userData,
+      //                        address:userAddress,
+      //                        orders:orders,
+      //                        cart:cartitem
+       const carts = await Cart.findOne({userId:user._id}).populate("items.productId");
+      const address=await Address.find({userId:user._id})
       
       //console.log(address)
        if (!carts) {
          return res.render("checkout", { 
            captureEvents: { items: [], total: 0 }, 
-           user: req.user ,
+           user: userData ,
            address:address,
+           
          });
        }
     
@@ -238,8 +257,10 @@ const history=async (req,res) =>
        res.render("checkout", {
          carts,
          total,
+         user: userData ,
          address:address,
-         cart:carts.items,
+         cart:cartitem,
+         //cart:carts.items,
        });
      } catch (error) {
        console.error("Error loading checkout page:", error);
@@ -436,7 +457,7 @@ if (paymentMethod === 'WALLET') {
   if(parseInt(orderData.subtotal)<1000)
     {deliveryCharge=50;}
  
-  let orderid = "WAL"+uuidv4();
+  let orderid = "WAL"+new Date().getTime()
   let order = new Order({
     orderId: orderid,
     orderedItems: productItems,
@@ -486,7 +507,7 @@ if (paymentMethod === 'WALLET') {
 
 if (paymentMethod === 'COD') {
   console.log("inside COD")
-  const orderid="COD"+uuidv4()
+  const orderid="COD"+new Date().getTime()
   let deliveryCharge=0;
 if(parseInt(orderData.subtotal)<1000)
   {deliveryCharge=50;}
@@ -502,7 +523,7 @@ if(parseInt(orderData.subtotal)<1000)
     discount: couponDiscount,
     userId,
     status: 'Processing',
-    paymentStatus: 'pending',
+    paymentStatus: 'Pending',
     paymentMethod,
   });
 await order.save();
@@ -588,7 +609,7 @@ const handleRefund = async (userId, amount, productNames, orderId) => {
           });
       }
 
-      const transactionId = "WAL"+uuidv4();
+      const transactionId = "WAL"+new Date().getTime()
       wallet.balance += Number(amount);
       wallet.transactions.push({
           amount: amount,
@@ -752,7 +773,7 @@ const generateInvoice=async (req,res)=> {
               const price = Number(item.price) || 0;
               const quantity = Number(item.quantity) || 0;
               const total = price * quantity;
-const status=item.status;
+            const status=item.status;
               if (index % 2 === 1) {
                   doc.fillColor('#f9f9f9')
                       .rect(50, y - 5, 520, 20)
@@ -798,22 +819,22 @@ const status=item.status;
       });
 
 doc.text('Subtotal', summaryX, y)
-            .text(totalPrice.toString(), summaryX + 100, y, { align: 'right' });
+            .text(totalPrice.toString(), summaryX + 100, y,{align:'right'});
 
         if (discount > 0) {
             y += 20;
             doc.text('Discount', summaryX, y)
-                .text(`${discount.toString()}`, summaryX + 100, y, { align: 'right' });
+                .text(`${discount.toString()}`, summaryX + 100, y,{align:'right'});
         }
 
         y += 20;
         doc.text('Shipping', summaryX, y)
-            .text(shipping.toString(), summaryX + 100, y, { align: 'right' });
+            .text(shipping.toString(), summaryX + 100, y,{align:'right'});
 
         y += 20;
         doc.fontSize(12)
             .text('Grand Total', summaryX, y, { bold: true })
-            .text(finalAmount.toString(), summaryX + 100, y, { align: 'right', bold: true });
+            .text(finalAmount.toString(), summaryX + 100, y, { align:'right', bold: true });
 
         doc.fontSize(10)
             .text('        Thank you for shopping with Fruitables!', {
@@ -848,18 +869,12 @@ const cancelProductOrder = async (req, res) => {
           return res.status(404).json({ success: false, message: "Order not found." });
       }
 
-      const itemIndex = req.body.itemIndex;
-      console.log("req.body.itemIndex",req.body.itemIndex)
-      let productItem;
-
-      if (itemIndex !== undefined) {
-          productItem = order.orderedItems[itemIndex];
-      } else {
-          productItem = order.orderedItems.find(item =>
+      
+      let productItem = order.orderedItems.find(item =>
               item.productId.toString() === productId && item.status !== 'Cancelled'
           );
           console.log("productItem",productItem)
-      }
+      
 
       if (!productItem) {
           return res.status(404).json({ success: false, message: "Product not found in the order or already cancelled." });
@@ -891,7 +906,7 @@ const cancelProductOrder = async (req, res) => {
       
       order.discount = Math.max(order.discount - coupondis, 0); // Prevent negative discount
       order.subtotal = remainingSubtotal;
-      
+      order.refundedAmount +=refundAmount;
       if (order.subtotal < 1000 && order.subtotal > 0) {
           order.deliveryCharge = 50;
       } else {
@@ -904,7 +919,7 @@ const cancelProductOrder = async (req, res) => {
       } else {
           order.finalAmount = Math.max((order.finalAmount || 0) - refundAmount, 0); // Prevent NaN & negative finalAmount
       }
-      
+      await order.save()
       console.log("Updated Order:", {
           subtotal: order.subtotal,
           discount: order.discount,
@@ -954,7 +969,9 @@ const cancelProductOrder = async (req, res) => {
       } else {
           message = `Product canceled successfully`
       }
-
+await Product.findByIdAndUpdate(productId,{
+  $inc:{stock:productItem.quantity}
+})
       const response = {
           success: true,
           message: message,
@@ -1014,7 +1031,7 @@ const returnProductOrder = async (req, res) => {
               message: "Only delivered products can be returned."
           });
       }
-      const deliveryDate = productItem.deliveredDateTime 
+      const deliveryDate = order.deliveredDateTime 
       if(!deliveryDate){
           return res.status(400).json({
               success:false,
@@ -1031,15 +1048,7 @@ if (timeSinceDelivery > 2) {
         message: "Return window has expired. Products can only be returned within 2 hours of delivery."
     });
 }
-      // const daysSinceDelivery = Math.floor((new Date() - new Date(deliveryDate)) / (1000 * 60 * 60 * 24));
-      // if (daysSinceDelivery > 7) {
-      //     return res.status(400).json({
-      //         success: false,
-      //         message: "Return window has expired. Products can only be returned within 7 days of delivery."
-      //     });
-      // }
-
-      
+    
       if (['Return Request', 'Returned'].includes(productItem.status)) {
           return res.status(400).json({
               success: false,
@@ -1129,18 +1138,7 @@ const handleFailedPayment = async (req, res) => {
           }
       } else if (orderDetails && orderDetails.orderId === orderId) {
           const orderedItems = orderDetails.cartItems.map(item => {
-              // const variantId = item.variantId && (
-              //     typeof item.variantId === 'object' && item.variantId._id 
-              //         ? item.variantId._id 
-              //         : (typeof item.variantId === 'string' || item.variantId instanceof mongoose.Types.ObjectId 
-              //             ? item.variantId 
-              //             : null)
-              // );
               
-              // if (!variantId) {
-              //     console.error('Invalid cart item:', item);
-              //     throw new Error(`Variant ID missing or invalid for product ${item.productId?.productName || 'unknown'}`);
-              // }
 
               return {
                   product: item.productId,
@@ -1174,7 +1172,7 @@ const handleFailedPayment = async (req, res) => {
           paymentMethod = 'RAZORPAY';
           id = orderDetails.orderId;
       } else {
-          return res.render('payment-failed', {
+          return res.render('paymentFailed', {
               orderId: orderId,
               totalAmount: 0,
               paymentMethod: 'N/A',
@@ -1184,7 +1182,7 @@ const handleFailedPayment = async (req, res) => {
       }
 
       delete req.session.orderDetails;
-      res.render('payment-failed', {
+      res.render('paymentFailed', {
           orderId: orderId,
           totalAmount: finalAmount,
           paymentMethod: paymentMethod,
@@ -1195,7 +1193,7 @@ const handleFailedPayment = async (req, res) => {
   } catch (error) {
       console.error('Error handling failed payment:', error);
       delete req.session.orderDetails;
-      res.render('payment-failed', {
+      res.render('paymentFailed', {
           orderId: req.params.orderId || 'N/A',
           totalAmount: 0,
           paymentMethod: 'N/A',
@@ -1249,21 +1247,23 @@ const getOrder = async (req, res) => {
 
 
 const loadFailedPaymentPage = async (req,res)=>{
+ 
     try {console.log('loadFailedPaymentPage1111=========================================================================')
-      res.render('paymentFailedPage')
+      //const {id}=req.body;
+      res.render('paymentFailed')
       
     } catch (error) {
-      console.error(error)
+      console.log(error)
       res.redirect('/pageNotFound')
     }
   }
 
 module.exports={
 
-        orderHistory,
+        //orderHistory,
                 cancelOrder,
                returnOrder,
-        history,
+        //history,
         getOrderDetails,
         placeOrder,
         verifyPayment,

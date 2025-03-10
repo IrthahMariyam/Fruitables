@@ -29,10 +29,7 @@ const cartSchema=new Schema({
             type:String,
             default:'pending'
         },
-        cancellationReason:{
-            type:String,
-            default:"none"
-        }
+       
 
     }]
 })

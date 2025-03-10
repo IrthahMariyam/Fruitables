@@ -1,126 +1,429 @@
-<head>
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Offer</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ 
+    <link rel="stylesheet" href="/assets/vendors/mdi/css/materialdesignicons.min.css">
+   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- End layout styles -->
+    
+ 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
-<style>
-  .a.nav-link{
-background-color: #28a745;
+  <style>
+    .a.nav-link{
+      background-color: #28a745;
+    }
+    .th{
+      color:white
+    }
+    /* Styling for readonly (disabled) text fields */
+    .desc-field, .name-field {
+      background-color: #ffffff !important;
+      color: #212529 !important;
+      border: none !important;
+    }
+    /* Styling for editable text fields */
+    .desc-field.editable, .name-field.editable {
+      background-color: #ffffff !important;
+      color: #212529 !important;
+      border: 1px solid #ced4da !important;
+    }
+    
+  
+ 
+  /* Override any bootstrap styles that might be changing colors */
+  #addCategoryModal .modal-content,
+  #addCategoryModal .modal-header,
+  #addCategoryModal .modal-body,
+  #addCategoryModal .modal-footer {
+    background-color: white !important;
+    color: black !important;
   }
-  .th{
-color:white
+  
+  #addCategoryModal .form-control {
+    background-color: white !important;
+    color: black !important;
   }
-</style>
-</head>
-<%- include("../../views/partials/admin/header") %> 
+  
+  #addCategoryModal .form-control:focus {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  #addCategoryModal label {
+    display: block !important;
+    width: 100% !important;
+    color: black !important;
+    margin-bottom: 8px !important;
+  }
+  
+  #addCategoryModal .form-group {
+    display: block !important;
+    margin-bottom: 20px !important;
+  }
+  .search-form {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.search-form .input-group {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+}
+
+.search-form .form-control {
+  border: 1px solid #ccc;
+  border-radius: 5px 0 0 5px;
+  padding: 10px;
+  background-color: aliceblue;
+  color: black;
+}
+
+.search-form .btn {
+  border-radius: 0 5px 5px 0;
+}
+
+  </style>
+     <style>
+        body {
+        font-family: "Arial", sans-serif;
+        background: color #f2f2ff !important;
+        padding-top: 30px;
+        padding-left:  0px;
+        color: #333;
+      }
+      
+  .sidebar{
+    padding:0px;
+    margin-left: 0px;
+  }
+ 
+  .table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: separate; /* Ensures border radius works 
+    border-spacing: 0; /* Removes gaps between table cells */
+    overflow: hidden; /* Ensures rounded corners */
+    border-radius: 8px; /* Adjust this value for more/less rounding */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better appearance */
+    border-color: #28A745;
+  }
+  
+  .table th, .table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+    border-color: #28A745;
+  }
+     
+  .table thead th, 
+.table-responsive .table th {
+  background-color: #28A745 !important;
+  border-color: #28A745;
+  color: white !important;
+}
+
+  
+        .content-header h2 {
+          font-weight: bold;
+          color: #333;
+          align-items: center; 
+        }
+  
+        .table {
+          margin-top: 20px;
+        }
+  
+        .modal-title {
+          font-weight: bold;
+        }
+  
+        .btn-primary {
+          background-color: #28A745;
+          border: none;
+        }
+  
+        .btn-primary:hover {
+          background-color:#28A745;
+        }
+  
+        .btn-danger {
+          background-color: #dc3545;
+        }
+  
+        .btn-danger:hover {
+          background-color: #b22a37;
+        }
+    </style>
+    
+  </head>
+ 
+  <body>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <div class="container-scroller">
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+          <a class="sidebar-brand brand-logo text-white" href="dashboard">FRUITABLES</a>
+          <a class="sidebar-brand brand-logo-mini" href="dashboard"><img src="/assets/images/logo-mini.svg" alt="logo" /></a>
+        </div>
+        <ul class="nav">
+          <li class="nav-item profile">
+            <div class="profile-desc">
+              <div class="profile-pic">
+                <div class="count-indicator">
+                  <img class="img-xs rounded-circle " src="/assets/images/faces/face15.jpg" alt="">
+                  <span class="count bg-success"></span>
+                </div>
+                <div class="profile-name">
+                  <h5 class="mb-0 font-weight-normal">Admin</h5>
+                  
+                </div>
+              </div>
+
+                        </div>
+          </li>
+          <li class="nav-item nav-category">
+            <span class="nav-link">Navigation</span>
+          </li>
+            <li class="nav-item menu-items">
+            <a href="/admin/dashboard" class="nav-link">
+              <span class="menu-icon">
+                <i class="mdi mdi-speedometer"></i>
+              </span>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a href="/admin/user" class="nav-link">
+              <span class="menu-icon">
+                <i class="fas fa-users"></i>
+              </span>
+              <span class="menu-title">Users</span>
+            </a>
+            
+           
+          </li>
+          <li class="nav-item menu-items">
+            <a href="/admin/products" class="nav-link" >
+              <span class="menu-icon">
+                <i class="fas fa-box"></i>
+              </span>
+              <span class="menu-title">Products</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a href="/admin/category" class="nav-link">
+              <span class="menu-icon">
+                <i class="fas fa-tags"></i>
+              </span>
+              <span class="menu-title">Category</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="/admin/orders">
+              <span class="menu-icon">
+                <i class="fas fa-shopping-cart"></i>
+              </span>
+              <span class="menu-title">Order</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="/admin/inventory">
+              <span class="menu-icon">
+                <i class="fas fa-warehouse"></i>
+              </span>
+              <span class="menu-title">Inventory</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" href="/admin/coupon" >
+              <span class="menu-icon">
+                <i class="fas fa-ticket-alt"></i>
+              </span>
+              <span class="menu-title">Coupons</span>
+            </a>
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" data-toggle="collapse" href="/admin/offer" aria-expanded="false" aria-controls="auth">
+              <span class="menu-icon">
+                <i class="fas fa-gift"></i> 
+              </span>
+              <span class="menu-title">Offer</span>
+             
+            </a>
+           
+          </li>
+          <li class="nav-item menu-items">
+            <a class="nav-link" data-toggle="collapse" href="/admin/logout" aria-expanded="false" aria-controls="auth">
+              <span class="menu-icon">
+                <i class="fas fa-sign-out-alt"></i>
+              </span>
+              <span class="menu-title">Logout</span>
+             
+            </a>
+           
+          </li>
+        </ul>
+      </nav>
+
  
 <div class="main-panel">
-  <div class="content-wrapper  bg-white">
+  <div class="content-wrapper bg-white">
     <div class="row">
       <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
             <h2 class="card-title text-center text-dark">Category Details</h2>
-          <form action="/admin/searchCategory" method="GET" id=form1 class="search-form mb-4" >
-            <div class="input-group">
-             <input type="text" id="search" name="searchCategory" placeholder="Search by name"  class="form-control" required>
-          <button type="submit">Search</button>
+            <form action="/admin/searchCategory" method="GET" id="form1" class="search-form mb-4" >
+              <div class="input-group" >
+                <input type="text" id="search" name="searchCategory"  style="background-color: #ddd;width:10%;" placeholder="Search by name" class="form-control" required>
+                <button type="submit" class="btn btn-primary">Search</button>
+              </div>
+            </form> 
+            <div class="mb-4">
+              <button type="button" class="btn btn-primary" onclick="openAddCategoryModal()">
+                Add Category
+              </button>
             </div>
-        </form> 
-        <div>
-         <form id="form2" action="" method="post" class="search-form mb-4" onsubmit="return handleFormSubmit(event)">
-       
-          
-          <input type="text" id="name" name="name" placeholder="Add Category Name" required style="width: 250px;" class="form-control">
-          <textarea id="descriptionId" name="cdescription" rows="3" cols="30" placeholder="Add Description" required style="width: 400px;"  class="form-control"></textarea>
-          <button type="submit"  class="btn btn-primary">
-            Add Category
-          </button>
-           
-    </form>
-  </div>
-    <div class="table-responsive">
-      <table class="table table-hover" border="1">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Listed</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if (cat && cat.length > 0) { %>
-          <%for(let i=0;i<cat.length;i++){%> 
-        <tr>
-         
-        <td><input type="text" class="name-field border-0" value="<%= cat[i].name %>" readonly></td>
-         <td>
-          <textarea class="desc-field border-0" readonly rows="3" cols="50"><%= cat[i].description %></textarea>
-        </td>
-                   
-        <td><%if(cat[i].isListed===false){%>
-          <button class="btn btn-danger" style="width: 80px;">
-         <a href="/admin/listCategory?id=<%=cat[i]._id%>" class="text-white" style="text-decoration: none;">List</a>
-         </button>
-           <%}else{%>
-           <button class="btn btn-success" style="width: 80px;">
-           <a href="/admin/unlistCategory?id=<%=cat[i]._id%>" class="text-white" style="text-decoration: none;">UnList</a>
-           </button>
-           <%}%> 
-        </td>
-         <td>
-          <button class="btn btn-warning edit-btn" onclick="enableEdit(this.closest('tr'), '<%= cat[i]._id %>')"> <span class="material-icons">edit</span> </button>
-                          
-            <button class="btn btn-danger delete-btn" onclick="softDeleteCategory(this.closest('tr'), '<%= cat[i]._id %>')"><span class="material-icons">delete</span></button>
-          
-          
-           </td>
-             </tr>                         
-            <% } }else { %>
-              <tr>
-                <td colspan="5">No categories found</td>
-             </tr>
-            <% } %>
-                 
-              </tbody>
-          </table>
+            <div class="table-responsive">
+              <table class="table table-hover" border="1">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Listed</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (cat && cat.length > 0) { %>
+                    <% for(let i=0; i<cat.length; i++) { %> 
+                      <tr>
+                        <td><input type="text" class="name-field form-control" value="<%= cat[i].name %>" readonly></td>
+                        <td>
+                          <textarea class="desc-field form-control" readonly rows="3" cols="50"><%= cat[i].description %></textarea>
+                        </td>
+                        <td>
+                          <% if(cat[i].isListed===false) { %>
+                            <button class="btn btn-danger" style="width: 80px;">
+                              <a href="/admin/listCategory?id=<%=cat[i]._id%>" class="text-white" style="text-decoration: none;">List</a>
+                            </button>
+                          <% } else { %>
+                            <button class="btn btn-success" style="width: 80px;">
+                              <a href="/admin/unlistCategory?id=<%=cat[i]._id%>" class="text-white" style="text-decoration: none;">UnList</a>
+                            </button>
+                          <% } %> 
+                        </td>
+                        <td>
+                          <button class="btn btn-warning edit-btn" onclick="toggleEdit(this.closest('tr'), '<%= cat[i]._id %>')">
+                            <span class="material-icons">edit</span>
+                          </button>
+                          <button class="btn btn-danger delete-btn" onclick="softDeleteCategory(this.closest('tr'), '<%= cat[i]._id %>')">
+                            <span class="material-icons">delete</span>
+                          </button>
+                        </td>
+                      </tr>                         
+                    <% } %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="5">No categories found</td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-</div>
-<ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
-  <%for(let i=1;i<=totalPages;i++){%>
-   <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
-       <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-   </li>
-   <%}%>
-   </ul>
-
+  <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+    <% for(let i=1; i<=totalPages; i++) { %>
+      <li class="page-item <%= (i===currentPage) ? 'active' : '' %>">
+        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+      </li>
+    <% } %>
+  </ul>
 </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-   <script>
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="background-color: white !important; color: black !important;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCategoryModalLabel" style="color: black !important;">Add New Category</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" style="color: black !important;">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="addCategoryForm">
+          <div class="form-group" style="margin-bottom: 20px; display: block;">
+            <label for="categoryName" style="display: block; color: black !important; margin-bottom: 8px; width: 100%;">Category Name</label>
+            <input type="text" class="form-control" id="categoryName" name="name" placeholder="Enter category name" required style="display: block; width: 100%; background-color: white !important; color: black !important;">
+            <div id="name-error" class="text-danger error-message" style="display: none;"></div>
+          </div>
+          <br>
+          <div class="form-group" style="margin-bottom: 20px; display: block;">
+            <label for="categoryDescription" style="display: block; color: black !important; margin-bottom: 8px; width: 100%;">Description</label>
+            <textarea class="form-control" id="categoryDescription" name="cdescription" rows="3" placeholder="Enter description" required style="display: block; width: 100%; background-color: white !important; color: black !important;"></textarea>
+            <div id="description-error" class="text-danger error-message" style="display: none;"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="handleFormSubmit(event)">Add Category</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
 
 
-document.getElementById("form2").addEventListener('submit', function(event) {
-  event.preventDefault();
-  console.log("fewfdfsdfsdfsdfsdf")
-  handleFormSubmit(event)
-})
 
-   function handleFormSubmit(event) {
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function openAddCategoryModal() {
+    $('#addCategoryModal').modal('show');
+  }
+
+  function handleFormSubmit(event) {
     event.preventDefault();
-  //  console.log("fewfdfsdfsdfsdfsdf")
     if (!validateForm()) {
       return false;
     }
-    const name = document.getElementsByName("name")[0].value;
-    const description = document.getElementById("descriptionId").value;
+    
+    const name = document.getElementById("categoryName").value;
+    const description = document.getElementById("categoryDescription").value;
     
     fetch('/admin/addCategory', {
       method: 'post',
       headers: {
-        'content-type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ name, description })
     })
@@ -133,25 +436,30 @@ document.getElementById("form2").addEventListener('submit', function(event) {
       return response.json();
     })
     .then(data => {
-      location.reload();
+      $('#addCategoryModal').modal('hide');
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Category added successfully!',
+        timer: 2000
+      }).then(() => {
+        location.reload();
+      });
     })
     .catch(error => {
       Swal.fire({
         icon: 'error',
         title: "OOPS",
         text: error.message === "Category already exists" ? "Category already exists" : "An error occurred while entering category",
-      timer:5000
+        timer: 5000
       });
-      location.reload();
     });
-    document.getElementsByName("name")[0].innerHTML="";
-    document.getElementById("descriptionId").innerHTML="";
   }
   
   function validateForm() {
     clearErrorMessages();
-    const name = document.getElementsByName("name")[0].value.trim();
-    const description = document.getElementById("descriptionId").value.trim();
+    const name = document.getElementById("categoryName").value.trim();
+    const description = document.getElementById("categoryDescription").value.trim();
     let isValid = true;
   
     if (name === "") {
@@ -186,21 +494,23 @@ document.getElementById("form2").addEventListener('submit', function(event) {
     });
   }
 
-
-  function enableEdit(row, categoryId) {
+  function toggleEdit(row, categoryId) {
     const nameField = row.querySelector('.name-field');
     const descField = row.querySelector('.desc-field');
     const editButton = row.querySelector('.edit-btn');
+    const editIcon = editButton.querySelector('.material-icons');
     
-    
-    if (editButton.textContent === 'Edit') {
+    if (nameField.hasAttribute('readonly')) {
+      // Enable editing
       nameField.removeAttribute('readonly');
       descField.removeAttribute('readonly');
+      nameField.classList.add('editable');
       descField.classList.add('editable');
-      editButton.textContent = 'Update';
+      editIcon.textContent = 'save';
       editButton.classList.remove('btn-warning');
       editButton.classList.add('btn-success');
     } else {
+      // Save changes
       const updatedName = nameField.value;
       const updatedDescription = descField.value;
       
@@ -224,11 +534,15 @@ document.getElementById("form2").addEventListener('submit', function(event) {
           icon: 'success',
           title: 'Success',
           text: 'Category Updated Successfully!',
+          timer: 2000
         });
+        
+        // Disable editing
         nameField.setAttribute('readonly', 'readonly');
         descField.setAttribute('readonly', 'readonly');
+        nameField.classList.remove('editable');
         descField.classList.remove('editable');
-        editButton.textContent = 'Edit';
+        editIcon.textContent = 'edit';
         editButton.classList.remove('btn-success');
         editButton.classList.add('btn-warning');
       })
@@ -240,64 +554,47 @@ document.getElementById("form2").addEventListener('submit', function(event) {
         });
       });
     }
-}
+  }
 
-function softDeleteCategory(row,categoryId) {
-  const nameField = row.querySelector('.name-field').value;
- // const categoryId=row.querySelector('.id-field').value;
- // alert(categoryId)
- // alert("inside ejs")
-  //alert(nameField)
-  //console.log(categoryId)
-  console.log('Category ID:', categoryId);
-console.log('Name Field:', nameField);
-
-
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Yes, delete it!'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      fetch(`/admin/deleteCategory/${categoryId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        
-        body: JSON.stringify({_id:categoryId, name: nameField})
-      })
-      .then(response => response.json())
-      .then(data => {
-        Swal.fire(
-          'Deleted!',
-          'Category has been deleted.',
-          'success'
-        );
-       // row.style.opacity = '0.5';  // Visual feedback (dim the row)
-        window.location.href = '/admin/category';
-      })
-      .catch(error => {
-        Swal.fire(
-          'Error!',
-          'An error occurred while deleting category.',
-          'error'
-        );
-      });
-    }
-  });
-}
-
-
-
-
-
-
-
+  function softDeleteCategory(row, categoryId) {
+    const nameField = row.querySelector('.name-field').value;
+    
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`/admin/deleteCategory/${categoryId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({_id: categoryId, name: nameField})
+        })
+        .then(response => response.json())
+        .then(data => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'Category has been deleted.',
+            timer: 2000
+          }).then(() => {
+            window.location.href = '/admin/category';
+          });
+        })
+        .catch(error => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'An error occurred while deleting category.',
+          });
+        });
+      }
+    });
+  }
 </script>
-
-

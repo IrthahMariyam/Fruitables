@@ -98,7 +98,7 @@ const updateCoupon = async( req,res)=>{
       console.log(couponId,"couponId in update coupon")
       const {code,discount,minPrice,startDate,endDate, usageLimit,description,}=req.body
       console.log("req.body",req.body)
-      if (!code || discount < 0 || discount > 100 || minPrice < 0 || new Date(startDate) < new Date() || new Date(endDate) <= new Date(startDate)) {
+      if (!code || discount < 0 || discount > 100 || minPrice < 0 || new Date(endDate) <= new Date(startDate)) {
           return res.status(400).json({ success: false, message: 'Invalid input data' });
       }
       let changeCode= code.toUpperCase()

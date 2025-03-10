@@ -80,8 +80,8 @@ router.get("/getAddress/:id",userAuth,profileController.getAddress)
 router.post("/updateAddress/:id",userAuth,profileController.updateAddress)
 router.post("/deleteAddress/:addressId",userAuth,profileController.deleteAddress)
 
-router.get('/api/history',userAuth,orderController.history)
-router.get("/orders/history",userAuth,orderController.orderHistory)
+// router.get('/api/history',userAuth,orderController.history)
+// router.get("/orders/history",userAuth,orderController.orderHistory)
 router.post('/orders/cancel/:id',userAuth,orderController.cancelOrder)
 router.post('/orders/reutrnrequest/:id', orderController.returnOrder);
 router.get('/viewOrderDetails/:orderId',userAuth,orderController.getOrderDetails)
@@ -91,10 +91,7 @@ router.post("/getOrderDetails",userAuth,orderController.getOrder);
 router.post('/order/cancel-product',userAuth,orderController.cancelProductOrder);
 router.post('/order/return-product',userAuth,orderController.returnProductOrder);
 router.get('/payment-failed/:orderId',userAuth,orderController.handleFailedPayment);
-// router.post('/retry-payment',userAuth,orderController.retryPayment);
-// router.post('/verify-retry-payment',userAuth,orderController.verifyRetryPayment)
 router.get('/failedPayment',orderController.loadFailedPaymentPage)
-
 router.post('/placeOrder',userAuth,orderController.placeOrder)
 router.post('/razorpayverifyPayment',userAuth,orderController.verifyPayment)
 

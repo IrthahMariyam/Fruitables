@@ -590,16 +590,18 @@ console.log(Status)
          // alert("negative values not allowed")
           return
         }
-        if(salePrice<0){
+        if(salePrice<=0){
         //  alert("negative values not allowed")
-          document.getElementById('salePriceEror').innerText="negative values not allowed"
+          document.getElementById('salePriceEror').innerText="Enter a valid price"
           return
         }
-        if(regularPrice<0){
-            document.getElementById('regularPriceError').innerText="negative values not allowed"
+       
+        if(regularPrice<=0){
+            document.getElementById('regularPriceError').innerText="Enter a valid price"
          // alert("negative values not allowed")
           return
         }
+       
       if(parseInt(salePrice)>parseInt(regularPrice))
       {
          document.getElementById('regularPriceError').innerText="regular price must be greater than saleprice"

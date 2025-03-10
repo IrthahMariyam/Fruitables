@@ -2,31 +2,46 @@ const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
+const User=require('../../models/userSchema')
 const { v4: uuidv4 } = require('uuid');
 
 
 const getCartPage = async (req, res) => {
        try {console.log('getCartPage11111=========================================================================')
-      
-       if (!req.session.user) {
+      const user=req.session.user;
+       if (!user) {
         return res.redirect('/login'); 
        }
-       const userId = req.session.user._id;
-        
-      const carts = await Cart.findOne({ userId }).populate('items.productId');
-     
-            
+       const userData = await User.findOne({_id: user._id });
+        console.log(userData)
+      //const carts = await Cart.findOne({ userId:userData._id }).populate('items.productId');
+     //product lited checking
+      const carts = await Cart.findOne({ userId: userData._id }).populate('items.productId');
+
+      if (carts) {
+          // Filter out unlisted products
+          const filteredItems = carts.items.filter(item => item.productId && item.productId.isListed);
+      
+          // Update the cart with only the listed products
+          await Cart.updateOne(
+              { userId: userData._id },
+              { $set: { items: filteredItems } }
+          );
+      
+          console.log("Unlisted products removed from cart.");
+      }
+      
        if (!carts) { 
        
         
-        return res.render('cart',  {carts: [], totalPrice: 0,cart:carts }); 
+        return res.render('cart',  {carts: [], totalPrice: 0,cart:carts,user:userData }); 
        }
        let totalamount= carts.items.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(0) ;
        let total=Math.round(totalamount)
        //console.log(total)
        //console.log(totalamount)
         res.render('cart', {
-        user: req.session.user,
+        user: userData,
         carts: carts || { items: [] },
         total:total,
         cart:carts
@@ -50,7 +65,7 @@ const getCartPage = async (req, res) => {
     let cartitemcount=0;
     if(!userId)
     return res.status(404).json({error:"Please Login to add a product"})
-    const product = await Product.findById(productId);
+    const product = await Product.findOne({_id:productId,isListed:true});
     console.log("product",product)
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
@@ -145,7 +160,8 @@ const removeFromCart = async (req, res) => {
         return res.status(404).json({ error: 'Product not found in cart' });
       }
   
-      const product = await Product.findById(productId);
+      
+      const product = await Product.find({_id:productId,isListed:true});
       if (!product) {
         return res.status(404).json({ error: 'Product not found in inventory' });
       }
@@ -156,8 +172,8 @@ const removeFromCart = async (req, res) => {
       cart.items.splice(itemIndex, 1);
   
       await cart.save();
-      await product.save();
-      cart = await Cart.findOne({ userId:req.session.user._id })
+      // await product.save();
+     // cart = await Cart.findOne({ userId:req.session.user._id })
      let cartitemcount=cart.items.length
       res.status(200).json({ message: 'Product removed from cart',cartitemcount:cartitemcount });
     } catch (error) {
@@ -168,32 +184,34 @@ const removeFromCart = async (req, res) => {
   
 
 const updateCartQuantity = async (req, res) => {
-  try {console.log('updateCartQuantity11111n=========================================================================')
+  try {
+    console.log('updateCartQuantity11111n=========================================================================')
     const { productId, quantity } = req.body;
-
+console.log("req.body",req.body)
     const parsedQuantity = parseInt(quantity);
-
+console.log(parsedQuantity,"qqqq")
     if (!productId || isNaN(parsedQuantity)) {
       return res.status(400).json({ error: "Product ID and valid quantity are required" });
     }
-
+console.log("111111111111111111")
     const cart = await Cart.findOne({ userId: req.session.user._id });
     if (!cart) {
       return res.status(404).json({ error: "Cart not found" });
     }
-
+    console.log("22222222222222222222")
     const item = cart.items.find((item) => item.productId.toString() === productId);
     if (!item) {
       return res.status(404).json({ error: "Product not found in cart" });
     }
-
-    const product = await Product.findById(productId);
+    console.log("333333333333333333333")
+   // const product = await Product.findById(productId);
+    const product = await Product.findOne({_id:productId,isListed:true});
     if (!product) {
       return res.status(404).json({ error: "Product not found in inventory" });
     }
-
+    console.log("4444444444444444")
     item.quantity = parsedQuantity;
-    item.totalPrice = parsedQuantity * product.price;
+    item.totalPrice = parsedQuantity * product.salesPrice;
 
     await cart.save();
 

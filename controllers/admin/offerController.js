@@ -128,7 +128,7 @@ console.log("inside req c1")
                     { _id: { $in: selectedItems } },
                     { 
                         $set: { productOffer: discountAmount ,offer: savedOffer._id},
-                     //   $addToSet: { offer: savedOffer._id }
+                     
                     }
                 );
                 console.log('Products updated successfully:', result);

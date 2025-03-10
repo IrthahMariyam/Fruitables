@@ -151,6 +151,7 @@
     width: 100%;
     border-collapse: collapse;
     font-family: 'Arial', sans-serif;
+    table-layout: fixed;
 }
 
 .sales-report-table th,
@@ -161,8 +162,14 @@
 }
 
 .sales-report-table thead {
-    background-color:#28A745;
+    background-color:#28A745 ;
     color: white;
+  
+}
+.sales-report-table th {
+    background-color: #28A745; /* Apply background to individual cells too */
+    color: white;
+    font-weight: bold;
 }
 
 .sales-report-table tbody tr:hover {
@@ -287,6 +294,7 @@
                             <th>Customer Name</th>
                             <th>Total Amount</th>
                             <th>Discount</th>
+                            <th>Payable Amount</th>
                             <th>Date</th>
                         </tr>
                     </thead>
@@ -331,18 +339,9 @@
 <div style="height: 400px;">
     <h4>Top Selling Products</h4>
   
-    <!-- Filter Controls -->
-    <!-- <div>
-      <label for="filter">Filter by: </label>
-      <select id="filter">
-        <option value="daily">Daily</option>
-        <option value="monthly">Monthly</option>
-        <option value="yearly">Yearly</option>
-      </select>
-  
-      
+   
     </div>
-   -->
+   
     <!-- Table for Top Selling Products -->
     <table id="topSellingProductsTable"  cellpadding="5" cellspacing="10" style="border: 1;">
       <thead>
@@ -386,15 +385,7 @@
                 </div>
                 <div style="height: 400px; margin-top: 100px;padding-left: 20px;">
                     <h4>Top Categories</h4>
-<!--                   
-                     <label for="filter">Filter by: </label>
-                    <select id="filter">
-                      <option value="daily">Daily</option>
-                      <option value="monthly">Monthly</option>
-                      <option value="yearly">Yearly</option>
-                    </select> 
-                   -->
-                   
+
                   
                     <!-- Table for Top Selling Categories -->
                     <table id="topSellingCategoriesTable" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 20px 0;">
@@ -469,7 +460,7 @@ function updateSalesTable(reportData) {
     tbody.innerHTML = ""; // Clear old data
 
     if (reportData.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='5'>No sales data found</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='6'>No sales data found</td></tr>";
         return;
     }
 
@@ -478,8 +469,9 @@ function updateSalesTable(reportData) {
         row.innerHTML = `
             <td>${order.orderId || "N/A"}</td>
             <td>${order.customerName || "Unknown"}</td>
-            <td>₹${order.PayableAmount.toFixed(2)}</td>
-            <td>₹${order.discount.toFixed(2)}</td>
+            <td>${order.TotalAmount.toFixed(2)}
+            <td>${order.discount.toFixed(2)}</td>
+            <td>${order.PayableAmount.toFixed(2)}</td>           
             <td>${order.date}</td> 
         `;
         tbody.appendChild(row);
@@ -493,18 +485,52 @@ function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    doc.text("Sales Report", 20, 10);
-
+    // Add title with proper formatting
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Sales Report", doc.internal.pageSize.getWidth() / 2, 15, { align: "center" });
+    
+    // Add date
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    const today = new Date();
+    doc.text("Generated: " + today.toLocaleDateString(), doc.internal.pageSize.getWidth() / 2, 22, { align: "center" });
+    
     const rows = [];
     document.querySelectorAll(".sales-report-table tbody tr").forEach(row => {
         const rowData = [];
         row.querySelectorAll("td").forEach(cell => rowData.push(cell.innerText));
-        rows.push(rowData);
+      
+       rows.push(rowData);
     });
-
+   
+    // Create table with better styling
     doc.autoTable({
-        head: [["Order ID", "Customer Name", "Total Amount", "Discount", "Date"]],
-        body: rows
+        head: [["Order ID", "Customer Name", "Total Amount", "Discount", "Payable Amount","Date"]],
+        body: rows,
+        startY: 30,
+        styles: {
+            fontSize: 10,
+            font: "helvetica",
+            cellPadding: 5,
+        },
+        headStyles: {
+            fillColor: [40, 167, 69], // Match the green color
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+            halign: 'left'
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245]
+        },
+        columnStyles: {
+            0: { cellWidth: 30 }, // Order ID
+            1: { cellWidth: 30 }, // Customer Name
+            2: { cellWidth: 30 }, // Total Amount
+            3: { cellWidth: 30 }, // Discount
+            4: { cellWidth: 30 } , // Date
+            5: { cellWidth: 30 } 
+        }
     });
 
     doc.save("Sales_Report.pdf");
@@ -623,7 +649,7 @@ async function updateTopCategoriesChart() {
       } : undefined,
       plugins: {
         legend: {
-          display: true // Hide legend if needed
+          display: false // Hide legend if needed
         }
       },
       scales: {

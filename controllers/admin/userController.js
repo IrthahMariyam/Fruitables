@@ -70,13 +70,13 @@ const userBlocked=async (req,res)=>{
        console.log("blockUser",blockUser)
        res.status(200).json({ success:true,message: 'Blocked user successfully' });
      } else {
-       res.status(404).json({ error: 'User not found' });
+        res.redirect("/pageerror");
      }
    } catch (error) {
-     res.status(500).json({ error: 'Internal server error' });
-   }
+    console.log(error)
+    res.redirect("/pageerror");
  };
-
+}
 
 
 const userunBlocked=async(req,res)=>{
@@ -85,17 +85,18 @@ const userunBlocked=async(req,res)=>{
      await User.updateOne({_id:id},{$set:{isBlocked:false}})
      res.redirect("/admin/user")
  } catch (error) {
-     res.redirect("/pageerror")
- }
+    console.log(error)
+    res.redirect("/pageerror");
 }
-
+}
 const userListed=async (req,res)=>{
  try {
      id=req.query.id;
      await User.updateOne({_id:id},{$set:{isListed:true}})
      res.redirect("/admin/user")
  } catch (error) {
-     res.redirect("/pageerror")
+    console.log(error)
+    res.redirect("/pageerror");
  }
 }
 
@@ -105,7 +106,8 @@ const userunListed=async(req,res)=>{
      await User.updateOne({_id:id},{$set:{isListed:false}})
      res.redirect("/admin/user")
  } catch (error) {
-     res.redirect("/pageerror")
+    console.log(error)
+    res.redirect("/pageerror");
  }
 }
 
