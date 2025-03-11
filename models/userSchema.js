@@ -45,14 +45,7 @@ const userSchema=new Schema({
         default:Date.now,
     },
    
-    searchHistory:[{
-    type:Schema.Types.ObjectId,
-    ref:"Category"
-    }],
-    searchOn:{
-        type:Date,
-        default:Date.now,
-    },
+   
     redeemedUser: {
         type: Schema.Types.ObjectId,
         ref: "Coupon",
@@ -72,7 +65,7 @@ userSchema.pre("save", async function (next) {
         let newCode;
 
         while (!isUnique) {
-            newCode = `COSREF${Math.floor(100000 + Math.random() * 900000)}`; // Generate COSREF + 6-digit number
+            newCode = `FR${Math.floor(100000 + Math.random() * 900000)}`; // Generate COSREF + 6-digit number
             const existingUser = await mongoose.model("User").findOne({ referralCode: newCode });
 
             if (!existingUser) {
