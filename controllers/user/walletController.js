@@ -16,7 +16,7 @@ const razorpay = new Razorpay({
 
 //   Create Order for Adding Money
 const createAddmoneyWallet = async (req, res) => {
-    console.log('createAddmoneyWallet=========================================================================')
+   
     const { amount } = req.body;
     const options = {
         amount: amount * 100, // Convert to paise
@@ -39,7 +39,7 @@ const createAddmoneyWallet = async (req, res) => {
 
 //   Confirm Payment & Update Wallet
 const addMoneyWallet = async (req, res) => {
-    console.log('addMoneyWallet=========================================================================')
+   
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature, amount } = req.body;
 
     const hash = crypto.createHmac("sha256", process.env.SECRET_KEY)
@@ -106,7 +106,7 @@ const getWallet = async (req, res) => {
 
 //  Money from Wallet for Shopping
 const purchaseUsingWallet = async (req, res) => {
-    try {console.log('purchaseUsingWallet=========================================================================')
+    try {
         const userId = req.session.user._id;
         const { totalAmount, productId, qty } = req.body;
 
@@ -170,7 +170,6 @@ const verifyPayment = async (req, res) => {
 
 module.exports= {
     getWallet,
-   
     createAddmoneyWallet,
     addMoneyWallet,
     purchaseUsingWallet,

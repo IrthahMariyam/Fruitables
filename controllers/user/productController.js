@@ -11,29 +11,23 @@ const session = require("express-session");
 
 
 const searchProducts = async (req, res) => {
-  console.log('/login,userController.loadLogin=========================================================================')
-    try {console.log("insise searchproducts===============")
+
+    try {
       
       const id=req.session.user;
-      // console.log(id,"===============================")
-      // console.log(req.session.user)
+      
       const { query,sort } = req.query;
     
-
-      // console.log(query,"query=======================")
-      // console.log(req.query,"--------------------------------")
-  //  let {sort}=req.sort;
-     console.log(sort,"sort=======================")
      
       const categories = await Category.find({ isListed: true });
-      //console.log("categories=======",categories)
+     
       const categoryIds = categories.map((category) => category._id.toString());
-     // console.log("categoryIds=========",categoryIds)
+     
       const page = parseInt(req.query.page) || 1;
-      //console.log("page=================",page)
+     
       const limit = 9;
       const skip = (page - 1) * limit;
-      console.log("skip====================",skip)
+     
       let sortOption = {};
       if(sort)
   {
@@ -68,7 +62,7 @@ const searchProducts = async (req, res) => {
         sortOption = { createdOn: -1 };
 
     }
-    console.log("sortoption=========",sortOption)
+   
   }
       const products = await Product.find({
         isDeleted: false,
@@ -79,28 +73,22 @@ const searchProducts = async (req, res) => {
         .sort(sortOption)
         .skip(skip)
         .limit(limit);
-        console.log("products===================",products)
+       
       const totalProducts = await Product.countDocuments({
         isListed: true,
         isDeleted:false,
         category: { $in: categoryIds },
         productName: { $regex: query, $options: 'i' },
-      //   stock: { $gt: 0 },
+
       });
-       console.log(totalProducts,"total products")
+      
       const totalPages = Math.ceil(totalProducts / limit);
   
       const categoryWithIds = categories.map((category) => ({
         _id: category._id,
         name: category.name,
       }));
-     
-
-console.log("totalpages============",totalPages)
-console.log("categoryWithIds=====",categoryWithIds)
-  
-      // If no query provided, return all products
-      
+          
       if (!query) {
         const product = await Product.find({ isDeleted: false ,isListedd:true,}).lean();
         return res.render("shop", {
@@ -115,7 +103,7 @@ console.log("categoryWithIds=====",categoryWithIds)
   
       }
       const user = req.session.user;
-      console.log(user);
+      
       if (user) {
           const userData = await User.findOne({_id:id });
           const cartitem=await Cart.findOne({userId:userData._id})
@@ -150,7 +138,7 @@ console.log("categoryWithIds=====",categoryWithIds)
   };
   
 const filterCategory=async(req,res)=>{
-    try {console.log('/login,userController.loadLogin=========================================================================')
+    try {
       const userId = req.session.user ? req.session.user._id : null;
       const category = req.query.category;
      
@@ -159,7 +147,6 @@ const filterCategory=async(req,res)=>{
       const query = {
         isDeleted: false,
       
-        // stock: { $gt: 0 },
       };
   
       if (findCategory) {
@@ -179,16 +166,7 @@ const filterCategory=async(req,res)=>{
       if (userId) {
         userData = await User.findById(userId);
         const cartitem=await Cart.findOne({userId:userId})
-        // if (userData && findCategory) {
-        //   const searchEntry = {
-        //     category: findCategory._id,
-        //     searchedOn: new Date(),
-        //   };
-  
-        //   userData.searchHistory.push(searchEntry);
-        //   await userData.save();
-        // }
-            
+        
         res.locals.user = userData.name;
       res.render("shop", {
          user: userData,
@@ -230,24 +208,18 @@ const filterCategory=async(req,res)=>{
 
   const filterProduct = async (req, res) => {
 
-    console.log('/login,userController.loadLogin=========================================================================')
     try {
       const userId = req.session.user ? req.session.user._id : null;
       const category = req.query.category;
      const sort=req.query.sort
-    // const search=req.query.search
-     console.log("====================",sort)
-    // console.log("==================",search)
-      const findCategory = category ? await Category.findOne({ _id: category }) : null;
+     const findCategory = category ? await Category.findOne({ _id: category }) : null;
   
       let query = {
         isDeleted: false,
-      // stock: { $gt: 0 },
-      
-       
+     
       };
      
-      //=====================================================
+    
       let sortOption = {};
       if(sort)
   {
@@ -282,9 +254,9 @@ const filterCategory=async(req,res)=>{
         sortOption = { createdOn: -1 };
 
     }
-    console.log("sortoption=========",sortOption)
+   
   }
-    //======================================================
+   
       if (findCategory) {
         query.category = findCategory._id;
       }
@@ -295,7 +267,6 @@ const filterCategory=async(req,res)=>{
       const page = parseInt(req.query.page) || 1;
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
-      // const findProducts = await Product.find(query).lean();
       const findProducts = await Product.find(query).sort(sortOption)
       .skip(startIndex)
       .limit(limit)
@@ -334,8 +305,6 @@ const filterCategory=async(req,res)=>{
   }
     } catch (error) {
       console.error("Error in filterProduct:", error);
-  
-      
       res.status(500).render("page-404", { error: "An error occurred while filtering products." });
     
     }
@@ -344,19 +313,10 @@ const filterCategory=async(req,res)=>{
   
 const productDetails = async (req, res) => {
   try {console.log('/login,userController.loadLogin=========================================================================')
-  //  console.log("inside detail page");
-    const userId = req.session.user;
-    // console.log(  userId,  "userid in product data started first in product details");
-   
+     const userId = req.session.user;
     const productId = req.query.id;
     const product = await Product.findById(productId).populate("category");
-
-    // console.log("products", product);
-    // console.log("ended lProducts");
     const findCategory = product.category;
-    // console.log(findCategory, "finded ategory");
-
-    //const totalProducts=await Product.findById(findCategory._id).populate('category')
     const totalProducts = await Product.find({
       category: findCategory._id,
     }).populate("category");
@@ -364,18 +324,17 @@ const productDetails = async (req, res) => {
       category: findCategory._id,
     }).populate("category");
     const totalcategory = await Category.find({});
-    // console.log("totalcount=", totalProcount);
-    // console.log("totalProducts", totalProducts);
+   
     const categoryOffer = findCategory?.categoryOffer || 0;
-    // console.log(categoryOffer, "category");
+   
     const productOffer = product.productOffer || 0;
-    // console.log(productOffer, "prduc ofer");
+  
     const totalOffer = categoryOffer + productOffer;
-    // console.log(totalOffer, "finded");
+    
     if (userId) {
       const userData = await User.findById(userId);
      let  cartitem=await Cart.findOne({userId:userId})
-      //console.log(userData, "userdata in product details");
+     
       res.render("product-details", {
         user: userData,
         product: product,
@@ -398,14 +357,14 @@ const productDetails = async (req, res) => {
         totalProducts: totalProducts,
         totalProcount: totalProcount,
         totalcategory: totalcategory,
-        // cart:cartitem.items,
+       
       });
     }
    
   } catch (error) {
     console.error("Error for fetching product details", error.stack);
     res.redirect("/pageNotFound");
-    // console.error(error?.response?.data?.message || error?.message || 'Error adding product')
+   
   }
 };
 const productReview = async (req, res) => {console.log('productReview11111=========================================================================')
@@ -419,10 +378,7 @@ const productReview = async (req, res) => {console.log('productReview11111======
     if (!productreview) {
       return res.status(404).send("Product not found");
     }
-
-    console.log(productreview, "==============");
-
-    // Update the product with the new review
+        // Update the product with the new review
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
       {

@@ -18,8 +18,7 @@ const productSchema=new Schema({
     item:{
         type :String,
         enum: ['Fruit', 'Vegetable','vegetable'],
-         
-      
+            
     },
     
     price:{
@@ -32,8 +31,7 @@ const productSchema=new Schema({
     },
     productOffer:{
         type:Number,
-        default:0,
-       
+        default:0,     
     
     },
  

@@ -315,7 +315,7 @@
    
     <script>
       const orderId = "<%= order._id %>";
-      console.log("Order ID:", orderId);
+      
    </script>
    
 
@@ -412,7 +412,7 @@
               <p><strong>Quantity:</strong><%= order.orderedItems[i].quantity %> </p>
               <p><strong>Price:</strong> ₹<%= order.orderedItems[i].price %> </p>
               <p><strong>Product Total:</strong> ₹<%= order.orderedItems[i].totalPrice %> </p>
-              <!-- <p><strong>Status:</strong><%= order.orderedItems[i].status %></p> -->
+              
         </div>
           </div>
   
@@ -474,7 +474,7 @@
                                              
                       
 
-                      <!-- Order Summary Section -->
+                      
                     <!-- Order Summary Section -->
                     <div class="card">
   <div class="card-header">
@@ -554,8 +554,7 @@
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-  //  const orderid=document.getElementById('ordersId')
-  //  const id=orderid.value.toString()
+  
     const buttonCancel = document.getElementById('button-cancel');
     const buttonGoBack = document.getElementById('go-back');
     const buttonCancelOrder = document.getElementById('cancel-order');
@@ -574,15 +573,14 @@
     buttonCancelOrder.addEventListener('click', () => {
   if (reason.value.trim() === "") {
     document.getElementById('errorCancel').textContent='Please fill the reason'
-   // alert("Please fill the reason");
+   
     return false
-  } //alert(reason.value)
-    //alert(orderId)
+  } 
     fetch(`/orders/cancel/${orderId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        cancelReason: reason.value.trim(), // Use reason.value here
+        cancelReason: reason.value.trim(), 
         status: "Cancelled",
       }),
     })
@@ -624,11 +622,11 @@
       
   if (Rreason.value.trim() === "") {
     document.getElementById('errorreturn').textContent='Please fill the reason'
-    //alert("Please fill the reason");
+    
     return false
   } 
-  //alert(Rreason.value.trim())
-  //  alert(orderId)
+  
+  
     fetch(`/orders/reutrnrequest/${orderId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -662,19 +660,18 @@
                     button.addEventListener('click', async () => {
                         const orderId = button.getAttribute('data-cancel-order-id');
                         const productId = button.getAttribute('data-cancel-product-id');
-                        console.log('Return request - Order ID:', orderId);
-                        console.log('Return request - Product ID:', productId);
-                        // Find the corresponding reason dropdown
+                        
+                        
                         const reasonDropdown1 = document.querySelector(`.cancel-single-reason[data-cancel-order-id="${orderId}"][data-cancel-product-id="${productId}"]`);
                         if (!reasonDropdown1) {
-                console.error("Dropdown not found for Order ID:", orderId, "Product ID:", productId);
+                
                 return;
             }
                       
-                       console.log("reasonDropdown1",reasonDropdown1.value)
+                       
                         const cancellationReason = reasonDropdown1.value;
 
-                        // Validate that a reason is selected
+                        
                         if (!cancellationReason) {
                             Swal.fire({
                                 icon: 'warning',
@@ -685,7 +682,7 @@
                             return;
                         }
 
-                        // SweetAlert2 confirmation dialog
+                        
                         const result = await Swal.fire({
                             title: 'Are you sure?',
                             text: "You won't be able to revert this cancellation!",
@@ -839,11 +836,11 @@ async function handlePayment(orderId) {
         if (!response.ok || !orderData.id) {
             throw new Error(orderData.message || "Failed to fetch order details");
         }
-console.log("orderData",orderData)
-        // Initialize Razorpay checkout
+
+        
         const options = {
           key: "rzp_test_lcQt1KNawGzBhX",
-          //  amount: orderData.amount,
+          
            amount: orderData.amount * 100,
             currency: "INR",
             name: "Fruitables",
@@ -860,7 +857,7 @@ console.log("orderData",orderData)
                 });
 
                 const verifyResult = await verifyResponse.json();
-                 console.log(verifyResult,"==============")
+                 
                 if (verifyResult.success) {
                   await Swal.fire({
                 icon: "success",
@@ -893,7 +890,7 @@ console.log("orderData",orderData)
         };
 
         const razorpay = new Razorpay(options);
-        console.log("Amount sent to Razorpay:", options.amount);
+        
         razorpay.open();
     } catch (error) {
         console.error("Payment error:", error);

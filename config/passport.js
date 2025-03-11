@@ -12,7 +12,7 @@ async (accessToken,refreshToken,profile,done)=>{
     try {
         let user=await User.findOne({googleId:profile.id})
         if(user){
-            console.log("user found"+ user)
+            
             return done(null,user)
         }else{
             user= new User({

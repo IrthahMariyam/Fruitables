@@ -26,11 +26,10 @@ const listInventory = async (req, res) => {
         
         const totalProducts = await Product.countDocuments({isDeleted: false,
             productName: { $regex: new RegExp(search, 'i') }}); 
-        const totalPages = Math.ceil(totalProducts / itemsPerPage);
+        const totalPages = Math.floor(totalProducts / itemsPerPage);
 
         const products = await Product.find({isDeleted: false,
             productName: { $regex: new RegExp(search, 'i') } })
-        .sort({ createdOn: -1 })
         .sort({ createdOn: -1 })
         .skip((page - 1) * itemsPerPage) 
         .limit(itemsPerPage);
@@ -65,8 +64,8 @@ const updateStock = async (req, res) => {
 const productInfo = async (req, res) => {
     try {
       const search = req.query.searchProduct || "";
-      const page = parseInt(req.query.page) || 1;
-      const limit = 15||parseInt(req.query.page);
+      const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = parseInt(req.query.limit) || 15;
       const skip = (page - 1) * limit;
   
       const productData = await Product.find({
@@ -74,7 +73,7 @@ const productInfo = async (req, res) => {
         productName: { $regex: new RegExp(search, 'i') } 
       // $or:[{ productName: { $regex: new RegExp(search, 'i') }}] 
       })
-      .sort({ createdAt: -1 })
+      .sort({ createdOn: -1 })
       .skip(skip)
       .limit(limit)
       .populate('category');

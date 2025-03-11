@@ -228,7 +228,7 @@
             <h2 class="card-title text-center text-dark">DASHBOARD</h2>
         <!-- Main Content -->
         
-            <!-- / -->
+       
             <!-- Stats Section -->
             <div class="row mb-4">
                 <div class="col-md-4">
@@ -556,7 +556,7 @@ async function updateTopSellingChart() {
 
   const response = await fetch(`/admin/top-selling-products?filter=${filter}`);
   const data = await response.json();
-  console.log(data);
+  
 
   const productNames = data.map(item => item.productName);
   const totalSold = data.map(item => item.totalSold);
@@ -620,7 +620,7 @@ async function updateTopCategoriesChart() {
   const response = await fetch(`/admin/top-selling-categories?filter=${filter}`);
   const data = await response.json();
   
-  console.log(data);
+
 
   const categoryNames = data.map(item => item.categoryName);
   const totalSold = data.map(item => item.totalSold);
@@ -680,8 +680,7 @@ async function updateTopSellingProductsTable() {
 
   const response = await fetch(`/admin/top-selling-products?filter=${filter}`);
   const data = await response.json();
-  console.log("Top Selling Products Data:");
-  console.log(data);
+
 
   const productNames = data.map(item => item.productName);
   const totalSold = data.map(item => item.totalSold);
@@ -721,8 +720,7 @@ async function updateTopCategoriesTable() {
 
   const response = await fetch(`/admin/top-selling-categories?filter=${filter}`);
   const data = await response.json();
-  console.log("Top Selling Categories Data:");
-  console.log(data);
+  
 
   const categoryNames = data.map(item => item.categoryName);
   const totalSold = data.map(item => item.totalSold);

@@ -461,33 +461,33 @@ console.log(cartt)
   const invalidPattern = /^(.)\1{9}$/;
 if(!address)
 {document.getElementById('addresserror').textContent='Please give address'
- // alert("Please give address")
+ 
   return
 }
   if (!address.name || !address.landmark || !address.district || !address.state || !address.pincode || !address.phone) {
     document.getElementById('addresserror').textContent='Please fill all fields!'
-    //alert('Please fill all fields!');
+    
     return;
   }
   if (invalidPattern.test(address.phone)) {
     document.getElementById('addresserror').textContent='Phone number cannot be all the same digit'
-    //alert('Phone number cannot be all the same digit');
+    
     return;
   }
   if (!validIndianPattern.test(address.phone)) {
     document.getElementById('addresserror').textContent='Enter a valid Indian phone number'
-  //  alert('Enter a valid Indian phone number');
+  
     return;
   }
- // alert("hai")
+ 
   console.log("before order couponCode befor orderData {}",couponCode)
   console.log("couponDiscount",couponDiscount)
-  //const cartId=$('#cartId').text().trim();
+  
   const cartId=document.getElementById("cartId").value
   console.log("cartid=",cartId)
 
                 const orderData = {
-                   // addressId: selectedAddressId,
+                   
                    cartId:cartId,
                     address:address,
                     paymentMethod: paymentMethod,
@@ -608,8 +608,7 @@ fetch(`/removeCoupon?couponCode=${couponCode}`, {
  function fetchAndDisplayCoupons() {
   console.log("inside")
  const cartTotal = parseFloat($(`#totalprice`).text().replace('₹', '').trim()) ;
-  // alert(typeof cartTotal)
-  // alert(cartTotal)
+ 
   // Fetch coupons from the server
   fetch(`/getCouponCodes?cartTotal=${cartTotal}`, {
     method: 'GET',
@@ -682,7 +681,7 @@ function createCouponElement(coupon) {
 function applyCoupon(couponCode) {
  
   const cartTotal = parseFloat($(`#totalprice`).text().replace('₹', '').trim()) ;
-  //alert(cartTotal)
+ 
   console.log("Cart Total:", cartTotal); // Debug log
 
   if (isNaN(cartTotal)) {
@@ -723,7 +722,7 @@ function applyCoupon(couponCode) {
       console.log(couponCode)
       $(`#couponapplied`).text(`${couponCode}`);
 
-//console.log("seen")
+
       $(`#discountprice`).text( `₹${data.discount.toFixed(2)}`)
       let delivery=0;
       if(parseFloat(data.finalAmount)<1000)
@@ -731,7 +730,7 @@ function applyCoupon(couponCode) {
       const finalTotal = delivery + parseFloat(data.finalAmount)
 
     
-    //  const finalTotal = 100 + data.finalAmount;
+    
       $('#totalorderamount').text(`₹${finalTotal.toFixed(2)}`);
 
 

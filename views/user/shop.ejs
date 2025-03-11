@@ -237,9 +237,7 @@ transform: scale(1.3);
                 </aside>
                 
                 <main class="product-grid">
-                    <%console.log("inside shops")%>
-                    <%console.log(products.length)%>
-                    <% for(let i=0; i<products.length; i++) { %>
+                   <% for(let i=0; i<products.length; i++) { %>
                       
                      
                         <div class="product-card">
@@ -336,7 +334,7 @@ transform: scale(1.3);
              });
             }
          else {
-                //Swal.fire("Error", "error" || "Something went wrong", "error");
+                
                 Swal.fire({
                 title: "erro",
                 text: data.error,
@@ -346,7 +344,7 @@ transform: scale(1.3);
      })
      .catch(error => {
         console.error("Error:", error);
-       // Swal.fire("Error", "error", "error");
+       
        Swal.fire({
                 title: "error",
                 text: error,
@@ -359,8 +357,7 @@ transform: scale(1.3);
 
 
      function addToCart(productId) {
-           // alert("helloo")
-            const cartitem=document.getElementById('cartitems')
+                       const cartitem=document.getElementById('cartitems')
             fetch('/cart/add', {
          method: 'POST',
          headers: {
@@ -381,7 +378,7 @@ transform: scale(1.3);
        
         setTimeout(() => {
             if (data.cartitemcount !== undefined) {
-        // alert("success")
+        
           document.getElementById('cartitems').textContent = data.cartitemcount
         }
        

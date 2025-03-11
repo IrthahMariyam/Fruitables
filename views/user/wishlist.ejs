@@ -111,7 +111,7 @@ function removeFromWishlist(productId) {
     data: JSON.stringify({ productId }), // Send productId
     success: function (response) {
       // Handle success response
-      console.log("Product removed successfully:", response);
+      
 
       // Remove the product row
       const productRow = $(`#product-row-${productId}`);
@@ -142,9 +142,9 @@ function removeFromWishlist(productId) {
 }
 
       function whishlisttocart(productId) {
-           // alert("helloo")
+           
         const cartitem=document.getElementById('cartitems')
-        //fetch('/cart/add', {
+       
           fetch('/whishlisttocart/add', {
          method: 'POST',
          headers: {
@@ -168,7 +168,7 @@ function removeFromWishlist(productId) {
        
         setTimeout(() => {
             if (data.cartitemcount !== undefined) {
-        // alert("success")
+       
           document.getElementById('cartitems').textContent = data.cartitemcount
         }
        

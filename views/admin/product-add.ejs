@@ -349,11 +349,11 @@
 
       const handleImage = (e) => {
         const files = e.target.files; 
-        console.log("Selected Files: ", files);
+        
 
         const cropperContainers = document.getElementById("cropperContainers");
         cropperContainers.innerHTML = "";
-        console.log("length",files.length)
+        
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           const reader = new FileReader();
@@ -402,7 +402,7 @@
 
                   img.dataset.blob = blob; 
                   croppedImages.push(blob);
-                  console.log("Cropped Images Array: ", croppedImages);
+                  
 
                   const croppedImagePreview = document.createElement("img");
                   croppedImagePreview.src = url;
@@ -457,7 +457,7 @@
           .then((response) => response.json())
           .then((data) => {
             const imageUrl = data.secure_url;
-            console.log("Uploaded Image URL:", imageUrl);
+            
             return imageUrl;
           })
           .catch((error) => {
@@ -468,7 +468,7 @@
 
       document.getElementById("productForm").onsubmit = async function (event) {
         event.preventDefault();
-        //console.log("inside addproduct")
+        
         const productName = document.getElementById("product_name").value;
         const description = document.getElementById("descriptionid").value;
         const regularPrice = parseInt(document.querySelector(
@@ -533,29 +533,29 @@ return
         if(Status=='Available' && stock<=0)
         {
           document.getElementById("stockError").innerText="If no stock please select status 'Out of stock' ";
-           // alert("If no stock please select status 'Out of stock' ")
+           
             return
         }
         if(Status=='Out of Stock' && stock>0 )
         {
             
           document.getElementById("stockError").innerText="If 'Out of stock',please set stock to 0 ";
-          //  alert("If 'Out of stock',please set stock to 0 ")
+          
             return
         }
         if(stock <0){
           document.getElementById("stockError").innerText="Negative values not allowed";
-        //  alert("negative values not allowed")
+        
           return
         }
         if(salePrice<=0){
           document.getElementById("salePriceError").innerText="Enter a valid price";
-        //  alert("negative values not allowed")
+        
           return
         }
         if(regularPrice<=0){
           document.getElementById("regularPriceError").innerText="Enter a valid price";
-        //  alert("negative values not allowed")
+        
           return
         }
         if(regularPrice<salePrice)

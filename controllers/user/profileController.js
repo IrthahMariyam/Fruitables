@@ -22,32 +22,22 @@ const securePassword = async (password) => {
 };
 
 const loadProfile=async (req, res) => {
-    try {console.log('/login,userController.loadLogin=========================================================================')
+    try {
        const id=req.params.userId;
-       console.log(id,"inside loadprofile params id value")
+       
         const user = req.session.user
         if(!user)
           res.redirect('/login')
-        console.log(user);
+        
         if (user) {
             const userData = await User.findOne({_id: user._id });
             const cartitem=await Cart.findOne({userId:user._id})
             const orders = await Order.find({ userId: user._id}) // Fetch user's orders
             .sort({ createdOn: -1 })
             .populate('orderedItems.productId') // Populate product details
-            
-            console.log("Orders fetched:", orders);
             const userAddress = await Address.find({userId:user._id }).populate('userId');
             res.locals.user = userData.name;
           
-          
-           
-          //  console.log(userData,"userinside loadprofile")
-          //   console.log(userAddress,"useraddressinside loadprofile")
-          //  console.log("session name", req.session.user.name);
-          //  console.log("locals data", res.locals.user);
-          //   console.log("session data", req.session.user);
-
             if(userData){
               const cartitem=await Cart.findOne({userId:userData._id})
                 res.render("profile",{user:userData,
@@ -72,11 +62,11 @@ const loadProfile=async (req, res) => {
 
 const deleteAccount=async(req,res)=>{
     try 
-        {console.log('/login,userController.loadLogin=========================================================================')
+        {
             const id=req.params;
-            console.log(id,"inside deleteProfile params id value")
+           
              const user = req.session.user;
-             console.log(user);
+            
              if (user) {
                  const userData = await User.findOne({_id: user._id });
                  if (userData) {
@@ -95,37 +85,37 @@ const deleteAccount=async(req,res)=>{
 }
 
 const changePassword = async (req, res) => {
-    try {console.log('/login,userController.loadLogin=========================================================================')
+    try {
       const { userId, oldPassword, newPassword } = req.body;
-      console.log("inside change Password", userId, oldPassword, newPassword);
+     
   
       // Convert userId to ObjectId
       const userObjectId = new ObjectId(userId.trim());
   
       const findUser = await User.findOne({ _id: userObjectId, isAdmin: false });
       const userAddress = await Address.findOne({ userId: userObjectId }).populate('userId');
-      console.log("User found:", findUser);
+     
   
       if (findUser) {
         const passwordMatch = await bcrypt.compare(oldPassword, findUser.password);
-        console.log("Password match:", passwordMatch);
+        
   
         if (!passwordMatch) {
           return res.status(400).json({ error: "Incorrect old password" });
         }
   
         const passwordHash = await securePassword(newPassword);
-        console.log("New password hash:", passwordHash);
+      
   
         await User.updateOne(
           { _id: userObjectId },
           { $set: { password: passwordHash } }
         );
-        console.log("Password updated successfully");
+       
   
         return res.status(200).json({ message: "Password changed successfully!" });
       } else {
-        console.log("User not found or blocked");
+       
         return res.status(400).json({ error: 'User not found or blocked' });
       }
   
@@ -137,15 +127,14 @@ const changePassword = async (req, res) => {
   
   
     const addAddress = async (req, res) => {
-        try {console.log('/login,userController.loadLogin=========================================================================')
-            //console.log("added")
+        try {
+            
             const { Id,name, landmark, district, state, pincode, phone } = req.body;
             //const userId = req.user.id; // Assuming userAuth middleware sets `req.user`
-            console.log("req body",req.body);
+           
             const userData = await User.findOne({_id: Id ,isAdmin:false});
             const cartitem=await Cart.findOne({userId:Id})
-            console.log(userData,"inside addddress")
-            if(userData){
+                if(userData){
                 const newAddress = new Address({
                 userId: Id,
                 name: name,
@@ -158,9 +147,7 @@ const changePassword = async (req, res) => {
             });
     
           const addres=  await newAddress.save();
-          if(addres)console.log("successfully added")
-            else
-        console.log("nothing added")
+
             res.status(200).json({ message: 'Address added successfully' });
         }else{
             res.status(500).json({ error: 'User Blocked by Admin' });
@@ -172,11 +159,8 @@ const changePassword = async (req, res) => {
     };
     
     const getAddress=async(req,res)=>{
-        try {console.log('/login,userController.loadLogin=========================================================================')
-          console.log("inside getaddress")
-         
+        try {
             const address = await Address.findById(req.params.id);
-            console.log(address)
             res.json(address);
           } catch (error) {
             res.status(500).json({ message: 'Error fetching address!' });
@@ -184,23 +168,18 @@ const changePassword = async (req, res) => {
          }
 
 const updateAddress = async (req, res) => {
-    try {console.log('/login,userController.loadLogin=========================================================================')
+    try {
       // Extract ID from params and fields from body
       const { id } = req.params;
       const { name, landmark, district, state, pincode, phone } = req.body;
-  
-      console.log("Request Body:", req.body);
-      console.log("Address ID:", id);
-  
-      // Find the old address by ID
+        // Find the old address by ID
       const oldAddress = await Address.findById(id);
   
       if (!oldAddress) {
         return res.status(404).json({ error: 'Address not found' });
       }
   
-      console.log("Old Address:", oldAddress);
-  
+    
       // Create the updated address object
       const newAddress = {
         userId: oldAddress.userId,
@@ -223,10 +202,10 @@ const updateAddress = async (req, res) => {
       const updatedAddress = await Address.findByIdAndUpdate(id, newAddress, { new: true });
   
       if (updatedAddress) {
-        console.log("Address successfully updated:", updatedAddress);
+      
         return res.status(200).json({ message: 'Address updated successfully', updatedAddress });
       } else {
-        console.log("Failed to update address");
+       
         return res.status(500).json({ error: 'Failed to update address' });
       }
     } catch (error) {
@@ -236,25 +215,22 @@ const updateAddress = async (req, res) => {
   };
   
 const deleteAddress = async (req, res) => {
-    try {console.log('deleteAddress=========================================================================')
+    try {
       const addressid = req.params.addressId;
       const userId = req.session.user?._id;
-  //console.log(addressid,"addressidddddd")
-  //console.log(userId,"userid")
-  //console.log(req.params,"params request")
-      if (!userId) {
+       if (!userId) {
         return res.redirect('/login'); // Redirect to login if session is missing
       }
   
       const user = await User.findOne({ _id: userId, isAdmin: false });
- // console.log("userrr",user)
+
       if (!user) {
         return res.redirect('/home');
       }
   
       // Delete the address
       const addressDelete = await Address.findByIdAndDelete(addressid);
-    // console.log("addreddDelete",addressDelete)
+   
       if (addressDelete) {
         console.log('Address deleted successfully');
       } else {
@@ -268,7 +244,7 @@ const deleteAddress = async (req, res) => {
 
       return res.status(200).json({ message: 'Address updated successfully', updatedAddresses });
 
-     // res.render('profile',{user:user,address:updatedAddresses});
+     
     } catch (error) {
       console.error('Error deleting address:', error.message);
       res.status(500).json({ message: 'Error deleting address!' });
@@ -292,7 +268,7 @@ const history=async (req,res) =>
 
   const orderHistory=async(req,res)=>{
     try {
-      //console.log("inside history+++++++++", req.session.user._id)
+      
       const orders = await Order.find({ userId:req.session.user._id })
           .populate("orderedItems.productId")
           .sort({ createdOn: -1 });
@@ -312,8 +288,6 @@ try {
   const { id } = req.params;
   const { cancelReason, status } = req.body;
   
- // const cartitem = await Cart.findOne({userId:id})
-
   // Ensure the request body contains the required fields
   if (!cancelReason || !status) {
     return res.status(400).json({ message: 'Invalid request data' });
@@ -337,12 +311,10 @@ try {
 
 
 const getProfileDetail=async(req,res)=>{
-  try{console.log('getProfileDetail=========================================================================')
-  console.log("inside getDetail")
+  try{
 
-  console.log(req.params)
   const profile = await User.findById(req.params.userId);
-  console.log(profile)
+ 
   res.json(profile);
 } catch (error) {
   res.status(500).json({ message: 'Error fetching data!' });
@@ -350,7 +322,7 @@ const getProfileDetail=async(req,res)=>{
 }
 
   const updateProfileDetail=async(req,res)=>{
-    try {console.log('updateProfileDetail=========================================================================')
+    try {
     
       const { name, phone } = req.body;
  
@@ -359,8 +331,6 @@ const getProfileDetail=async(req,res)=>{
       if (!oldData) {
         return res.status(404).json({ error: 'User not found' });
       }
-  
-     // console.log("Old Data:", oldData);
   
       // Create the updated 
       const newData = {
@@ -375,11 +345,11 @@ const getProfileDetail=async(req,res)=>{
       const updated = await User.findByIdAndUpdate(req.params.userId, newData, { new: true });
       const cartitem=await Cart.findOne({userId:req.params.userId})
       if (updated) {
-        console.log("successfully updated:", updated);
+        
    
         return res.status(200).json({ userId:updated._id,name:updated.name,email:updated.email,phone:updated.phone,cart:cartitem });
       } else {
-        console.log("Failed to update details");
+        
         return res.status(500).json({ error: 'Failed to update details' });
       }
     } catch (error) {

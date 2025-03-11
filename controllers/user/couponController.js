@@ -9,21 +9,16 @@ const env = require("dotenv").config();
 
 
 const getCouponCodes= async(req, res)=>{
-    try {console.log('getCouponCodes11111=========================================================================')
-    console.log("inside getcoupon user")
+    try {
     const currentDate = new Date();
       const cartTotal = parseFloat(req.query.cartTotal) || 0;
-    //  console.log(req.query,"lllllllllllllllllllll")
-      console.log(cartTotal)
-      console.log(currentDate)
-      //console.log(req.session.user._id,"hgfdhgfdhgfdhgfdhgfdhgfd")
-      const userId = req.session.user._id; 
+         const userId = req.session.user._id; 
       const coupons = await Coupon.find({ 
         minPrice: { $lte: cartTotal }, 
         endDate: { $gt: currentDate }   
     });
     
-      //console.log(coupons,"cccccccccccccccccc")
+      
       const availableCoupons = coupons.filter(coupon => {
       const usage = coupon.userUsage.find(u => u.userId== userId);
       return !usage || usage.usageCount < coupon.usageLimit;
@@ -40,14 +35,11 @@ const getCouponCodes= async(req, res)=>{
 
 
 const applyCoupon = async (req, res) => {
-    try { console.log('applyCoupon1111=========================================================================')
-        console.log("inside appply coupons")
+    try { 
         const { couponCode, cartTotal } = req.body;
-      //  console.log(req.body,"rrrrrrrrrrrrrrrrrrrr")
+      
         const userId = req.session.user._id;
-        console.log(couponCode)
-        console.log(cartTotal)
-
+       
         if (!couponCode || !cartTotal) {
             return res.status(400).json({
                 success: false,
@@ -89,7 +81,7 @@ const applyCoupon = async (req, res) => {
                 success: false,
                 message: 'Coupon has expired'
             });
-        }console.log("checked date")
+        }
 
         // **ENSURE THAT THE MINIMUM PURCHASE AMOUNT IS CHECKED**
         if (parsedAmount < coupon.minPrice) {
@@ -98,7 +90,7 @@ const applyCoupon = async (req, res) => {
                 message: `Minimum purchase of ₹${coupon.minPrice} required`
             });
         }
-        console.log("checked pice")
+        
         // Ensure usedUsers is initialized
         if (!coupon.userUsage) {
             coupon.userUsage = [];
@@ -111,14 +103,14 @@ const applyCoupon = async (req, res) => {
                 message: 'Coupon already used'
             });
         }
-        console.log("checked used/not")
+        
         // Apply the coupon discount
         let discount = coupon.discount;
          req.session.discount = discount
          req.session.couponCode=couponCode;
         // Prevent discount from exceeding total amount
         let finalAmount = Math.max(parsedAmount - discount, 0);
-        console.log("checked discount")
+        
         // Mark coupon as used for the user
 
 // Find if user has already used this coupon
@@ -163,21 +155,19 @@ if (!existingUserUsage) {
 
 
 const removeCoupon = async (req, res) => {
-    try {console.log('removeCoupon1111=========================================================================')
-        console.log("inside remove coupon")
-        console.log("query",req.query)
+    try {
         const code = req.query.couponCode;
-        console.log(code,"code")
+        
         const userId = req.session.user._id;
         const user = await User.findById(userId);
-console.log( user,"user")
+
         if (!user) {
             return res.status(400).json({
                 success: false,
                 message: 'User not found'
             });
         }
-        console.log("checked user")
+        
         // Fetch the cart
         const cart = await Cart.findOne({ userId }).populate('items.productId');
         if (!cart) {
@@ -186,7 +176,7 @@ console.log( user,"user")
                 message: 'Cart not found'
             });
         }
-     console.log("checked cart")
+     
         // Check if the coupon exists
         const appliedCoupon = await Coupon.findOne({ couponCode: code });
 if (appliedCoupon) {
@@ -211,7 +201,7 @@ if (appliedCoupon) {
                             }
                         );
                     }
-                    console.log("Coupon updated successfully");
+                    
                 } catch (error) {
                     console.error("Error updating coupon:", error);
                 }

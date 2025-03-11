@@ -434,11 +434,11 @@
         e.preventDefault(); // Stop default form submission
         
         if (!orderId) {
-            console.error("Order ID not found!");
+            
             Swal.fire("Error!", "Order ID is missing. Cannot update status.", "error");
             return;
         }
-console.log("status: statusSelect.value",statusSelect.value)
+
         fetch(`/admin/orders/updateorderstatus/${orderId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

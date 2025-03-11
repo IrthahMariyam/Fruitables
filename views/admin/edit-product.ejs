@@ -306,7 +306,7 @@ button[type="submit"]:hover {
                           <div class="row">
 
                         <div class="mb-4">
-                            <label class="form-label text-white">Category</label>
+                            <label class="form-label text-dark">Category</label>
                             <select name="category" class="form-select border">
                                 <% category.forEach(cat => { %>
                                     <option value="<%= cat._id %>" <%= cat._id.equals(product.category) ? 'selected' : '' %>><%= cat.name %></option>
@@ -316,7 +316,7 @@ button[type="submit"]:hover {
                           </div>
                           <div class="row">
                         <div class="mb-4">
-                            <label class="form-label text-white">Status</label>
+                            <label class="form-label text-dark">Status</label>
                             <select name="Available" class="form-select border">
                                 <option value="Available" <%= product.status === 'Available' ? 'selected' : '' %>>Available</option>
                                 <option value="Out of Stock" <%= product.status === 'Out of Stock' ? 'selected' : '' %>>Out of Stock</option>
@@ -327,7 +327,7 @@ button[type="submit"]:hover {
                           </div>
                         <!-- Existing Images -->
                         <div class="mb-4">
-                            <label class="form-label text-white">Existing Images</label>
+                            <label class="form-label text-dark">Existing Images</label>
                             <div class="thumbnails-container" id="existingImages">
                                 <% if (product && product.productImage && product.productImage.length > 0) { %>
                                     <% product.productImage.forEach((image, index) => { %>
@@ -348,7 +348,7 @@ button[type="submit"]:hover {
 
                         <!-- image new code -->
                         <div class="mb-4">
-                            <label class="form-label text-white">Choose Images</label>
+                            <label class="form-label text-dark">Choose Images</label>
                             <input type="file" name="images" id="upload" multiple onchange="handleImage(event)" />
 
                             <div id="cropperContainers"></div> 
@@ -559,46 +559,46 @@ console.log(Status)
     if (radio.checked) {
          selectedValue = radio.value;
           break; } }
-        //  alert(selectedValue)
+    
 
          if(productName.length<3)
          {
             document.getElementById("productNameError").innerText="enter a valid name";
-            //alert("enter a valid name")
+          
          return}
          if(description.length<6)
 
         {
             document.getElementById("desriptionError").innerText="enter a valid description";
-            // alert("enter a valid description")
+           
          return}
         if(Status=='Available' && stock<1)
         {
        document.getElementById('stockError').innerText="If no stock please select status 'Out of stock' "
-       // alert("If no stock please select status 'Out of stock' ")
+       
         return
         }
         if(Status=='Out of Stock' && stock>0)
         {
             document.getElementById('stockError').innerText="If 'Out of stock',please set stock to 0 "
          
-          //  alert("If 'Out of stock',please set stock to 0 ")
+          
         return
         }
         if(stock <0){
             document.getElementById('stockError').innerText="negative values not allowed"
-         // alert("negative values not allowed")
+         
           return
         }
         if(salePrice<=0){
-        //  alert("negative values not allowed")
+        
           document.getElementById('salePriceEror').innerText="Enter a valid price"
           return
         }
        
         if(regularPrice<=0){
             document.getElementById('regularPriceError').innerText="Enter a valid price"
-         // alert("negative values not allowed")
+         
           return
         }
        
@@ -620,7 +620,7 @@ console.log(Status)
         item:selectedValue,
     };
     console.log("dat=",data) 
-  //  console.log(data,'data')
+  
     // Upload all cropped images to Cloudinary and get their URLs
 
 
@@ -638,10 +638,10 @@ console.log(Status)
     data.images = mergedImages;
     if(mergedImages.length==0){
         document.getElementById('imageError').innerText="please select images"
-      //  alert("mergedImages.length",mergedImages.length)
+      
         return
     }
-//alert(`'/admin/editProduct/${productid}'`)
+
     // Send the data to the backend
     axios.post(`/admin/editProduct/${productid}`, data, {
     headers: {

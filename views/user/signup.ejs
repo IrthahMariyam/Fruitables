@@ -200,7 +200,7 @@
   });
      
       function formValidate(e) {
-        console.log("inside formvalidate");
+        
         e.preventDefault();
 
         var email = document.getElementById("email").value;
@@ -208,7 +208,7 @@
         var confirmPassword = document.getElementById("cPassword").value;
         var name = document.getElementById("name").value;
         var phone = document.getElementById("phone").value;
-        console.log(email, password, confirmPassword, name, phone);
+        
         const validIndianPattern = /^[6-9]\d{9}$/;
         const invalidPattern = /^(.)\1{9}$/;
         if (
@@ -219,34 +219,34 @@
           phone == ""
         ) {
           document.getElementById('error').innerText="please fill all fields"
-        //  alert("fields  required");
+       
           return false;
         } else if (password != confirmPassword) {
            document.getElementById('error').innerText="Passwords do not match"
-         // alert("Passwords do not match");
+        
           return false;
         } else if (!validatePassword(password)) {
            document.getElementById('error').innerText="Enter password in correct format"
-         // alert("Enter password in correct format");
+        
           return false;
         } else if (password.length < 8) {
            document.getElementById('error').innerText="Password is invalid must be at least 8 characters"
-        //  alert("Password is invalid must be at least 8 characters)");
+        
           return false; // Stop form submission
         } else if (!validateEmail(email)) {
          document.getElementById('error').innerText="Email is not validated"
-        //  alert("Email is not validated");
+        
           return false; // Stop form submission
         } else if (!validateName(name)) {
            document.getElementById('error').innerText="Give in correct format"
-        //  alert("Give in correct format");
+        
           return false;
         } else if (invalidPattern.test(phone)) {
            document.getElementById('error').innerText="Phone number cannot be all the same digit"
-        //  alert("Phone number cannot be all the same digit");
+        
         } else if (!validIndianPattern.test(phone)) {
            document.getElementById('error').innerText="Enter a valid Indian phone number"
-         // alert("Enter a valid Indian phone number");
+         
         } else {
           document.getElementById("signupForm").submit();
           return true;

@@ -524,8 +524,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
      function handleDeleteAccount(userId,user) {
-      //alert("dsfadsfasdf")
-      //console.log("Inside delete:", userId);
+    
   
       Swal.fire({
         title: 'Are you sure?',
@@ -589,13 +588,13 @@ document.addEventListener('DOMContentLoaded', function() {
   
     if (!validatePassword(newPassword)) {
       document.getElementById('passerror').textContent='New password must be 8-16 characters long, include at least one letter, one number, and one special character (@$!&)'
-     // alert('New password must be 8-16 characters long, include at least one letter, one number, and one special character (@$!&)');
+    
       return;
     }
   
     if (newPassword !== confirmPassword) {
       document.getElementById('passerror').textContent='New Password and Confirm Password do not match'
-      //alert('New Password and Confirm Password do not match');
+     
       return;
     }
   
@@ -625,7 +624,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
   
         const data = await response.json();
-  //alert("success")
+  
   Swal.fire({
   title: 'Changed!',
   text: 'Your password is changed.',
@@ -653,7 +652,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const userIdInput = document.getElementById('userId');
      if (userIdInput) {
       userIdInput.value = userId; // Set the user ID in the hidden input
-      console.log('User ID set in modal:', userId);
+      
      } else {
       console.error('Hidden input for user ID not found.');
      }
@@ -668,21 +667,21 @@ document.addEventListener('DOMContentLoaded', function() {
     e.preventDefault(); // Prevent form submission
     
     // Retrieve form values
-   // alert("inssidsg")
+   
     const name = document.getElementById('name').value.trim();
     const userId=document.getElementById('userId').value.trim()
-  //alert(userId)
-    console.log(name)
+ 
+  
     const landmark = document.getElementById('landmark').value.trim();
-    console.log(landmark)
+  
     const district = document.getElementById('District').value.trim();
-    console.log(district)
+   
     const state = document.getElementById('state').value.trim();
-    console.log(state)
+    
     const pincode = document.getElementById('pincode').value.trim();
-    console.log(pincode)
+  
     const phone = document.getElementById('phone').value.trim();
-    console.log(phone)
+   
    
     
     // Validation
@@ -691,25 +690,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!name || !landmark || !district || !state || !pincode || !phone) {
       document.getElementById('addaddresserror').textContent='Please fill all fields!';
-      //alert('Please fill all fields!');
+    
       return;
     }
     if (invalidPattern.test(phone)) {
       document.getElementById('addaddresserror').textContent='Phone number cannot be all the same digit.';
-     // alert('Phone number cannot be all the same digit.');
+    
       return;
     }
     if (!validIndianPattern.test(phone)) {
       document.getElementById('addaddresserror').textContent='Enter a valid Indian phone number.'
-      //alert('Enter a valid Indian phone number.');
+     
       return;
     }
   
-    // Prepare API call details
+    
   
-    //alert("inside")
-  
-   // alert(userId,name,landmark,district,state,pincode,phone)
+   
    
     // Make API call
     fetch('/addAddress', {
@@ -751,8 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
     // Delete address
     function deleteaddress(addressId) {
-     // alert(addressId)
-      // if (confirm('Are you sure you want to delete this address?')) {
+    
         Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -773,7 +769,7 @@ document.addEventListener('DOMContentLoaded', function() {
               'Your account has been deleted.',
               'success'
             );
-           // alert(data.message);
+           
             window.location.reload();
           })
           .catch((err) => {console.error(err)
@@ -791,7 +787,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Open modal for editing an address
   function openEditAddressModal(addressId) {
-    //console.log(addressId,"edit addres modal")
+    
      fetch(`/getAddress/${addressId}`,
      {method:'GET', 
      headers: {
@@ -832,17 +828,17 @@ document.addEventListener('DOMContentLoaded', function() {
   
     if (!name || !landmark || !district || !state || !pincode || !phone) {
      document.getElementById("editerrormessage").textContent="Please fill all fields!"
-     // alert('Please fill all fields!');
+    
       return;
     }
     if (invalidPattern.test(phone)) {
        document.getElementById("editerrormessage").textContent="Phone number cannot be all the same digit"
-     // alert('Phone number cannot be all the same digit');
+     
       return;
     }
     if (!validIndianPattern.test(phone)) {
        document.getElementById("editerrormessage").textContent="Enter a valid Indian phone number"
-     // alert('Enter a valid Indian phone number');
+    
       return;
     }
   
@@ -913,8 +909,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   
    function openEditDetails(userId) {
-   // console.log(userId,"edit details modal")
-   // alert(userId)
+   
      fetch(`/getprofileDetail/${userId}`,
      {
       method:'GET', 
@@ -923,11 +918,9 @@ document.addEventListener('DOMContentLoaded', function() {
               },})
       .then((res) => res.json())
       .then((data) => {
-      //alert("dfdfdsfffffffffffffffffffff")
-        // console.log("inside recieve",data)
-       //  alert(data.phone)
+    
          const num=data._id.toString()
-       //  alert(num)
+      
           document.getElementById('profileid').value=num
           document.getElementById('profilename').value=data.name
           document.getElementById('profilephone').value=data.phone
@@ -942,19 +935,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('editDetailForm').addEventListener('submit', function (e) {
     e.preventDefault();
     
-    //console.log(document.getElementById('profilename').value)
+    
     const username=document.getElementById('profilename').value
     const userphone = document.getElementById('profilephone').value
     const useremail = document.getElementById('profileemail').value
     const userId=document.getElementById('profileid').value
-   // alert(userId)
-  //console.log(userId,"this is id")
   
   
-    // Get form data
-   
-    //const userId = document.getElementById('userid').value.trim();
-    
    
     // Validate inputs
     const validIndianPattern = /^[6-9]\d{9}$/;
@@ -962,27 +949,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!username || !userphone || !useremail) {
       document.getElementById("editdetailerrormessage").textContent='Please fill all fields!'
-      //alert('Please fill all fields!');
+    
       return false;
     }
     if (invalidPattern.test(userphone)) {
       document.getElementById("editdetailerrormessage").textContent='Phone number cannot be all the same digit.'
-      //alert('Phone number cannot be all the same digit.');
+     
       return false;
     }
     if (!validIndianPattern.test(userphone)) {
       document.getElementById("editdetailerrormessage").textContent='Enter a valid Indian phone number.'
-      //alert('Enter a valid Indian phone number.');
+     
       return false;
     }
     if(! emailReg.test(useremail) ){
       document.getElementById("editdetailerrormessage").textContent='Enter a valid emailId'
-      //alert('Enter a valid emailId');
+      
       return false;
         }
   if(profilename="")
   {document.getElementById("editdetailerrormessage").textContent='Please enter name'
-    //alert("Please enter name")
+   
     return false;
   }
   

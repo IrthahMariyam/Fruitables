@@ -199,19 +199,15 @@
       
 function updateQuantity(productId,change,stock,price) {
 
-  //quantity = parseInt(quantity);
+  
   var $row = $(`#product-row-${productId}`);
   var currentQty = parseInt($row.find(".quantity").text());
   var unitPrice = parseFloat($row.find(".price").text());
   
-  // alert(currentQty)
-  // alert(change)
-  // alert(stock)
-  // alert(productId)
-  // alert(price)
+ 
 
  var oldprice=currentQty*price;
- console.log(oldprice,"oldprice")
+ 
  var newQty = currentQty + change;
 
   if (newQty < 1) {
@@ -240,7 +236,7 @@ function updateQuantity(productId,change,stock,price) {
           });
           return;
         }
-//alert(quantity)
+
 var data = {
     productId: productId,
     quantity: newQty
@@ -252,38 +248,36 @@ var data = {
    
    data: JSON.stringify(data),
     success: function (response) {
-console.log("Cart updated successfully:", response);
+
 
 let $productRow = $(`#product-row-${productId}`);
 
 if ($productRow.length) {
   
     let newTotal = price * newQty;
-   console.log("newtotal",newTotal)
+   
     
   let subtotalText = $(`#subtotal`).text().trim(); // Get text without extra spaces
         let subtotal = parseFloat(subtotalText.replace("₹", "")) || 0;
 
     $productRow.find(".product-total").text(`₹${newTotal.toFixed(2)}`);
     $productRow.find(".quantity").text(newQty);
-           console.log("Before Update - Subtotal:", subtotal);
+           
       subtotal=(subtotal-oldprice)+newTotal;
-        console.log("After Update - Subtotal:", subtotal);
+        
         $(`#subtotal`).text(`₹${subtotal.toFixed(2)}`); // Keep 2 decimal places
-//       
+    
 if (subtotal >= 1000) {
   $("#shipping").text(`₹ 0`);
   $("#totalprice").text(`₹${(subtotal).toFixed(2)}`); // No shipping fee for orders ≥1000
-  // alert($("#shipping").text());
-  // alert(subtotal);
+ 
 } else {
   $("#shipping").text(`₹ 50`);
   $("#totalprice").text(`₹${(subtotal + 50).toFixed(2)}`); // Add shipping fee for orders <1000
-//   alert($("#shipping").text());
-//   alert(subtotal);
+
 }
 }
-    //window.location.reload()
+   
 
      
     },
@@ -313,18 +307,17 @@ if (subtotal >= 1000) {
 
 function removeFromCart(productId,price) {
   var $productRow = $(`#product-row-${productId}`);
-  //alert($productRow)
+  
   
       var currentQty = parseInt($productRow.find(".quantity").text());
-    //  alert(currentQty)
-     // alert("currentquantity",currentQty)
+    
   $.ajax({
     url: "/cart/remove", // Backend endpoint
     type: "POST",
     contentType: "application/json",
     data: JSON.stringify({ productId}), // Send productId
     success: function (response) {
-      console.log("Product removed successfully:", response);
+      
       
       var total=currentQty * price
    
@@ -334,10 +327,10 @@ function removeFromCart(productId,price) {
 
         let subtotalText = $(`#subtotal`).text().trim(); 
         let subtotal = parseFloat(subtotalText.replace("₹", "")) || 0;
-        console.log("Before Update - Subtotal:", subtotal);
+        
         // Subtract the product price from the subtotal
         subtotal -= total;
-        console.log("After Update - Subtotal:", subtotal);
+        
         // Update the displayed values
         let shipping=0;
         if(subtotal>1000)

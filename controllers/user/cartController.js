@@ -7,13 +7,13 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const getCartPage = async (req, res) => {
-       try {console.log('getCartPage11111=========================================================================')
+       try {
       const user=req.session.user;
        if (!user) {
         return res.redirect('/login'); 
        }
        const userData = await User.findOne({_id: user._id });
-        console.log(userData)
+      
       //const carts = await Cart.findOne({ userId:userData._id }).populate('items.productId');
      //product lited checking
       const carts = await Cart.findOne({ userId: userData._id }).populate('items.productId');
@@ -38,8 +38,7 @@ const getCartPage = async (req, res) => {
        }
        let totalamount= carts.items.reduce((sum, item) => sum + item.totalPrice, 0).toFixed(0) ;
        let total=Math.round(totalamount)
-       //console.log(total)
-       //console.log(totalamount)
+      
         res.render('cart', {
         user: userData,
         carts: carts || { items: [] },

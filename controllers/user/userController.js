@@ -102,7 +102,6 @@ const getProductReviewsForHomepage = async () => {
 const pageNotFound = async (req, res) => {
   try {
     const user = req.session.user;
-    console.log(user);
     res.render("page-404");
   } catch (error) {
     res.redirect("/pageNotFound");
@@ -115,7 +114,6 @@ const success = async (req, res) => {
   try {
     const {id}=req.query;
     const user = req.session.user;
-    console.log(user);
     res.render("success",{orderId:id});
   } catch (error) {
     res.redirect("/success");
@@ -139,14 +137,14 @@ const loadSignup = async (req, res) => {
 const loadShopping = async (req, res) => {
   
  try {
-  console.log("inside shop")
+
   const user = req.session.user;
   let userData,cartitem;
   if(user)
    { 
-    console.log("user",user)
+   
     userData = await User.findOne({ _id: user });
-    console.log(user, "user in shop page in session");
+    
    cartitem=await Cart.findOne({userId:user._id})
   }
   const categories = await Category.find({ isListed: true ,isDeleted:false}).lean();
@@ -163,8 +161,7 @@ const loadShopping = async (req, res) => {
 
   let baseQuery = {
   isDeleted: false,
-   // stock: { $gt: 0 },
-  isListed:true,
+     isListed:true,
   };
 
 
@@ -287,7 +284,7 @@ const signup = async (req, res) => {
     const { name, email, phone, password, cpassword,referralCode } = req.body;
     const user = await User.findOne({ email });
      if (user) {
-      console.log("User already exists");    
+       
       return res.render("signup", {
       success: false,
       message: "User with this email already exists",
@@ -321,16 +318,14 @@ const securePassword = async (password) => {
 const generateReferralCode = () => {
   const randomString = crypto.randomBytes(3).toString("hex").toUpperCase(); // Generates a 6-character string
 
-  console.log("refcode=",`FR${randomString}`)
-  return `FR${randomString}`; 
+   return `FR${randomString}`; 
 };
 
 
   const verifyOTP = async (req, res) => {
    try {
     const { otp } = req.body;
-    console.log("Entered OTP:", otp);
-
+    
     if (otp.toString() !== req.session.userOtp) {
       return res.status(400).json({ success: false, message: "Invalid OTP, please try again" });
     }
@@ -350,18 +345,12 @@ const generateReferralCode = () => {
     req.session.user = saveUserData;
     req.session.email = saveUserData.email;
     req.session.name = saveUserData.name;
-
-    console.log("User's referral code:", saveUserData.referralCode);
-    console.log("Session referral code:", req.session.referralCode);
-
     
     if (req.session.referralCode) {
       const referrer = await User.findOne({ referralCode: req.session.referralCode });
 
       if (referrer) {
-        console.log("Referrer found:", referrer.name);
-
-     
+        
         let referrerWallet = await Wallet.findOne({ userId: referrer._id });
         if (!referrerWallet) {
           referrerWallet = new Wallet({
@@ -376,9 +365,7 @@ const generateReferralCode = () => {
         await referrerWallet.save();
         referrer.totalAmount = (referrer.totalAmount || 0) + 100;
         await referrer.save();
-        console.log(`₹100 added to ${referrer.name}'s wallet for referral.`);
-
-        
+                
         let userWallet = await Wallet.findOne({ userId: saveUserData._id });
         if (!userWallet) {
           userWallet = new Wallet({
@@ -391,8 +378,7 @@ const generateReferralCode = () => {
           userWallet.transactions.push({ amount: 50, transactionType: "credit", reason: "Referral Bonus", description: "Referral Amount", timestamp: new Date() });
         }
         await userWallet.save();
-        console.log(`₹50 added to ${saveUserData.name}'s wallet for referral.`);
-
+        
     
         const referralUser = new Referrel({
           user:saveUserData._id, 
@@ -416,11 +402,9 @@ const generateReferralCode = () => {
 
 const resendOtp = async (req, res) => {
   try {
-    console.log("inside resend");
-    console.log(req.session.email);
-    console.log(req.body.email)
+  
     const email = req.session.email;
-    console.log("email " + email);
+    
     if (!email) {
       return res
         .status(400)
@@ -430,7 +414,7 @@ const resendOtp = async (req, res) => {
     req.session.userOtp = otp;
     const emailSent = await sendVerificationEmail(email, otp);
     if (emailSent) {
-      console.log("Resend OTP", otp);
+      
       res
         .status(200)
         .json({ success: true, message: "OTP Resend Successfully" });
@@ -454,7 +438,7 @@ const resendOtp = async (req, res) => {
 };
 
 const loadLogin = async (req, res) => {
-  try {console.log('loadLogin=1111========================================================================')
+  try {
     if (!req.session.user) return res.render("login");
     else res.redirect("/");
   } catch (error) {
@@ -463,10 +447,10 @@ const loadLogin = async (req, res) => {
 };
 
 const userlogin = async (req, res) => {
-  try {console.log('/userlogin111=========================================================================')
-    console.log("User inside login");
+  try {
+  
     const { email, password } = req.body;
-    console.log(req.body);
+   
     const findUser = await User.findOne({ email: email, isAdmin: false });
     if (!findUser) {
       return res.render("login", { message: "User not found" });
@@ -485,8 +469,6 @@ const userlogin = async (req, res) => {
       return res.render("login", { message: "Incorrect password" });
     }
 
-    console.log("inside userLogin", req.session.user);
-
     req.session.user = findUser;
     
     res.redirect("/");
@@ -497,10 +479,10 @@ const userlogin = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  try {console.log('logout=========================================================================')
+  try {
     req.session.destroy((err) => {
       if (err) {
-        console.log("Session destruction error", err.message);
+       
         return res.redirect("/pageNotFound");
       }
       return res.redirect("/login");
@@ -530,7 +512,7 @@ const forgotpasswordEmail = async (req, res) => {
         req.session.userOtp = otp;
         req.session.email = email;
         res.render("forgot-verify-otp");
-        console.log("otp = ", otp);
+        
       } else {
         res.json({
           success: false,
@@ -550,7 +532,7 @@ const forgotpasswordEmail = async (req, res) => {
 const forgotverifyOTP = async (req, res) => {
   try {
     const { otp } = req.body;
-    console.log("entered otp :" + otp);
+    
     if (otp.toString() == req.session.userOtp) {
       res.json({ success: true, redirectUrl: "/reset-password" });
     } else res.json({ success: false, message: "OTP mismatch" });
@@ -578,7 +560,7 @@ const getverifyOTPpage = async (req, res) => {
 };
 const postNewPassword = async (req, res) => {
   try {
-    //console.log('haiiiiiii')
+    
     const { newPass1, newPass2 } = req.body;
     const email = req.session.email;
     if (newPass1 == newPass2) {
@@ -587,7 +569,7 @@ const postNewPassword = async (req, res) => {
         { email: email },
         { $set: { password: passwordHash } }
       );
-      console.log("succes");
+      
       res.redirect("/login");
     } else res.render("reset-password", { message: "Password mismatch" });
   } catch (error) {
@@ -597,7 +579,7 @@ const postNewPassword = async (req, res) => {
 const getProfilePage = async (req, res) => {
   try {
     const userId = req.session.user._id;
-    //console.log(userId);
+    
     const userData = await User.findById({ _id: userId });
     const cartitem=await Cart.findOne({userId:userId})
     res.render("profile", { user: userData.name,cart:cartitem});
@@ -611,20 +593,14 @@ const getProfilePage = async (req, res) => {
 const loadProfile=async (req, res) => {
     try {
        const id=req.params;
-       //console.log(id,"inside loadprofile params id value")
+       
         const user = req.session.user;
-       // console.log(user);
+       
         if (user) {
             const userData = await User.findOne({_id: user._id });
             const cartitem=await Cart.findOne({userId:userData._id})
-            // const useraddress=await Address.findOne({userId:user._id})
             const userAddress = await Address.findOne({userId:user._id }).populate('user._id');
             res.locals.user = userData.name;
-           // console.log(userData,"userinside loadprofile")
-            //console.log(userAddress,"useraddressinside loadprofile")
-          //  console.log("session name", req.session.user.name);
-            console.log("locals data", res.locals.user);
-            console.log("session data", req.session.user);
             if(userData){
                 res.render("profile",{user:userData,
                              address:userAddress,
@@ -647,9 +623,9 @@ const deleteAccount=async(req,res)=>{
     try 
         {
             const id=req.params;
-            console.log(id,"inside deleteProfile params id value")
+           
              const user = req.session.user;
-             console.log(user);
+             
              if (user) {
                  const userData = await User.findOne({_id: user._id });
                  const cartitem=await Cart.findOne({userId:userData._id})
@@ -686,9 +662,7 @@ module.exports = {
   getverifyOTPpage,
   postNewPassword,
   getProfilePage,
- 
- success,
-
+  success,
   loadProfile,
   deleteAccount,
 

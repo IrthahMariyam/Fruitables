@@ -30,22 +30,7 @@
                     <td>
                         <a href="/admin/getorderdetails/<%=order._id%>" style="text-decoration: none;"><button class="btn"style="background-color:#28A745">View More</button></a>
                       
-                        <!-- <form action="/admin/orders/update-status" method="POST">
-                            <input type="hidden" name="orderId" value="<%= order._id %>">
-                            <select name="status">
-                                <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
-                                <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                            </select>
-                            <button type="submit">Update</button>
-                        </form>
-                        <% if (order.status === 'Pending') { %>
-                        <form action="/admin/orders/cancel/<%= order._id %>" method="POST">
-                            <button type="submit">Cancel Order</button>
-                        </form>
-                        <% } %> -->
+                       
                     </td>
                 </tr>
                 <% }); %>
@@ -74,11 +59,6 @@
  function blockUser(row,userId,userName) {
  const buttonlabel=document.querySelector('[name=blockuser]')
  const currentText = button.innerHTML === "Blocked" ? "Blocked" : "Unblocked";
- //alert(userId)
- //alert(userName)
-  console.log('Category ID:', userId);
-console.log('Name Field:', userName);
-
 
   Swal.fire({
     title: 'Are you sure?',
@@ -106,8 +86,7 @@ console.log('Name Field:', userName);
           'success'
         );
         button.innerHTML = currentText === "Blocked" ? "Unblocked" : "Blocked";
-         // row.style.opacity = '0.5';  // Visual feedback (dim the row)
-         //window.location.href = '/admin/user';
+        
       })
       .catch(error => {
         Swal.fire(
