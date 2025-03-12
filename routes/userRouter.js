@@ -13,7 +13,6 @@ const walletController=require('../controllers/user/walletController')
 
 
 const passport = require('passport')
-//const { userAuth } = require('../middlewares/auth')
 const User = require('../models/userSchema')
 const Address = require('../models/addressSchema')
 const Wallet=require('../models/walletSchema')
@@ -42,8 +41,6 @@ router.get('/auth/google',passport.authenticate('google',{scope:['profile','emai
 
 router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), async(req, res) => {
    
-    console.log("User Profile:", req.user);
-    console.log("User Email:", req.user.email);
     const findUser=await User.findOne({email:req.user.email,isAdmin:false})
 
     req.session.user=findUser
@@ -58,7 +55,7 @@ router.post('/login',userController.userlogin)
 
 router.get('/logout',userController.logout)
 
-//router.get('/products',userController.getFilteredProducts)
+
 router.get("/shop",userController.loadShopping)
 router.get('/search',productController.searchProducts);
 router.get('/filter',productController.filterProduct)
@@ -80,8 +77,7 @@ router.get("/getAddress/:id",userAuth,profileController.getAddress)
 router.post("/updateAddress/:id",userAuth,profileController.updateAddress)
 router.post("/deleteAddress/:addressId",userAuth,profileController.deleteAddress)
 
-// router.get('/api/history',userAuth,orderController.history)
-// router.get("/orders/history",userAuth,orderController.orderHistory)
+
 router.post('/orders/cancel/:id',userAuth,orderController.cancelOrder)
 router.post('/orders/reutrnrequest/:id', orderController.returnOrder);
 router.get('/viewOrderDetails/:orderId',userAuth,orderController.getOrderDetails)
@@ -118,10 +114,6 @@ router.post('/removeCoupon',userAuth,couponController.removeCoupon)
 
 //wallet
 router.get('/wallet',userAuth,walletController.getWallet)
-//router.post('addMoneyToWallet',userAuth,walletController.addMoneyToWallet)
-//router.post('/wallet/verify-payment',userAuth,walletController.walletVerifyPayment)
-//router.post('/wallet/create-order',userAuth,walletController.walletCreateOrder)
-//router.get('/wallet/history', userAuth, walletController.getTransactionHistory)
 router.post("/wallet/create-order",userAuth,walletController.createAddmoneyWallet)
 router.post("/wallet/add/money",userAuth,walletController.addMoneyWallet)
 router.post("/wallet/purchase",userAuth,walletController.purchaseUsingWallet)

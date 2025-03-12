@@ -65,13 +65,13 @@ const productInfo = async (req, res) => {
     try {
       const search = req.query.searchProduct || "";
       const page = Math.max(1, parseInt(req.query.page) || 1);
-    const limit = parseInt(req.query.limit) || 15;
+    const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
   
       const productData = await Product.find({
         isDeleted: false,
         productName: { $regex: new RegExp(search, 'i') } 
-      // $or:[{ productName: { $regex: new RegExp(search, 'i') }}] 
+     
       })
       .sort({ createdOn: -1 })
       .skip(skip)
@@ -83,7 +83,7 @@ const productInfo = async (req, res) => {
         productName: { $regex: new RegExp(search, 'i') }  
       });
   
-      const totalPages = Math.ceil(totalProduct / limit);
+      const totalPages = Math.floor(totalProduct / limit);
   
       res.render("admin-products", {
         products: productData,
@@ -111,10 +111,10 @@ try {
 }
 const addProducts = async (req, res) => {
     try {
-        console.log("addProducts route",req.body);
+      
 
         const products = req.body;
-        console.log('Received product:', products);
+        
 
         if(!products.productName){
             return res.status(400).json({ message: "Product name not recived. Try with another name." });
@@ -139,7 +139,7 @@ const addProducts = async (req, res) => {
             return res.status(400).json({ message: "No images uploaded." });
 
         } 
-console.log("images==========================",req.body.images)
+
         // Validate Category
         const categoryId = await Category.findOne({ name: products.category });
         if (!categoryId) {
@@ -161,11 +161,11 @@ console.log("images==========================",req.body.images)
             item:products.item,
         });
 
-        console.log(newProduct,'new produ')
+       
 
         // Save to Database
         await newProduct.save();
-        console.log('Product saved successfully:', products.productName);
+      
 
         // Success redirect or response
         return res.status(200).json({ message: "Product added successfully!" });
@@ -203,14 +203,14 @@ const productunListed=async(req,res)=>{
 const getEditProduct = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log("Editing product with Name:", id);
+       
     
         // Fetch product by ID
         const product = await Product.findOne({"_id":`${id}`})
         const category = await Category.find({});  // Fetch all categories for dropdown
         
         if (!product) {
-            return res.status(404).json({ message: "Product not found." });
+            res.redirect("/pageerror");
         }
 
         // Render the edit page with product and category details
@@ -218,9 +218,7 @@ const getEditProduct = async (req, res) => {
             product: product,
             category: category
         });
-        //console.log(category)
-       // console.log(product)
-        //console.log(product.productImage)
+       
     } catch (error) {
         console.error("Error fetching product for edit:", error);
         res.redirect("/pageerror");
@@ -232,12 +230,10 @@ const postEditProduct = async (req, res) => {
  
      try {
 
-        console.log("req.params",req.params)
+        
         const productId = req.params.id;
         const updatedData = req.body;
-        console.log("req.body=",req.body)
-        console.log("Updating product with ID:", productId);
-        console.log("Received data:", updatedData);
+       
         const cat = await Category.findById(updatedData.category);
 
    
@@ -259,14 +255,14 @@ const postEditProduct = async (req, res) => {
          }
 
         // Update the product in the database
-        console.log(productId)
+        
         const updatedProduct = await Product.findByIdAndUpdate(productId, update, { new: true });
         
         if (!updatedProduct) {
-            return res.status(404).json({ message: "Product not found." });
+            res.redirect("/pageerror");
         }
 
-        console.log("Product updated successfully:", updatedProduct);
+       
         res.redirect("/admin/products");  // Redirect to product list after update
      } catch (error) {
         console.error("Error updating product:", error);
@@ -280,35 +276,28 @@ const deleteProduct=async(req,res)=>{
 try{
 const { name } = req.body;
 const id=req.params.id // Use req.body to get the values
-console.log('Product IDin controller:', id);
-console.log('Name Field:in controller', name);
-console.log("inside deletecat")
+
 const cat = await Product.findOne({_id: id});
 if (cat) {
   const category = await Product.updateOne({ _id: id }, { $set: { isDeleted: true } });
   res.status(200).json({ message: 'Product soft deleted successfully' });
 } else {
-  res.status(404).json({ error: 'Product not found' });a
+    res.redirect("/pageerror");
 }
 }catch (error) {
-res.status(500).json({ error: 'Internal server error' });
-}
+    res.redirect("/pageerror");}
 }
 
 
 
   const deleteSingleImage = async (req, res) => {
     try {
-        console.log('halooo');
         
         const { imageNameToServer, productIdToServer } = req.body;
-        console.log('productId:', productIdToServer);
-        console.log('imageName:', imageNameToServer);
-
-
+       
         const segments = imageNameToServer.split('/');
-        const fileNameWithVersion = segments.pop(); // "hcejfhvf45ll5wrofzbh.jpg"
-        const publicId = fileNameWithVersion.split('.')[0]; // "hcejfhvf45ll5wrofzbh"
+        const fileNameWithVersion = segments.pop(); 
+        const publicId = fileNameWithVersion.split('.')[0]; 
 
         
         const product = await Product.findByIdAndUpdate(
@@ -317,7 +306,7 @@ res.status(500).json({ error: 'Internal server error' });
         );
        
         const imagePath = path.join("public", imageNameToServer);
-        console.log('Image path:', imagePath);
+        
        
     
      let saved=   await product.save();
@@ -341,6 +330,5 @@ module.exports={
     getEditProduct,
     postEditProduct,
     deleteProduct,
-    //deleteImage,
     deleteSingleImage,
 }

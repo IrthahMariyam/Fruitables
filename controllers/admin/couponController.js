@@ -12,7 +12,7 @@ const getCouponPage = async (req, res) => {
         const coupons = await Coupon.find();
         res.status(200).render("admin-coupon",{coupons:coupons});
     } catch (error) {
-        console.error("Error fetching coupons:", error);
+        
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
@@ -29,7 +29,7 @@ const addCoupon = async (req, res) => {
       discount,
       description,
     } = req.body;
-console.log(req.body)
+
     // Validation
     const now = new Date();
     if (!couponCode || !startDate || !endDate || !minPrice || !usageLimit || !discount || !description) {
@@ -64,7 +64,7 @@ console.log(req.body)
       discount,
       description,
     });
-    console.log("coupon",coupon)
+   
 
     await coupon.save();
     res.status(201).json({ success: true, message: "Coupon added successfully." });
@@ -81,7 +81,7 @@ const deleteCoupon = async (req, res) => {
     const deletedCoupon = await Coupon.findByIdAndDelete(id);
 
     if (!deletedCoupon) {
-      return res.status(404).json({ success: false, message: "Coupon not found." });
+      res.redirect("/pageerror");
     }
 
     res.status(200).json({ success: true, message: "Coupon deleted successfully." });
@@ -93,20 +93,18 @@ const deleteCoupon = async (req, res) => {
 
 const updateCoupon = async( req,res)=>{
   
-  try {console.log("inside update coupon")
+  try {
       const couponId = req.params.id
-      console.log(couponId,"couponId in update coupon")
+     
       const {code,discount,minPrice,startDate,endDate, usageLimit,description,}=req.body
-      console.log("req.body",req.body)
+     
       if (!code || discount < 0 || discount > 100 || minPrice < 0 || new Date(endDate) <= new Date(startDate)) {
           return res.status(400).json({ success: false, message: 'Invalid input data' });
       }
       let changeCode= code.toUpperCase()
     
       const check = await Coupon.find({code:changeCode})
-      // if(check){
-      //    // return res.status(404).json({ success: false, message: 'Coupon Code Already used' });
-      // }
+    
      const updatedCoupon= await Coupon.findByIdAndUpdate(couponId,{
       couponCode:changeCode,
       discount,
@@ -118,7 +116,7 @@ const updateCoupon = async( req,res)=>{
      })
       
      if (!updatedCoupon) {
-      return res.status(404).json({ success: false, message: 'Coupon not found' });
+      res.redirect("/pageerror");
   }
   
   res.json({ success: true, message: 'Coupon updated successfully'});
@@ -133,15 +131,13 @@ const couponStatus = async (req,res)=>{
   
   const couponId = req.params.id;
   const { active } = req.body;
-  console.log(active,"gfdfdddfdfdffd")
-
+  
   try {
-    console.log(couponId,req.body,"ytretrerere")
-    
+  
       const coupon = await Coupon.findByIdAndUpdate(couponId, { active }, { new: true });  
       if (!coupon) {
-          return res.status(404).json({success:false, message: 'Coupon not found' });
-      }console.log(coupon)
+        res.redirect("/pageerror");
+      }
       res.status(200).json({ success:true,message: 'Coupon updated successfully', coupon });
   } catch (error) {
       console.log('Error updating coupon:', error);

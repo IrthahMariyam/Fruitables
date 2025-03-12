@@ -55,19 +55,13 @@ const userBlocked=async (req,res)=>{
  try {
     const { name } = req.body;
      const {id}=req.params // Use req.body to get the values
-     console.log('Category IDin controller:', id);
-     //console.log('Name Field:in controller', name);
-     console.log("inside deleteuser")
-     console.log(req.params,"params")
-     console.log('req.body',req.body)
-     console.log(name,"name")
-     console.log(id,"id")
+   
      const user = await User.findById(id);
-     console.log(user)
+    
      if (user) {
-        console.log("inside user")
+       
        const blockUser = await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
-       console.log("blockUser",blockUser)
+     
        res.status(200).json({ success:true,message: 'Blocked user successfully' });
      } else {
         res.redirect("/pageerror");

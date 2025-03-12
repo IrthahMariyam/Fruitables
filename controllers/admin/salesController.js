@@ -82,7 +82,7 @@ const loadSalesPage = async (req, res) => {
             });
 
         } catch (error) {
-            console.error("Error loading dashboard:", error);
+          
             res.redirect("/pageNotFound");
         }
     } else {
@@ -95,16 +95,12 @@ const salesReport = async (req, res) => {
         const { filter, startDate, endDate } = req.query;
         let start, end;
 
-        // const today = new Date();
-        // today.setHours(0, 0, 0, 0);
         const today = moment.utc().startOf('day').toDate();
         start = new Date(0); // Unix epoch (all time)
         end = new Date(); // Current date
         switch (filter) {
             case "daily":
-                // start = today;
-                // end = new Date(today);
-                // end.setHours(23, 59, 59, 999);
+              
                 start = today;
                 end = moment.utc(today).endOf('day').toDate();
                 break;
@@ -134,8 +130,7 @@ const salesReport = async (req, res) => {
             createdOn: { $gte: start, $lte: end },
             status: "Delivered"  // Filter for delivered orders only
         }).populate("userId", "name"); 
-   // console.log("orders in sales",orders)
-        // Format response data correctly
+  
         const reportData = orders.map(order => ({
             orderId: order.orderId,   // Ensure you use the correct field name
             customerName: order.userId ? order.userId.name : "Guest",  // Fetch populated user name
@@ -156,7 +151,7 @@ const salesReport = async (req, res) => {
 const getTopSellingProducts = async (req, res) => {
     try {
         const { filter } = req.query; 
-//console.log("date",req.query)
+
         let startDate, endDate;
         if (filter === 'daily') {
             startDate = moment().startOf('day').toDate();
@@ -175,15 +170,13 @@ const getTopSellingProducts = async (req, res) => {
             endDate = new Date();
         }
 
-        console.log(`Filtering orders between ${startDate} and ${endDate}`);
-
-        
+       
         const orders = await Order.find({
             status: 'Delivered',
             createdOn: { $gte: startDate, $lte: endDate }
         }).populate('orderedItems.productId').limit(10)
 
-        console.log(`Found ${orders.length} orders`);
+       
 
         
         const productSales = {};
@@ -201,17 +194,15 @@ const getTopSellingProducts = async (req, res) => {
             });
         });
 
-      //  console.log('Product sales data:', productSales);
-
-        
+    
         const topSellingProducts = Object.values(productSales);
         topSellingProducts.sort((a, b) => b.totalSold - a.totalSold); 
         
 
-      //  console.log('Sorted top selling products:', topSellingProducts);
+     
         const limitedTopSellingProducts = topSellingProducts.slice(0, 10); // Limit to top 10 products
 
-     //   console.log('Limited top selling products:', limitedTopSellingProducts);
+     
 
         res.json(limitedTopSellingProducts);
 

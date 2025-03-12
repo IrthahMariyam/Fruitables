@@ -46,9 +46,9 @@ const categoryInfo=async(req,res)=>{
 
 
  const addCategory=async(req,res)=>{
-    try {console.log(req.body)
+    try {
             const {name,description}=req.body;
-            console.log(`${name}` + `${description}`)
+            
             const existCategory=await Category.findOne({
                 name:{
                     $regex:`^${name}$`,$options:'i'
@@ -97,7 +97,7 @@ const editCategory = async (req, res) => {
 
         const cat = await Category.findOne({ _id: id });
         if (!cat) {
-            return res.status(400).json({ error: "Category not found" });
+            res.redirect("/pageerror");
         }
 
         const updateCategory = await Category.findByIdAndUpdate(id, {
@@ -112,7 +112,7 @@ const editCategory = async (req, res) => {
             res.status(404).json({ error: "Category not updated" });
         }
     } catch (error) {
-        res.status(500).json({ error: "Internal server error" });
+        res.redirect("/pageerror");
     }
 };
 
@@ -121,18 +121,16 @@ const deleteCategory = async (req, res) => {
     try {
       const { name } = req.body;
       const id=req.params.id // Use req.body to get the values
-      console.log('Category IDin controller:', id);
-      console.log('Name Field:in controller', name);
-      console.log("inside deletecat")
+     
       const cat = await Category.findOne({ name: name });
       if (cat) {
         const category = await Category.updateOne({ _id: id }, { $set: { isDeleted: true } });
         res.status(200).json({ message: 'Category soft deleted successfully' });
       } else {
-        res.status(404).json({ error: 'Category not found' });a
+        res.redirect("/pageerror");
       }
     } catch (error) {
-      res.status(500).json({ error: 'Internal server error' });
+        res.redirect("/pageerror");
     }
   };
   

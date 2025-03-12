@@ -312,7 +312,7 @@ const filterCategory=async(req,res)=>{
   
   
 const productDetails = async (req, res) => {
-  try {console.log('/login,userController.loadLogin=========================================================================')
+  try {
      const userId = req.session.user;
     const productId = req.query.id;
     const product = await Product.findById(productId).populate("category");
@@ -367,9 +367,9 @@ const productDetails = async (req, res) => {
    
   }
 };
-const productReview = async (req, res) => {console.log('productReview11111=========================================================================')
+const productReview = async (req, res) => {
   const { productId, username, rating, reviewText } = req.body;
-  console.log(req.body, "product review");
+
 
   try {
     // Fetch the product to check if it exists
@@ -395,7 +395,7 @@ const productReview = async (req, res) => {console.log('productReview11111======
     );
 
     if (updatedProduct) {
-      console.log("Review saved successfully");
+      
       return res.redirect(`/productDetails?id=${productId}`);
     } else {
       return res.status(500).send("Failed to update product with review");

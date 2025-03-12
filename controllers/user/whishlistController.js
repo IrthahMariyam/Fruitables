@@ -4,16 +4,16 @@ const Wishlist= require('../../models/whishlistSchema')
 const User = require("../../models/userSchema");
 
 const addtoWishlist = async (req, res) => {
-    try {console.log('addtoWishlist1111=========================================================================')
+    try {
         const user = req.session.user;
-        console.log(user, "User in wishlist");
+       
 
         if (!user) {
             return res.status(401).json({ error: "Please login to add a product to wishlist" });
         }
 
         const { productId } = req.body;
-        console.log(productId, "Product ID in wishlist");
+        
 
         if (!productId) {
             return res.status(400).json({ error: "Product ID is required" });
@@ -57,17 +57,17 @@ const addtoWishlist = async (req, res) => {
 
     const getWishlistPage = async (req, res) => {
     try {
-      console.log('getWishlistPage1111=========================================================================')
+     
     
     const user = req.session.user;
     if (!user) {
       return res.redirect('/login'); 
      }
-     console.log("user",user)
+   
     const userData = await User.findOne({_id: user._id });
-    console.log(userData)
+   
     const carts = await Cart.findOne({userId:userData._id }).populate('items.productId');
-        //console.log(cart,"cart")
+     
         const wishlist = await Wishlist.findOne({userId: userData._id }).populate('products.productId');    
     if (!wishlist) { 
     
@@ -92,7 +92,7 @@ const addtoWishlist = async (req, res) => {
  
 
 const removeFromWishlist = async (req, res) => {
-    try {console.log('removeFromWishlist1111=========================================================================')
+    try {
       
       const user = req.session.user;
       if (!user) {
@@ -122,8 +122,7 @@ const removeFromWishlist = async (req, res) => {
   
       await wishlist.save();
     
-     // cart = await Cart.findOne({ userId:req.session.user._id })
-     //let cartitemcount=cart.items.length
+   
       res.status(200).json({ success: 'Product removed from wishlist' });
     } catch (error) {
       console.error('Error removing product from wishlist:', error);

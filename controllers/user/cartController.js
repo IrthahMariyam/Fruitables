@@ -13,9 +13,7 @@ const getCartPage = async (req, res) => {
         return res.redirect('/login'); 
        }
        const userData = await User.findOne({_id: user._id });
-      
-      //const carts = await Cart.findOne({ userId:userData._id }).populate('items.productId');
-     //product lited checking
+     
       const carts = await Cart.findOne({ userId: userData._id }).populate('items.productId');
 
       if (carts) {
@@ -28,7 +26,7 @@ const getCartPage = async (req, res) => {
               { $set: { items: filteredItems } }
           );
       
-          console.log("Unlisted products removed from cart.");
+        
       }
       
        if (!carts) { 
@@ -56,16 +54,16 @@ const getCartPage = async (req, res) => {
   
 
  const addToCart = async (req, res) => {
-  try {console.log('addToCart1111=========================================================================')
+  try {
     const { productId } = req.body; 
-    console.log("product",req.body)
+   
     const userId = req.session.user; 
-    console.log(req.session.user,"id")
+  
     let cartitemcount=0;
     if(!userId)
     return res.status(404).json({error:"Please Login to add a product"})
     const product = await Product.findOne({_id:productId,isListed:true});
-    console.log("product",product)
+   
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
@@ -75,7 +73,7 @@ const getCartPage = async (req, res) => {
     }
 
     let cart = await Cart.findOne({userId: userId._id });
-  console.log("cart====",cart)
+  
     if (!cart) {
       if (product.stock < 1) {
         return res.status(400).json({ error: 'Insufficient stock to add to cart' });
@@ -142,7 +140,7 @@ const getCartPage = async (req, res) => {
   
 
 const removeFromCart = async (req, res) => {
-    try {console.log('removeFromCart11111=========================================================================')
+    try {
       const user = req.session.user;
       if (!user) {
         return res.status(401).json({ error: 'User not logged in' });
@@ -164,15 +162,13 @@ const removeFromCart = async (req, res) => {
       if (!product) {
         return res.status(404).json({ error: 'Product not found in inventory' });
       }
-  //product.stock+=quantity;
+ 
       const removedItem = cart.items[itemIndex];
-     // product.stock += removedItem.quantity;
-  
+    
       cart.items.splice(itemIndex, 1);
   
       await cart.save();
-      // await product.save();
-     // cart = await Cart.findOne({ userId:req.session.user._id })
+     
      let cartitemcount=cart.items.length
       res.status(200).json({ message: 'Product removed from cart',cartitemcount:cartitemcount });
     } catch (error) {
@@ -184,31 +180,31 @@ const removeFromCart = async (req, res) => {
 
 const updateCartQuantity = async (req, res) => {
   try {
-    console.log('updateCartQuantity11111n=========================================================================')
+  
     const { productId, quantity } = req.body;
-console.log("req.body",req.body)
+
     const parsedQuantity = parseInt(quantity);
-console.log(parsedQuantity,"qqqq")
+
     if (!productId || isNaN(parsedQuantity)) {
       return res.status(400).json({ error: "Product ID and valid quantity are required" });
     }
-console.log("111111111111111111")
+
     const cart = await Cart.findOne({ userId: req.session.user._id });
     if (!cart) {
       return res.status(404).json({ error: "Cart not found" });
     }
-    console.log("22222222222222222222")
+    
     const item = cart.items.find((item) => item.productId.toString() === productId);
     if (!item) {
       return res.status(404).json({ error: "Product not found in cart" });
     }
-    console.log("333333333333333333333")
-   // const product = await Product.findById(productId);
+    
+   
     const product = await Product.findOne({_id:productId,isListed:true});
     if (!product) {
       return res.status(404).json({ error: "Product not found in inventory" });
     }
-    console.log("4444444444444444")
+    
     item.quantity = parsedQuantity;
     item.totalPrice = parsedQuantity * product.salesPrice;
 
@@ -233,6 +229,6 @@ console.log("111111111111111111")
     addToCart,
     updateCartQuantity,
     removeFromCart,
-   // getCheckoutPage,
+   
     
   }

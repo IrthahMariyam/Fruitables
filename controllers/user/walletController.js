@@ -99,8 +99,7 @@ const getWallet = async (req, res) => {
             transactions: sortedTransactions,
         });
     } catch (error) {
-        console.error('Error fetching wallet:', error);
-        res.status(500).send('Server Error');
+        res.redirect("/pageNotFound");
     }
 };
 

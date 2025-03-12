@@ -19,69 +19,40 @@ const KeyId=process.env.KEY_ID
 const SecretKey= process.env.SECRET_KEY
 
 const razorpayInstance = new Razorpay({
- // key_id:"rzp_test_lcQt1KNawGzBhX",
- // key_secret:"RvHJxgCXgr69KRUUNv6J6WWr"
+
    key_id: KeyId, 
   key_secret: SecretKey 
 
 })
 
-// const history=async (req,res) => 
-//     {try {console.log('history111=========================================================================')
-//       const userId = req.session.user._id; // Get the logged-in user's ID
-//       const cartitem=await Cart.findOne({userId:userId})
-//       const orders = await Order.find({ userId })
-//         .populate('orderedItems.productId')
-//         .sort({ createdOn: -1 });
-    
-//       res.json(orders); // Return orders as JSON
-//     } catch (err) {
-//       console.error('Error fetching order history:', err);
-//       res.status(500).json({ error: 'Failed to fetch order history' });
-//     }}
-    
-//       const orderHistory=async(req,res)=>{
-//         try {console.log('orderHistory11111=========================================================================')
-//           //console.log("inside history+++++++++", req.session.user._id)
-//           const orders = await Order.find({ userId:req.session.user._id })
-//               .populate("orderedItems.productId")
-//               .sort({ createdOn: -1 });
-//               const cartitem=await Cart.findOne({userId:req.session.user._id})
-//               res.render("orders/history", { orders ,cart:cartitem});
-//       } catch (err) {
-//           console.error("Error fetching orders:", err);
-//           res.status(500).send("Internal Server Error");
-//       }
-//       }
+
     
     const cancelOrder = async (req, res) => {
       try {
-        console.log('cancelOrder ordercancel=========================================================================')
+       
         const { id } = req.params;
         const { 
           cancelReason, status } = req.body;
-          console.log("req body",req.body)
+          
         const userId = req.session.user?._id;
-        console.log(userId,"userid")
-    console.log("req",req.params)
-
+        
         // Find the order
         const order = await Order.findById(id);
 
         if (!order) {
-          return res.status(404).json({ success:false,message: "Order not found" });
+          res.redirect("/pageNotFound");
         }
-    console.log(order,"order=============")
+    
 
     const amount = order.finalAmount;
         // Prevent canceling a shipped order
         if (["Shipping", "Out for Delivery", "Delivered"].includes(order.status)) {
-          console.log("inside status checking")
+        
           return res.status(400).json({success:false, message: "Cannot cancel a shipped order." });
         }
     
         if (!cancelReason || !status) {
-          console.log("==============")
+        
           return res.status(400).json({success:false, message: "Invalid request data"});
         }
     
@@ -89,15 +60,14 @@ const razorpayInstance = new Razorpay({
         let walletRefundSuccess = false;
     
         if (order.paymentMethod === "RAZORPAY" || order.paymentMethod === "WALLET") {
-          console.log("inside cancel==wallet")
+         
           let wallet = await Wallet.findOne({ userId:userId });
           if (!wallet) {
             wallet = new Wallet({ userId, balance: 0, transactions: [] });
             await wallet.save();
           }
            
-          
-          console.log("orderid",order._id)
+        
           // Add money to wallet
           wallet.balance += Number(amount);
           wallet.transactions.push({
@@ -113,7 +83,7 @@ const razorpayInstance = new Razorpay({
           await wallet.save();
           
        walletRefundSuccess = true;
-         console.log("success")
+        
         }
     
         // Restore stock
@@ -151,8 +121,8 @@ const razorpayInstance = new Razorpay({
           walletUpdated: walletRefundSuccess,
         });
       } catch (error) {
-        console.log("Error cancelling order:", error);
-        res.status(500).json({success:false, message: "Server error" });
+        
+        res.redirect("/pageNotFound");
       }
     };
     const returnOrder=async(req,res)=>{
@@ -164,7 +134,7 @@ const razorpayInstance = new Razorpay({
        // Find the order
        const order = await Order.findById(id);
        if (!order) {
-         return res.status(404).json({ success:false,message: "Order not found" });
+        res.redirect("/pageNotFound");
        }
        if (order.status!='Delivered') {
         return res.status(400).json({success:false, message: "Only delivered order can be returned." });
@@ -186,7 +156,7 @@ const razorpayInstance = new Razorpay({
       
         res.json({success:true, message: 'Return Request Send', order: updatedOrder });
       } catch (error) {
-        console.error('Error cancelling order:', error);
+       
         res.status(500).json({ success:false,message: 'Server error', error });
       }
       };
@@ -197,6 +167,7 @@ const razorpayInstance = new Razorpay({
           const orderId = req.params.orderId; // Ensure `orderId` is the correct field name in your route
           if (!orderId) {
             return res.redirect('/page-404'); // Handle missing orderId
+            
           }
           
           // Fetch the order and populate references
@@ -254,7 +225,7 @@ const razorpayInstance = new Razorpay({
          
        });
      } catch (error) {
-       console.error("Error loading checkout page:", error);
+       
        res.status(500).send("An error occurred while loading the checkout page.");
      }
     };
@@ -532,8 +503,7 @@ await order.save();
 
 
 } catch (error) {
-    console.log("Error in createOrder:", error);
-    res.status(500).json({success:false, error: error.message });
+  res.redirect("/pageNotFound");
 }
 };
 
@@ -563,8 +533,8 @@ const handleWalletPayment = async (userId, cartItems, orderData) => {
     await wallet.save();
     return { success: true };
    } catch (error) {
-    console.log("Internal Server Error:", error);
-    return { success: false, error: error.message };
+    
+    res.redirect("/pageNotFound");
    }
 };
 
@@ -601,7 +571,7 @@ const handleRefund = async (userId, amount, productNames, orderId) => {
 
       return { success: true, transactionId: transactionId };
   } catch (error) {
-      console.error('Wallet refund error:', error);
+    res.redirect("/pageNotFound");
       throw error;
   }
 };
@@ -685,10 +655,7 @@ const generateInvoice=async (req,res)=> {
           });
 
       if (!order) {
-          return res.status(404).json({
-              success: false,
-              message: 'Order not found'
-          });
+        res.redirect("/pageNotFound");
       }
 
       const doc = new PDFDocument({
@@ -812,14 +779,14 @@ doc.text('Subtotal', summaryX, y)
       doc.end();
 
   } catch (error) {
-      console.error('Error generating invoice:', error);
+      
       res.status(500).json({
           success: false,
           message: 'Failed to generate invoice'
       });
   }
 };
-/////////////////////=====================================
+
 const cancelProductOrder = async (req, res) => {
   try {
       const { productId, orderId, cancellationReason } = req.body;
@@ -1207,7 +1174,7 @@ const loadFailedPaymentPage = async (req,res)=>{
       res.render('paymentFailed')
       
     } catch (error) {
-      console.log(error)
+      
       res.redirect('/pageNotFound')
     }
   }

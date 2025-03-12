@@ -73,7 +73,7 @@ const deleteAccount=async(req,res)=>{
                     const blockUser = await User.updateOne({ _id:user._id }, { $set: { isBlocked: true } });
                     res.status(200).json({ message: 'Deleted successfully' });
                   } else {
-                    res.status(404).json({ error: 'User not found' });a
+                    res.redirect("/pageNotFound");
                   }
              }else{
                 res.render("/login",{message:"Something went wrong.Please login again"})
@@ -116,7 +116,7 @@ const changePassword = async (req, res) => {
         return res.status(200).json({ message: "Password changed successfully!" });
       } else {
        
-        return res.status(400).json({ error: 'User not found or blocked' });
+        res.redirect("/pageNotFound");
       }
   
     } catch (error) {
@@ -163,7 +163,7 @@ const changePassword = async (req, res) => {
             const address = await Address.findById(req.params.id);
             res.json(address);
           } catch (error) {
-            res.status(500).json({ message: 'Error fetching address!' });
+            res.redirect("/pageNotFound");
           }
          }
 
@@ -176,7 +176,7 @@ const updateAddress = async (req, res) => {
       const oldAddress = await Address.findById(id);
   
       if (!oldAddress) {
-        return res.status(404).json({ error: 'Address not found' });
+        res.redirect("/pageNotFound");
       }
   
     
@@ -231,23 +231,21 @@ const deleteAddress = async (req, res) => {
       // Delete the address
       const addressDelete = await Address.findByIdAndDelete(addressid);
    
-      if (addressDelete) {
-        console.log('Address deleted successfully');
-      } else {
-        console.log('No such address found');
+      if (!addressDelete) {
+        
+        res.redirect("/pageNotFound");
       }
   
       // Fetch the updated address list
       const updatedAddresses = await Address.find({ userId: userId });
-  console.log("updatedAddresses",updatedAddresses)
+  
       // Redirect back to the profile page
 
       return res.status(200).json({ message: 'Address updated successfully', updatedAddresses });
 
      
     } catch (error) {
-      console.error('Error deleting address:', error.message);
-      res.status(500).json({ message: 'Error deleting address!' });
+      res.redirect("/pageNotFound");;
     }
   };
  
@@ -317,7 +315,7 @@ const getProfileDetail=async(req,res)=>{
  
   res.json(profile);
 } catch (error) {
-  res.status(500).json({ message: 'Error fetching data!' });
+  res.redirect("/pageNotFound");
 }
 }
 
@@ -329,7 +327,7 @@ const getProfileDetail=async(req,res)=>{
       const oldData = await User.findById(req.params.userId);
   
       if (!oldData) {
-        return res.status(404).json({ error: 'User not found' });
+        res.redirect("/pageNotFound");
       }
   
       // Create the updated 
