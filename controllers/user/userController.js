@@ -153,12 +153,11 @@ const loadShopping = async (req, res) => {
   const search = req.query.query || ""; 
   const selectedCategory = req.query.category || ""; 
   const sort = req.query.sort || "default"; 
-   const page = parseInt(req.query.page) || 1; 
-  const limit = 9; 
+  
+   const page = Math.max(1, parseInt(req.query.page) || 1);
+   const limit = parseInt(req.query.limit) || 9;
   const skip = (page - 1) * limit;
-  const gt = parseFloat(req.query.gt) || 0; 
-  const lt = parseFloat(req.query.lt) || Infinity; 
-
+ 
   let baseQuery = {
   isDeleted: false,
      isListed:true,
@@ -173,9 +172,6 @@ if (selectedCategory) {
   baseQuery.category = selectedCategory;
 } else {
   baseQuery.category = { $in: categoriesIds }; 
-}
-if (req.query.gt || req.query.lt) {
-  baseQuery.salesPrice = { $gt: gt, $lt: lt };
 }
 
  let sortOption = {};

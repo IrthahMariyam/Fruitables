@@ -25,7 +25,7 @@ const listInventory = async (req, res) => {
         const page = parseInt(req.query.page) || 1; 
         
         const totalProducts = await Product.countDocuments({isDeleted: false,
-            productName: { $regex: new RegExp(search, 'i') }}); 
+        productName: { $regex: new RegExp(search, 'i') }}); 
         const totalPages = Math.floor(totalProducts / itemsPerPage);
 
         const products = await Product.find({isDeleted: false,
