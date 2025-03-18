@@ -27,30 +27,48 @@ cookie:{
 }
 }))
 
-app.use(passport.initialize())
-app.use(passport.session())
+    app.use(passport.initialize())
+    app.use(passport.session())
 
 
-app.use((req,res,next)=>{
+    app.use((req,res,next)=>{
     res.set('cache-control','no-store')
     next()
-})
+    })
 
-app.set('view engine','ejs')
-app.set('views',[
+    app.set('view engine','ejs')
+    app.set('views',[
     path.join(__dirname,"views/user"),
-    path.join(__dirname,"views/admin")
-])
-app.use(express.static(path.join(__dirname,"public")))
+    path.join(__dirname,"views/admin"),
+    path.join(__dirname, 'views'),
+    ])
 
-app.use('/',userRouter)
-app.use('/admin',adminRouter)
-
-
-
-const PORT=process.env.PORT||3000
-app.listen(PORT, '0.0.0.0',()=>console.log(`server running at http://localhost:${PORT}`))
+    app.use(express.static(path.join(__dirname,"public")))
+    app.use('/',userRouter)
+    app.use('/admin',adminRouter)
 
 
 
-module.exports=app;
+    app.use((err, req, res, next) => {
+    
+    if (err.name === 'CastError' && err.kind === 'ObjectId') {
+        return res.status(404).render('page-404');
+    }
+
+    res.status(500).render('page-404');
+    });
+
+
+
+    app.use((req, res) => {
+    res.status(404).render('page-404');
+    });
+
+
+
+    const PORT=process.env.PORT||3000
+    app.listen(PORT, '0.0.0.0',()=>console.log(`server running at http://localhost:${PORT}`))
+
+
+
+    module.exports=app;

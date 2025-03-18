@@ -481,10 +481,10 @@ if(!address)
   }
  
   console.log("before order couponCode befor orderData {}",couponCode)
-  console.log("couponDiscount",couponDiscount)
+  
   
   const cartId=document.getElementById("cartId").value
-  console.log("cartid=",cartId)
+ 
 
                 const orderData = {
                    
@@ -500,9 +500,7 @@ if(!address)
                 console.log(orderData,"ejs")
                 
   //payment implemetation starts
-  console.log("cartId before place",cartId)
-  console.log("address",address)
-  console.log("orderData",orderData)
+ 
   if(paymentMethod=="COD" && orderData.finalAmount>1000)
   {
     Swal.fire({
@@ -682,11 +680,11 @@ function applyCoupon(couponCode) {
  
   const cartTotal = parseFloat($(`#totalprice`).text().replace('₹', '').trim()) ;
  
-  console.log("Cart Total:", cartTotal); // Debug log
+  
 
   if (isNaN(cartTotal)) {
     
-    console.log('Invalid cart total:', cartTotal);
+    
     Swal.fire({
       title: 'Error',
       text: 'Could not determine cart total. Please try again.',
@@ -714,12 +712,11 @@ function applyCoupon(couponCode) {
   .then(data => {
     if (data.success) {
       // Update the subtotal
-      console.log("retuned")
-      console.log(data)
+    
      
      const totalamount = parseFloat($('#totalorderamount').text().replace('₹', '').trim());
 
-      console.log(couponCode)
+      
       $(`#couponapplied`).text(`${couponCode}`);
 
 
@@ -778,7 +775,7 @@ function applyCoupon(couponCode) {
 
 const placeOrder = async (orderData) => {
     try {
-        console.log("Placing COD order:", orderData);
+       
         const response = await fetch("/placeOrder", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -789,7 +786,7 @@ const placeOrder = async (orderData) => {
 
         const result = await response.json();
 
-        console.log("result in COD",result)
+       
       
         if (result.success) {
             await Swal.fire({
@@ -816,7 +813,7 @@ const placeOrder = async (orderData) => {
 
 const createOrder = async (orderData) => {
     try {
-        console.log("Creating Razorpay order:", orderData);
+       
         const response = await fetch("/placeOrder", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -824,15 +821,14 @@ const createOrder = async (orderData) => {
             body: JSON.stringify({ orderData })
         });
       
-      
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
         const order = await response.json();
-        console.log('Response data:', order);
+     
       
         if (!order.success) {
             throw new Error(result.error || "Failed to create order");
         }
+        const orderId = order.orderId; 
+       
         const options = {
             key: "rzp_test_lcQt1KNawGzBhX",
             amount: order.order.amount * 100,
@@ -841,8 +837,8 @@ const createOrder = async (orderData) => {
             description: "Order Payment",
             order_id:order.order.id,
             handler: async function(response) {
-              console.log("reponse before verify payment",response)
-                await verifyPayment(response, orderData.cartId);
+            
+                await verifyPayment(response,  orderData.cartId,orderId);
             },
             prefill: {
                 name: orderData.address.name,
@@ -856,8 +852,7 @@ const createOrder = async (orderData) => {
         };
 
         const rzp = new Razorpay(options);
-        console.log("Amount sent to Razorpay:", options.amount);
-        /////////failure
+       
         rzp.on('payment.failed', function (response) {
         Swal.fire({
             icon: 'error',
@@ -866,10 +861,12 @@ const createOrder = async (orderData) => {
             confirmButtonText: 'Okey',
             confirmButtonColor: '#d33'
         }).then(() => {
-            window.location.href="/failedPayment"
+        
+            window.location.href=`/failedPayment/${orderId}`
+           
         });
         
-        console.error("Payment failure details:", response.error); // Optional: Log detailed error information
+        console.error("Payment failure details:", response.error); 
     });
         rzp.open();//open
     } catch (error) {
@@ -886,16 +883,16 @@ const createOrder = async (orderData) => {
 
 const verifyPayment = async (paymentData, cartId) => {
     try {
-        console.log("Verifying payment:", paymentData);
+      
         const response = await fetch("/razorpayverifyPayment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-           // credentials: 'include',
+           
             body: JSON.stringify({ paymentData, cartId })
         });
 
         const result = await response.json();
-        console.log("Verification result:", result);
+       
 
         if (result.success) {
             await Swal.fire({
@@ -906,7 +903,7 @@ const verifyPayment = async (paymentData, cartId) => {
         
         
               });
-            console.log("result",result)
+           
             setTimeout(() => {
                 window.location.href = `/success?id=${result.orderId}`;
             }, 1500);
@@ -921,7 +918,7 @@ const verifyPayment = async (paymentData, cartId) => {
         });
         
         setTimeout(() => {
-            window.location.href = '/failedPayment';
+            window.location.href = `/failedPayment/${result.orderId}`;
         }, 1500);
     }
 };
@@ -929,7 +926,7 @@ const verifyPayment = async (paymentData, cartId) => {
 
 const processWalletPayment = async (orderData) => {
     try {
-        console.log("Processing wallet payment:", orderData);
+        
         const response = await fetch("/placeOrder", {
             method: "POST",
             headers: { "Content-Type": "application/json" },

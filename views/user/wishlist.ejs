@@ -91,12 +91,13 @@
         </tbody>
       </table>
      
-        <% } else { %>
-        <p>Your wishlist is empty</p>
+        <% } else { %>            
+          <p>Your wishlist is empty</p>
+          <a href="/shop" class="btn btn-primary">Continue Shopping</a>        
         <% } %>
       </div>
     </div>
-    <!-- Cart Page End -->
+    <!--  Page End -->
 
 
   <script>
@@ -105,10 +106,10 @@
  
 function removeFromWishlist(productId) {
      $.ajax({
-    url: "/wishlist/remove", // Backend endpoint
+    url: "/wishlist/remove",
     type: "POST",
     contentType: "application/json",
-    data: JSON.stringify({ productId }), // Send productId
+    data: JSON.stringify({ productId }), 
     success: function (response) {
       // Handle success response
       

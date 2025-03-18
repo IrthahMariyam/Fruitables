@@ -151,7 +151,7 @@
           />
           <label style="font-size: 10px"
             >Password must contain atleast one alphabet,digit and special
-            symbols like @ $ ! & Password length 8-16 characters. eg:Passw0rd!
+            symbols like @ $ ! & # Password length 8-16 characters. eg:Password!
             Hello@123</label
           >
         </div>
@@ -263,7 +263,7 @@
 
       function validatePassword(password) {
         const alpha =
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!&])[A-Za-z\d@$!&]{8,16}$/;
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!&#])[A-Za-z\d@$!&#]{8,16}$/;
         return alpha.test(password);
       }
     </script>

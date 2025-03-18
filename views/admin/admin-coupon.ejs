@@ -143,14 +143,7 @@
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
-          <!-- <li class="nav-item menu-items">
-            <a href="/admin/loadSalesPage" class="nav-link">
-              <span class="menu-icon">
-                <i class="mdi mdi-speedometer"></i>
-              </span>
-              <span class="menu-title">Reports</span>
-            </a>
-          </li> -->
+         
           <li class="nav-item menu-items">
             <a href="/admin/user" class="nav-link">
               <span class="menu-icon">
@@ -552,7 +545,7 @@
             });
 
             if (response.ok) {
-             // alert('Coupon deleted successfully!');
+             
              Swal.fire({
                 title: "Deleted!",
                 text: "Coupon deleted successfully!",
@@ -561,7 +554,7 @@
              });
               location.reload();
             } else {
-             // alert('Failed to delete coupon');
+             
              Swal.fire({
                 title: "Error",
                 text: "Failed to delete coupon",
@@ -578,7 +571,7 @@
                 timer:1500,
 
              });
-            //alert('An error occurred while deleting the coupon');
+            
           }
         }
       } 
@@ -595,18 +588,12 @@
           const description = document.getElementById("description").value.trim();
           const now = new Date();
 
-      // alert(couponCode)
-      // alert(startDate)
-      // alert(endDate)
-      // alert(minPrice)
-         // alert(discount)
-      // alert(description)
           let errorMessage = "";
       
           // Field validations
           if (!couponCode) errorMessage += "Coupon code is required.\n";
           if(couponCode<5) errorMessage +="Coupon code must be atleast 4"
-          console.log("ikujyhgf")
+          
           if (isNaN(startDate.getTime()) || startDate < now)
             errorMessage += "Start date must be a valid future date.\n";
           if (isNaN(endDate.getTime()) || endDate < startDate)
@@ -633,7 +620,7 @@
             discount,
             description,
           };
-      console.log(formData)
+      
           fetch("/admin/addcoupon", {
             method: "POST",
             headers: {
@@ -644,16 +631,16 @@
             .then((response) => response.json())
             .then((data) => {
               if (data.success) {
-                //alert("Coupon added successfully!");
+                
                 Swal.fire({
                 title: "Added!",
                 text: "Coupon added successfully!",
                 icon: "success",
                 timer:1500,
              });
-                location.reload(); // Reload the page
+                location.reload(); 
               } else {
-                //alert("Error: " + data.message);
+                
                 Swal.fire({
                 title: "Error",
                 text: data.message,
@@ -663,7 +650,7 @@
               }
             })
             .catch((err) => {
-              //alert("An error occurred. Please try again.");
+              
               Swal.fire({
                 title: "Error",
                 text: "An error occurred. Please try again.",
@@ -673,20 +660,20 @@
               console.error(err);
             });
         });
-/////////////////////////edit///////////////////
+
 $('.edit-button').click(function () {
         const couponId = $(this).data('id');
-        console.log(couponId)
+        
         const couponCode = $(this).data('code');
         const discount = $(this).data('discount');
         const minPrice = $(this).data('min-price');
         const startDate = $(this).data('start-date')
-        console.log(startDate)
+        
         const endDate = $(this).data('end-date');
         const usageLimit=$(this).data('usage-limit')
-        console.log(usageLimit,"llllll")
+        
         const description=$(this).data('description')
-        console.log('description',description)
+        
 
         $('#editCouponId').val(couponId);
         $('#editCouponCode').val(couponCode);
@@ -697,7 +684,7 @@ $('.edit-button').click(function () {
         $('#editusageLimit').val(usageLimit)
         $('#editdescription').val(description)
 
-       // $('#editCouponModal').modal('show');
+       
        const editModal = new bootstrap.Modal(document.getElementById('editCouponModal'));
     editModal.show();
     });
@@ -712,16 +699,16 @@ $('.edit-button').click(function () {
  
           document.getElementById('editCouponForm').addEventListener('submit', (e) => {
           e.preventDefault();
-         console.log("submit button clicked")
+         
          const inputs = document.querySelectorAll('#editCouponForm .form-control');
          inputs.forEach(input => {
           input.classList.remove('is-invalid');
-         const feedback = input.nextElementSibling; // The corresponding span for feedback
-          if (feedback) feedback.style.display = 'none'; // Hide previous messages
+         const feedback = input.nextElementSibling;
+          if (feedback) feedback.style.display = 'none'; 
           });
 
         const couponId = document.getElementById('editCouponId').value;
-        console.log(couponId,"ertyui")
+        
         const couponData = {
         code: document.getElementById('editCouponCode').value.trim(),
         discount: parseFloat(document.getElementById('editDiscount').value),
@@ -732,7 +719,7 @@ $('.edit-button').click(function () {
         description:document.getElementById('editdescription').value
        
     };
-    console.log("couponData",couponData)
+    
     let hasError = false;
 
     if (couponData.code.length < 4) {
@@ -752,33 +739,33 @@ $('.edit-button').click(function () {
     if (isNaN(couponData.minPrice) || couponData.minPrice < 0) {
         const feedback = document.getElementById('editMinPrice').nextElementSibling;
         document.getElementById('editMinPrice').classList.add('is-invalid');
-        feedback.style.display = 'block'; // Show feedback message
+        feedback.style.display = 'block'; 
         hasError = true;
     }
 
     if (isNaN(new Date(couponData.endDate).getTime()) || new Date(couponData.endDate) <= new Date(couponData.startDate)) {
         const feedback = document.getElementById('editEndDate').nextElementSibling;
         document.getElementById('editEndDate').classList.add('is-invalid');
-        feedback.style.display = 'block'; // Show feedback message
+        feedback.style.display = 'block'; 
         hasError = true;
     }
     if (couponData.description.length < 4) {
         const feedback = document.getElementById('editdescription').nextElementSibling;
         document.getElementById('editdescription').classList.add('is-invalid');
-        feedback.style.display = 'block'; // Show feedback message
+        feedback.style.display = 'block'; 
         hasError = true;
     }
     if (isNaN(couponData.usageLimit) || couponData.usageLimit < 0) {
         const feedback = document.getElementById('usageLimit').nextElementSibling;
         document.getElementById('usageLimit').classList.add('is-invalid');
-        feedback.style.display = 'block'; // Show feedback message
+        feedback.style.display = 'block'; 
         hasError = true;
     }
 
     if (hasError) {
-        return; // Prevent submission if there are validation errors
+        return; 
     }
-   console.log(`${couponId}`)
+   
     alertify.confirm('Are you sure you want to update this coupon?',
         function () {
             axios.put(`/admin/coupons/update/${couponId}`, couponData)
@@ -805,17 +792,17 @@ $('.edit-button').click(function () {
 
 
 
- // Function to activate the coupon
+ 
  function activateCoupon(couponId) {
-    // Prompt confirmation using Alertify
+    
     alertify.confirm('Activate Coupon', 'Are you sure you want to activate this coupon?', 
-        function() { // On Confirm
-            // Send PATCH request to activate the coupon
+        function() { 
+            
             axios.patch(`/admin/coupons/status/${couponId}`, { active: true })
                 .then(response => {
-                    // Check if the response was successful
+                    
                     if (response.status === 200) {
-                        // Update button state dynamically
+                        
                         const button = document.getElementById(`btn-${couponId}`);
                         button.classList.remove('btn-success');
                         button.classList.add('btn-danger');
@@ -828,22 +815,22 @@ $('.edit-button').click(function () {
                     alertify.error('Failed to activate coupon. Please try again.');
                 });
         }, 
-        function() { // On Cancel
+        function() {
             alertify.message('Cancelled');
         }
     );
 }
 
 function deactivateCoupon(couponId) {
-    // Prompt confirmation using Alertify
+    
     alertify.confirm('Deactivate Coupon', 'Are you sure you want to deactivate this coupon?', 
-        function() { // On Confirm
-            // Send PATCH request to deactivate the coupon
+        function() { 
+            
             axios.patch(`/admin/coupons/status/${couponId}`, { active: false })
                 .then(response => {
-                    // Check if the response was successful
+                    
                     if (response.status === 200) {
-                        // Update button state dynamically
+                        
                         const button = document.getElementById(`btn-${couponId}`);
                         button.classList.remove('btn-danger');
                         button.classList.add('btn-success');
@@ -856,7 +843,7 @@ function deactivateCoupon(couponId) {
                     alertify.error('Failed to deactivate coupon. Please try again.');
                 });
         }, 
-        function() { // On Cancel
+        function() { 
             alertify.message('Cancelled');
         }
     );
@@ -864,18 +851,17 @@ function deactivateCoupon(couponId) {
 
 function changeStatus(button,isActive) {
   let stat;
-        const couponId = button.value; // Get the offer ID from the button's value
-       // const isActive = button.classList.contains('btn-danger'); // Check if the offer is currently active
-       console.log("isActive",isActive)
-       console.log(typeof isActive)
+        const couponId = button.value; 
+      
+      
        if(isActive=="true")
      stat =false;
     if(isActive=="false")
     stat=true
-    console.log("stat",stat)
+    
        const action = isActive ? 'deactivate' : 'activate';
     
-        // SweetAlert2 confirmation dialog
+        
         Swal.fire({
             title: `Are you sure you want to ${action} this offer?`,
             text: `Are you sure you want to ${action} this offer?`,
@@ -886,12 +872,12 @@ function changeStatus(button,isActive) {
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Send a POST request to toggle the offer status
+
                 axios.patch(`/admin/coupons/status/${couponId}`, { active: stat })
-                //axios.patch(`/admin/offers/action/${offerId}`)
+                
                     .then(response => {
                         if (response.data.success) {
-                            // Update the button class and text based on the new state
+                            
                             if (response.data.isActive) {
                                 button.classList.remove('btn-success');
                                 button.classList.add('btn-danger');
@@ -902,7 +888,7 @@ function changeStatus(button,isActive) {
                                 button.textContent = 'Activate';
                             }
     window.location.href='/admin/coupon'
-                            // Success message
+                           
                             Swal.fire("Success!", `Offer has been ${action}d successfully.`, "success");
                         } else {
                             Swal.fire("Error!", "Failed to toggle offer status.", "error");

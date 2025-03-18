@@ -59,17 +59,17 @@ const loadHomepage = async (req, res) => {
 };
 
 
-// Function to get reviews from all products for the homepage
+
 const getProductReviewsForHomepage = async () => {
   try {
-    // Find all listed products that have at least one review
+  
     const productsWithReviews = await Product.find({
       isListed: true,
       isDeleted: false,
-      'review.0': { $exists: true } // Only products with at least one review
+      'review.0': { $exists: true } 
     }).select('productName productImage review')
     
-    // Format the review data for homepage display
+    
     const formattedReviews = [];
     
     productsWithReviews.forEach(product => {
@@ -86,11 +86,11 @@ const getProductReviewsForHomepage = async () => {
       });
     });
     
-    // Sort by newest reviews first
+    
     formattedReviews.sort((a, b) => new Date(b.date) - new Date(a.date));
     
-    // Optionally limit the number of reviews returned
-    const latestReviews = formattedReviews.slice(0, 10); // Return 10 most recent reviews
+    
+    const latestReviews = formattedReviews.slice(0, 10); 
     
     return latestReviews;
   } catch (error) {
@@ -174,26 +174,26 @@ if (selectedCategory) {
   baseQuery.category = { $in: categoriesIds }; 
 }
 
- let sortOption = {};
- switch (sort) {
-     case "priceHighToLow":
-         sortOption = { salesPrice: -1 };
-         break;
-     case "priceLowToHigh":
-         sortOption = { salesPrice: 1 };
-         break;
-     case "nameAtoZ":
-         sortOption = { productName: 1 };
-         break;
-     case "nameZtoA":
-         sortOption = { productName: -1 };
-         break;
-     default:
-         sortOption = { createdOn: -1 }; 
- }
+let products;
+let sortOptions = {};
+if (sort === "priceHighToLow") {
+    sortOptions = { salesPrice: -1,productOffer: -1  }; 
+} else if (sort === "priceLowToHigh") {
+    baseQuery.salesPrice = { $gte: 0 };
+    sortOptions = { salesPrice: 1 };
+} else if (sort === "nameAtoZ") {
+    sortOptions = { productName: 1 };
+} else if (sort === "nameZtoA") {
+    sortOptions = { productName: -1 };
+} else {
+    sortOptions = {}; 
+}
+if(sort!='default')
+ products = await Product.find(baseQuery).sort(sortOptions).skip(skip).limit(limit).lean();
 
- let products = await Product.find(baseQuery)
- .sort({ productOffer: -1 }||sortOption)
+else
+  products = await Product.find(baseQuery)
+ .sort({ productOffer: -1 })
  .skip(skip)
  .limit(limit)
  .lean();
@@ -499,10 +499,15 @@ const getforgotPasswordPage = async (req, res) => {
 
 const forgotpasswordEmail = async (req, res) => {
   try {
-    const { email } = req.body;
-    const findUser = User.findOne({ email: email });
+    const {email} = req.body;
+       const findUser = await User.findOne({email:email });
+    
+  if(!findUser)res.render("forgot-password", {
+        message: "User with this email does not exists",
+  });
     if (findUser) {
       const otp = generateOTP();
+      console.log(otp,"otp")
       const sendEmail = await sendVerificationEmail(email, otp);
       if (sendEmail) {
         req.session.userOtp = otp;
@@ -515,10 +520,7 @@ const forgotpasswordEmail = async (req, res) => {
           message: "failed to send otp,please try again",
         });
       }
-    } else {
-      res.render("forgot-password", {
-        message: "User with this email does not exists",
-      });
+    
     }
   } catch (error) {
     res.redirect("/pageNotFound");

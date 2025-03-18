@@ -309,7 +309,8 @@ button[type="submit"]:hover {
                             <label class="form-label text-dark">Category</label>
                             <select name="category" class="form-select border">
                                 <% category.forEach(cat => { %>
-                                    <option value="<%= cat._id %>" <%= cat._id.equals(product.category) ? 'selected' : '' %>><%= cat.name %></option>
+                                    <option value="<%= cat._id %>" <%= cat._id.equals(product.category) ? 'selected' : '' %> > 
+                                        <%= cat.name %></option>
                                 <% }) %>
                             </select>
                         </div>
@@ -346,7 +347,7 @@ button[type="submit"]:hover {
                             </div>
                         </div>
 
-                        <!-- image new code -->
+                        
                         <div class="mb-4">
                             <label class="form-label text-dark">Choose Images</label>
                             <input type="file" name="images" id="upload" multiple onchange="handleImage(event)" />
@@ -360,7 +361,7 @@ button[type="submit"]:hover {
                             </div>
                             <div id="imageError" class="error-message"></div>
                         </div>
-                        <!-- image new code -->
+                        
 
                         <div>
                             <button class="btn btn-md btn-primary" type="submit">Update Product</button>
@@ -377,41 +378,40 @@ button[type="submit"]:hover {
 
 
 <script>
-    const cloudName = "dwwxgavec";  // Replace with your Cloudinary cloud name
-const uploadPreset = "my_images"; // Replace with your upload preset (can be found in Cloudinary dashboard)
+    const cloudName = "dwwxgavec";  
+const uploadPreset = "my_images"; 
 
-let croppers = {};  // Object to store the cropper instances
-let croppedImages = [];  // Array to store the cropped image blobs
+let croppers = {};  
+let croppedImages = [];  
 let existingImagesArray = [];
 document.querySelectorAll("#existingImages img").forEach(img => {
   existingImagesArray.push(img.src);
 });
     const handleImage = (e) => {
-    const files = e.target.files;  // Get the selected files
-    console.log("Selected Files: ", files);
+    const files = e.target.files;  
+    
 
-    // Clear any existing cropper containers
+    
     const cropperContainers = document.getElementById("cropperContainers");
     cropperContainers.innerHTML = "";
-    console.log("length",files.length)
-    // Iterate through the selected files
+    
+    
      for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        console.log(i,"index")
+        
         const reader = new FileReader();
 
-        // Create a new cropper container dynamically
+        
         const cropperContainer = document.createElement('div');
 
         cropperContainer.id = `cropperContainer${i}`;
 
-        cropperContainer.style.marginBottom = "20px";  // Styling for separation
+        cropperContainer.style.marginBottom = "20px"; 
         cropperContainers.appendChild(cropperContainer);
-        console.log(`appended${i}`)
-        // Create an image element for previewing the selected image
+       
         const img = document.createElement('img');
         img.id = `cropImage${i}`;
-        console.log(`cropimage${i}`)
+        
         img.style.width = '300px';
         img.style.height = '200px';
         cropperContainer.appendChild(img);
@@ -422,79 +422,79 @@ document.querySelectorAll("#existingImages img").forEach(img => {
         saveButton.setAttribute("type", "button");
         cropperContainer.appendChild(saveButton);
 
-        // Read the file as data URL
+        
          reader.onload = function () {
             img.src = reader.result;
 
-             // Initialize the cropper for this image
+             
                 if (croppers[i]) {
-                croppers[i].destroy();  // Destroy any existing cropper before initializing a new one
+                croppers[i].destroy(); 
               }
 
                 croppers[i] = new Cropper(img, {
-                aspectRatio: 1,  // Maintain a square aspect ratio
+                aspectRatio: 1,  
                 viewMode: 1,
                 autoCropArea: 1,
              });
 
-                // Handle the "Save Cropped Image" button click event
+                
                 saveButton.onclick = function () {
                 const croppedCanvas = croppers[i].getCroppedCanvas({
-                    width: 600,  // Resize to 600x600
+                    width: 600, 
                     height: 600
                 });
 
-                // Compress and convert the cropped image to a Blob
+              
                 croppedCanvas.toBlob(function (blob) {
                     const url = URL.createObjectURL(blob);
 
-                    // If the image is already cropped, replace the preview with the new cropped image
-                    img.src = url;  // Replace the preview with the new cropped image
+                    
+                    img.src = url;  
 
-                    img.dataset.blob = blob;  // Store the Blob for future submission (e.g., sending to the backend)
+                    img.dataset.blob = blob; 
 
-                    // Push the cropped image Blob to the array
+                  
                     croppedImages.push(blob);
-                    console.log("Cropped Images Array: ", croppedImages);
+                   
 
-                    // Display the cropped image
+                   
                     const croppedImagePreview = document.createElement('img');
                     croppedImagePreview.src = url;
                     croppedImagePreview.style.width = '200px';
                     croppedImagePreview.style.height = '200px';
                     cropperContainer.appendChild(croppedImagePreview);
 
-                    // Hide the cropper container (or remove it)
-                    cropperContainer.innerHTML = '';  // Clear the cropper UI
-                    cropperContainer.appendChild(croppedImagePreview);  // Only show the cropped image
+                    
+                    cropperContainer.innerHTML = ''; 
+                    cropperContainer.appendChild(croppedImagePreview);  
 
-                    // Add a button to allow re-cropping the cropped image
+                   
                     const reCropButton = document.createElement('button');
                     reCropButton.textContent = 'Re-Crop This Image';
                     reCropButton.setAttribute("type", "button");
                     cropperContainer.appendChild(reCropButton);
 
-                    // Handle re-cropping the cropped image
+                   
                     reCropButton.onclick = function () {
-                        // Replace the cropped image with the cropper again
-                        img.src = url;  // Use the cropped image as the source for re-cropping
+                        
+                        img.src = url; 
 
-                        // Destroy the previous cropper instance
+                      
                         croppers[i].destroy();
 
-                        // Re-initialize the cropper with the cropped image
+                       
                         croppers[i] = new Cropper(img, {
-                            aspectRatio: 1,  // Maintain a square aspect ratio
+                            aspectRatio: 1,  
                             viewMode: 1,
                             autoCropArea: 1,
                         });
 
-                        // Clear the cropped image preview and display the cropper again
-                        cropperContainer.innerHTML = '';  // Clear the cropped image preview
-                        cropperContainer.appendChild(img);  // Add the image back for cropping
-                        cropperContainer.appendChild(saveButton);  // Add the save button
+                       
+                        cropperContainer.innerHTML = '';  
+                        cropperContainer.appendChild(img); 
+                        cropperContainer.appendChild(saveButton);  
                     };
-                }, 'image/jpeg', 0.7);  // Adjust the quality of the image (0.7 = 70%)
+                }, 'image/jpeg', 0.7);  
             };
         };
 
@@ -509,8 +509,8 @@ document.querySelectorAll("#existingImages img").forEach(img => {
 
 const uploadImageToCloudinary = (blob) => {
     const formData = new FormData();
-    formData.append("file", blob);  // Append the cropped blob
-    formData.append("upload_preset", uploadPreset);  // Add your upload preset (set in Cloudinary dashboard)
+    formData.append("file", blob);  
+    formData.append("upload_preset", uploadPreset);  
 
     return fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method: "POST",
@@ -519,7 +519,7 @@ const uploadImageToCloudinary = (blob) => {
         .then((response) => response.json())
         .then((data) => {
             const imageUrl = data.secure_url; // Cloudinary URL for the uploaded image
-            console.log("Uploaded Image URL:", imageUrl);
+           
             return imageUrl;
         })
         .catch((error) => {
@@ -530,30 +530,30 @@ const uploadImageToCloudinary = (blob) => {
 document.addEventListener("DOMContentLoaded", function () {
 document.getElementById('myform').onsubmit = async function (event) {
     event.preventDefault();
-    console.log("Form submitted!");
-    // Get form data
+   
     const productName = document.getElementById('product_name').value.trim();
-    console.log(productName)
+   
     const productid = document.getElementById('productId').value.trim();
-    console.log(productid)
+    
     const description = document.getElementById('descriptionid').value.trim();
-    console.log(description)
+   
     const regularPrice = document.querySelector('[name="regularPrice"]').value.trim();
-    console.log(regularPrice)
+   
     const salePrice = document.querySelector('[name="salePrice"]').value.trim();
-console.log(salePrice)
+
     const stock = document.querySelector('[name="stock"]').value.trim();
-    console.log(stock)
+   
     const color = document.querySelector('[name="color"]').value.trim();
-   console.log(color)
+  
     const Status = document.querySelector('[name="Available"]').value;
-console.log(Status)
+
+
     const category = document.querySelector('[name="category"]').value;
-    console.log(category)
+   
     const item= document.querySelector('[name="item"]').value;
-    console.log(item)
+    
     const radios = document.getElementsByName('item');
-    console.log(radios)
+    
    let selectedValue;
    for (const radio of radios) { 
     if (radio.checked) {
@@ -607,7 +607,7 @@ console.log(Status)
          document.getElementById('regularPriceError').innerText="regular price must be greater than saleprice"
          return
       }
-     console.log("before data")
+     
       
      let data = {
         productName: productName,
@@ -619,9 +619,9 @@ console.log(Status)
         category: category,
         item:selectedValue,
     };
-    console.log("dat=",data) 
+    
   
-    // Upload all cropped images to Cloudinary and get their URLs
+  
 
 
     
@@ -631,10 +631,10 @@ console.log(Status)
         if (imageUrl) {
             imageUrls.push(imageUrl);
         }
-        console.log(imageUrls)
+
     }
     const mergedImages = existingImagesArray.concat(imageUrls);
-    // Add image URLs to the form data
+   
     data.images = mergedImages;
     if(mergedImages.length==0){
         document.getElementById('imageError').innerText="please select images"
@@ -642,7 +642,7 @@ console.log(Status)
         return
     }
 
-    // Send the data to the backend
+   
     axios.post(`/admin/editProduct/${productid}`, data, {
     headers: {
         'Content-Type': 'application/json'
@@ -650,13 +650,13 @@ console.log(Status)
 })
 .then(response => {
     Swal.fire({
-        icon: 'success',  // 'Success' should be lowercase
+        icon: 'success',  
         title: 'Success',
         text: 'Product edited successfully',
         timer:2000
     });
 
-    // Redirect after success
+    
     window.location.href = '/admin/products';
 })
 .catch(error => {

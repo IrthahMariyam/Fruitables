@@ -121,11 +121,11 @@ const addProducts = async (req, res) => {
 
         }
 
-        // const productExists = await Product.findOne({ productName: products.productName });
+        
         const productExists = await Product.findOne({
             productName: { 
-              $regex: `^${products.productName}$`,  // Exact match for productName
-              $options: "i"  // Case-sensitive search
+              $regex: `^${products.productName}$`,  
+              $options: "i"  
             }
           });
           
@@ -134,19 +134,19 @@ const addProducts = async (req, res) => {
        
         }
 
-        // Ensure req.files is an array (it should be when using uploads.array())
+    
         if (req.images && req.images.length === 0) {
             return res.status(400).json({ message: "No images uploaded." });
 
         } 
 
-        // Validate Category
+        
         const categoryId = await Category.findOne({ name: products.category });
         if (!categoryId) {
             return res.status(400).json({ message: "Invalid category name" });
         }
       
-        // Create New Product
+        
         const newProduct = new Product({
             productName: products.productName,
             description: products.description,
@@ -156,18 +156,18 @@ const addProducts = async (req, res) => {
             createdOn: new Date(),
             stock: products.stock,
             color: products.color,
-            productImage: req.body.images, // Store image paths
+            productImage: req.body.images,
             status:products.Available,
             item:products.item,
         });
 
        
 
-        // Save to Database
+        
         await newProduct.save();
       
 
-        // Success redirect or response
+    
         return res.status(200).json({ message: "Product added successfully!" });
 
     } catch (error) {
@@ -207,7 +207,7 @@ const getEditProduct = async (req, res) => {
     
         // Fetch product by ID
         const product = await Product.findOne({"_id":`${id}`})
-        const category = await Category.find({});  // Fetch all categories for dropdown
+        const category = await Category.find({});  
         
         if (!product) {
             res.redirect("/pageerror");
@@ -263,7 +263,7 @@ const postEditProduct = async (req, res) => {
         }
 
        
-        res.redirect("/admin/products");  // Redirect to product list after update
+        res.redirect("/admin/products");  
      } catch (error) {
         console.error("Error updating product:", error);
         res.status(500).json({ message: "Internal server error." });
@@ -275,7 +275,7 @@ const deleteProduct=async(req,res)=>{
 
 try{
 const { name } = req.body;
-const id=req.params.id // Use req.body to get the values
+const id=req.params.id 
 
 const cat = await Product.findOne({_id: id});
 if (cat) {

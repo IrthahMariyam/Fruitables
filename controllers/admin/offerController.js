@@ -171,7 +171,7 @@ const updateOffer = async (req, res) => {
             await Category.updateMany(
                 { _id: { $in: existingOffer.applicableItems } },
                 { 
-                    $set: { categoryOffer: 0 }, // Reset previous discount
+                    $set: { categoryOffer: 0 }, 
                     $unset:  { offer: 1 } 
                    // $unset: { offer: existingOffer._id }
                 }
@@ -328,7 +328,7 @@ async function updateProductSalesPrice(productId) {
                 salesPrice: newSalesPrice,
                 productOffer: bestDiscount
             },
-            { new: true }  // Return the updated document
+            { new: true }  
         );
         
                
@@ -399,8 +399,6 @@ cron.schedule('0 0 * * *', async () => {
     }
 });
 
-// After saving a new offer or updating an existing one
-//await handleOfferChange(savedOffer._id);
 
 module.exports={
     getOfferPage,

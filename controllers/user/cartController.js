@@ -17,10 +17,10 @@ const getCartPage = async (req, res) => {
       const carts = await Cart.findOne({ userId: userData._id }).populate('items.productId');
 
       if (carts) {
-          // Filter out unlisted products
+    
           const filteredItems = carts.items.filter(item => item.productId && item.productId.isListed);
       
-          // Update the cart with only the listed products
+          
           await Cart.updateOne(
               { userId: userData._id },
               { $set: { items: filteredItems } }

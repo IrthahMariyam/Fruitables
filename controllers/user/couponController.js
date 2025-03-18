@@ -91,12 +91,12 @@ const applyCoupon = async (req, res) => {
             });
         }
         
-        // Ensure usedUsers is initialized
+        
         if (!coupon.userUsage) {
             coupon.userUsage = [];
         }
 
-        // Check if the user has already used the coupon
+
         if (coupon.userUsage.includes(userId)) {
             return res.status(400).json({
                 success: false,
@@ -104,28 +104,28 @@ const applyCoupon = async (req, res) => {
             });
         }
         
-        // Apply the coupon discount
+
         let discount = coupon.discount;
          req.session.discount = discount
          req.session.couponCode=couponCode;
-        // Prevent discount from exceeding total amount
+        
         let finalAmount = Math.max(parsedAmount - discount, 0);
         
-        // Mark coupon as used for the user
+        
 
-// Find if user has already used this coupon
+
 const existingUserUsage = coupon.userUsage.find(usage => 
     usage.userId== userId
 );
 
 if (!existingUserUsage) {
-    // First time user is using this coupon
+
     coupon.userUsage.push({
         userId: userId,
         usageCount: 1
     });
 } else {
-    // User has used this coupon before, increment their usage count
+    
     existingUserUsage.usageCount += 1;
 }
         

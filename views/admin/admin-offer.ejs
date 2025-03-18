@@ -523,12 +523,12 @@
     <script>
        
     document.getElementById("createOfferForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent actual form submission
+        event.preventDefault(); 
     
-        // Clear any previous error messages
+        
         clearErrors();
     
-        // Collect form values
+        
         const offerName = document.getElementById('offerName').value.trim();
         const offerDescription = document.getElementById('offerDescription').value.trim();
         const discountAmount = document.getElementById('discountAmount').value;
@@ -536,7 +536,7 @@
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
     
-        // Get selected categories or products based on applicable type
+        
         let selectedItems = [];
         if (applicableType === 'category') {
             document.querySelectorAll('#categorySelection input[type=checkbox]:checked').forEach(function (el) {
@@ -592,9 +592,9 @@
             isValid = false;
         }
     
-        // If all validations pass, send the form data
+        
         if (isValid) {
-            // Show confirmation dialog with SweetAlert
+            
             Swal.fire({
                 title: 'Confirm Action',
                 text: 'Are you sure you want to create this offer?',
@@ -606,7 +606,7 @@
                 cancelButtonText: 'Cancel'
              }).then((result) => {
                 if (result.isConfirmed) {
-                    // Create data object to send to backend
+                    
                     const formData = {
                         offerName,
                         offerDescription,
@@ -617,9 +617,9 @@
                         endDate
                     };
     
-                   console.log(formData,"formData in addmodal")
+                   
     
-                    // Send data to backend using Axios
+                    
                     axios.post('/admin/offers/create', formData)
                         .then(function (response) {
                             if (response.data){
@@ -657,14 +657,14 @@
         }
     });
     
-    // Helper function to show error messages
+    
     function showError(fieldId, message) {
         const errorField = document.getElementById(fieldId);
         errorField.textContent = message;
         errorField.style.display = 'block';
     }
     
-    // function to clear previous error messages
+    
     function clearErrors() {
         const errorFields = document.querySelectorAll('.text-danger');
         errorFields.forEach(function (field) {
@@ -681,7 +681,7 @@
             const categorySelectionCreate = document.getElementById("categorySelection");
             const productItemsFieldCreate = document.getElementById("productItemsField");
     
-            // Show/hide fields based on applicable type selection in Create Offer modal
+            
             applicableTypeCreate.addEventListener("change", function () {
                 if (this.value === "category") {
                     categorySelectionCreate.style.display = "block";
@@ -695,12 +695,6 @@
                 }
             });
     
-           
-    
-            // Example form submission handling
-       
-    
-    
     
         });
     
@@ -708,25 +702,23 @@
         $(document).on('click', '.edit-button', function () {
        
         const dataAttributes = $(this).data();
-       // Log all data attributes
-        
-        // Access the data attributes with the correct names
-        const offerId = dataAttributes.id; // This should work
-        const offerName = dataAttributes.code; // This should work
-        const offerDescription = dataAttributes.offerDescription; // This should work if accessed correctly
-        const discountAmount = dataAttributes.discount; // This should work
-        const applicableType = dataAttributes.applicableType; // This should work
-        const startDate = dataAttributes.startDate; // This should work
-        const endDate = dataAttributes.endDate; // This should work
+      
+        const offerId = dataAttributes.id; 
+        const offerName = dataAttributes.code; 
+        const offerDescription = dataAttributes.offerDescription; 
+        const discountAmount = dataAttributes.discount;
+        const applicableType = dataAttributes.applicableType; 
+        const startDate = dataAttributes.startDate; 
+        const endDate = dataAttributes.endDate; 
         const items  = dataAttributes.applicableItems
     
         
      
-        // Check if any of these values are undefined
+        
        
-        console.log("Setting offerId to:", offerId);
+        
         $('#editOfferId').val(offerId);
-        console.log("After setting, value is:", $('#editOfferId').val());
+        
         $('#editOfferName').val(offerName);
         $('#editOfferDescription').val(offerDescription);
         $('#editDiscountAmount').val(discountAmount);
@@ -734,12 +726,12 @@
         $('#editStartDate').val(startDate);
         $('#editEndDate').val(endDate);
     
-        // Show or hide the category and product selection fields based on applicableType
+        
         const applicableTypeEdit = document.getElementById("editApplicableType");
             const editCategorySelection = document.getElementById("editCategorySelection");
             const editProductItemsField = document.getElementById("editProductItemsField");
     
-            // Show/hide fields based on applicable type selection in Edit Offer modal
+            
            
                 if (applicableType === "category") {
                     editCategorySelection.style.display = "block";
@@ -754,7 +746,7 @@
             
                 
     
-        // Reset checkboxes and pre-select previously selected categories and products
+        
         $('#editCategorySelection input[type="checkbox"]').prop('checked', false);
         items.forEach(item => {
            
@@ -766,27 +758,27 @@
             $(`#edit-product-${item._id}`).prop('checked', true);
         });
     
-        // Show the modal
+        
         $('#editOfferModal').modal('show');
     });
     
     $('#editOfferForm').on('submit', function (e) {
         e.preventDefault();
     
-        // Clear any previous error messages
+        
         clearErrors();
     
-        // Gather the updated values from the form fields
+        
         const offerId = $('#editOfferId').val().trim()
         const offerName = $('#editOfferName').val().trim();
-        console.log("editOfferName=",offerName)
+        
         const offerDescription = $('#editOfferDescription').val().trim();
         const discountAmount = $('#editDiscountAmount').val();
         const applicableType = $('#editApplicableType').val();
         const startDate = $('#editStartDate').val();
         const endDate = $('#editEndDate').val();
     
-        // Collect selected categories or products based on applicableType
+        
         let applicableItems = [];
         if (applicableType === 'category') {
             $('#editCategorySelection input[type="checkbox"]:checked').each(function () {
@@ -798,7 +790,7 @@
             });
         }
     
-        // Validate form fields
+        
         let isValid = true;
     
         if (!offerName) {
@@ -834,12 +826,12 @@
             isValid = false;
         }
     
-         // If validation fails, stop further processing
+         
          if (!isValid) {
             return;
          }
     
-        // If all validations pass, show SweetAlert confirmation
+        
          Swal.fire({
             title: 'Confirm Action',
             text: 'Are you sure you want to update this offer?',
@@ -851,20 +843,20 @@
             cancelButtonText: 'Cancel'
          }).then((result) => {
             if (result.isConfirmed) {
-                // Prepare the data object to send to the server
+                
                 const updatedOfferData = {
                     offerId: offerId,
                     name: offerName,
                     description: offerDescription,
                     discount: discountAmount,
                     applicableType: applicableType,
-                    applicableItems: applicableItems, // Array of selected category/product IDs
+                    applicableItems: applicableItems, 
                     startDate: startDate,
                     endDate: endDate
                  };
-                 console.log(updatedOfferData,"formData in editmodal")
+                 
     
-                 // Send data to backend using Axios
+                 
                  axios.put(`/admin/offers/update/`, updatedOfferData)
                     .then(response => {
                         if (response.data && response.data.success) {
@@ -873,7 +865,7 @@
                                 response.data.message,
                                 'success'
                             ).then(() => {
-                                // Close modal and reload page
+                                
                                 $('#editOfferModal').modal('hide');
                                 location.reload();
                             });
@@ -902,14 +894,14 @@
         });
     });
     
-    // Function to display error messages
+    
     function showError(fieldId, message) {
         const errorField = document.getElementById(fieldId);
         errorField.textContent = message;
         errorField.style.display = 'block';
     }
     
-    // Helper function to clear previous error messages
+    
     function clearErrors() {
         const errorFields = document.querySelectorAll('.text-danger');
         errorFields.forEach(function (field) {
@@ -921,11 +913,11 @@
     
     
         function changeStatus(button) {
-        const offerId = button.value; // Get the offer ID from the button's value
-        const isActive = button.classList.contains('btn-danger'); // Check if the offer is currently active
+        const offerId = button.value; 
+        const isActive = button.classList.contains('btn-danger'); 
         const action = isActive ? 'deactivate' : 'activate';
     
-        // SweetAlert2 confirmation dialog
+        
         Swal.fire({
             title: `Are you sure you want to ${action} this offer?`,
             text: `Are you sure you want to ${action} this offer?`,
@@ -936,11 +928,11 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Send a POST request to toggle the offer status
+               
                 axios.patch(`/admin/offers/action/${offerId}`)
                     .then(response => {
                         if (response.data.success) {
-                            // Update the button class and text based on the new state
+                           
                             if (response.data.isActive) {
                                 button.classList.remove('btn-success');
                                 button.classList.add('btn-danger');
@@ -951,14 +943,14 @@
                                 button.textContent = 'Activate';
                             }
     
-                            // Success message
+                           
                             Swal.fire("Success!", `Offer has been ${action}d successfully.`, "success");
                         } else {
                             Swal.fire("Error!", "Failed to toggle offer status.", "error");
                         }
                     })
                     .catch(error => {
-                        console.log(error)
+                       
                         console.error('Error toggling offer status:', error);
                         Swal.fire("Error!", "An error occurred while trying to toggle the offer status.", "error");
                     });

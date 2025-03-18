@@ -21,6 +21,46 @@ const securePassword = async (password) => {
   } catch (error) {}
 };
 
+const getOrders = async (req, res) => {
+  try{
+    const user = req.session.user;
+    if(!user) res.redirect('/login')
+    
+      const userData = await User.findOne({_id: user._id,isAdmin:false});
+      if (!userData) return res.redirect('/');
+      
+      const cartitem=await Cart.findOne({userId:user._id})
+
+      const page = parseInt(req.query.page) || 1; 
+      const limit = 10; 
+      const skip = (page - 1) * limit;
+  
+
+      const orders = await Order.find({ userId: user._id}) 
+      .sort({ createdOn: -1 })
+      .populate('orderedItems.productId')
+      .skip(skip)
+      .limit(limit);
+
+      const totalOrders = await Order.countDocuments({ userId: user._id });
+      const totalPages = Math.ceil(totalOrders / limit);
+
+      res.locals.user = userData.name;
+    res.render("orders", {
+      user: userData,
+      orders: orders,
+      cart: cartitem,
+      currentPage: page,
+      totalPages: totalPages
+    });   
+  
+
+}catch (error) {
+  res.render("page-404",{message:"server error"});
+}
+}
+
+
 const loadProfile=async (req, res) => {
     try {
        const id=req.params.userId;
@@ -30,11 +70,11 @@ const loadProfile=async (req, res) => {
           res.redirect('/login')
         
         if (user) {
-            const userData = await User.findOne({_id: user._id });
+            const userData = await User.findOne({_id: user._id,isAdmin:false});
             const cartitem=await Cart.findOne({userId:user._id})
-            const orders = await Order.find({ userId: user._id}) // Fetch user's orders
+            const orders = await Order.find({ userId: user._id}) 
             .sort({ createdOn: -1 })
-            .populate('orderedItems.productId') // Populate product details
+            .populate('orderedItems.productId') 
             const userAddress = await Address.find({userId:user._id }).populate('userId');
             res.locals.user = userData.name;
           
@@ -55,7 +95,7 @@ const loadProfile=async (req, res) => {
         }
     } catch (error) {
         res.render("page-404",{message:"server error"});
-        console.log("not found", error.message);
+       
     }
 }
 
@@ -130,7 +170,7 @@ const changePassword = async (req, res) => {
         try {
             
             const { Id,name, landmark, district, state, pincode, phone } = req.body;
-            //const userId = req.user.id; // Assuming userAuth middleware sets `req.user`
+            
            
             const userData = await User.findOne({_id: Id ,isAdmin:false});
             const cartitem=await Cart.findOne({userId:Id})
@@ -169,10 +209,10 @@ const changePassword = async (req, res) => {
 
 const updateAddress = async (req, res) => {
     try {
-      // Extract ID from params and fields from body
+    
       const { id } = req.params;
       const { name, landmark, district, state, pincode, phone } = req.body;
-        // Find the old address by ID
+  
       const oldAddress = await Address.findById(id);
   
       if (!oldAddress) {
@@ -219,7 +259,7 @@ const deleteAddress = async (req, res) => {
       const addressid = req.params.addressId;
       const userId = req.session.user?._id;
        if (!userId) {
-        return res.redirect('/login'); // Redirect to login if session is missing
+        return res.redirect('/login'); 
       }
   
       const user = await User.findOne({ _id: userId, isAdmin: false });
@@ -250,35 +290,6 @@ const deleteAddress = async (req, res) => {
   };
  
 
-const history=async (req,res) => 
-{try {
-  const userId = req.session.user._id; // Get the logged-in user's ID
-  const cartitem=await Cart.findOne({userId:userId})
-  const orders = await Order.find({ userId })
-    .populate('orderedItems.productId')
-    .sort({ createdOn: -1 });
-
-  res.json(orders); // Return orders as JSON
-} catch (err) {
-  console.error('Error fetching order history:', err);
-  res.status(500).json({ error: 'Failed to fetch order history' });
-}}
-
-  const orderHistory=async(req,res)=>{
-    try {
-      
-      const orders = await Order.find({ userId:req.session.user._id })
-          .populate("orderedItems.productId")
-          .sort({ createdOn: -1 });
-          const cartitem=await Cart.findOne({userId:req.session.user._id})
-          res.render("orders/history", { orders ,cart:cartitem});
-  } catch (err) {
-      console.error("Error fetching orders:", err);
-      res.status(500).send("Internal Server Error");
-  }
-  }
-
-
 
   const cancelOrder=async(req,res)=>{
 
@@ -286,7 +297,7 @@ try {
   const { id } = req.params;
   const { cancelReason, status } = req.body;
   
-  // Ensure the request body contains the required fields
+  
   if (!cancelReason || !status) {
     return res.status(400).json({ message: 'Invalid request data' });
   }
@@ -322,7 +333,7 @@ const getProfileDetail=async(req,res)=>{
   const updateProfileDetail=async(req,res)=>{
     try {
     
-      const { name, phone } = req.body;
+      const { name, emaol,phone } = req.body;
  
       const oldData = await User.findById(req.params.userId);
   
@@ -370,10 +381,7 @@ addAddress,
 getAddress,
 updateAddress,
 deleteAddress,
-
- orderHistory,
- cancelOrder,
- history,
-//getOrderDetails,
+getOrders,
+cancelOrder,
 
 }

@@ -54,7 +54,7 @@ const userBlocked=async (req,res)=>{
 
  try {
     const { name } = req.body;
-     const {id}=req.params // Use req.body to get the values
+     const {id}=req.params 
    
      const user = await User.findById(id);
     

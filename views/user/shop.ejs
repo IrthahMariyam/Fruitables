@@ -6,17 +6,72 @@
     <title>Shop Page</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* General styling */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        /* Dropdown menu */
+        .dropdown-menu {
+            min-width: 200px;
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            z-index: 1000;
+        }
+        
+        @media (min-width: 992px) {
+            .dropdown-menu {
+                min-width: 250px;
+                margin-left: 0;
+            }
+        }
+        
+        .dropdown-item {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        
+        .dropdown-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        /* Main container */
         .main-container {
             max-width: 1200px;
             margin: 175px auto 0;
-            padding: 20px;
+            padding: 15px;
+            width: 100%;
         }
+        
+        @media (max-width: 991px) {
+            .main-container {
+                margin-top: 130px;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .main-container {
+                margin-top: 100px;
+                padding: 10px;
+            }
+        }
+        
+        /* Shop topbar */
         .shop-topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
+        
         .search-form {
             display: flex;
             align-items: center;
@@ -24,15 +79,31 @@
             border-radius: 25px;
             overflow: hidden;
             max-width: 250px;
+            width: 100%;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        
+        @media (max-width: 575px) {
+            .search-form {
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .shop-topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+        
         .search-input {
             flex: 1;
             padding: 8px 10px;
             font-size: 14px;
             border: none;
             outline: none;
+            width: 100%;
         }
+        
         .search-button {
             padding: 8px 15px;
             background-color: #81C408;
@@ -44,10 +115,20 @@
             margin-right: 5px;
             transition: background-color 0.3s, transform 0.2s;
         }
+        
         .search-button:hover {
             background-color: #0056b3;
             transform: scale(1.05);
         }
+        
+        /* Product list container */
+        .product-list-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        /* Sidebar */
         .sidebar {
             padding: 20px;
             border: 1px solid #ddd;
@@ -56,52 +137,61 @@
             margin-bottom: 20px;
             width: 250px;
         }
+        
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 100%;
+                order: 1;
+            }
+            
+            .filter-options {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            
+            .filter-section {
+                flex: 1;
+                min-width: 200px;
+            }
+        }
+        
         .filter-section {
             margin-bottom: 20px;
         }
+        
         .filter-title {
             font-weight: bold;
             margin-bottom: 10px;
             font-size: 16px;
             color: #333;
         }
+        
         .filter-item a {
             text-decoration: none;
             color: #333;
         }
+        
         .filter-item a:hover {
             color: #007bff;
         }
-        .wishlist-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: red; 
-    color: white; 
-    padding: 10px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
-    border: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    z-index: 1;
-}
-
-.wishlist-btn:hover {
-    background-color: darkred; 
-    transform: scale(1.1); 
-}
-
-        .product-list-container {
-            display: flex;
-            gap: 20px;
-        }
+        
+        /* Product grid */
         .product-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             width: calc(100% - 270px);
         }
+        
+        @media (max-width: 991px) {
+            .product-grid {
+                width: 100%;
+                order: 2;
+            }
+        }
+        
+        /* Product card */
         .product-card {
             width: calc(33.333% - 20px);
             border: 1px solid #ddd;
@@ -109,13 +199,63 @@
             border-radius: 8px;
             text-align: center;
             position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+        
+        @media (max-width: 991px) {
+            .product-card {
+                width: calc(50% - 10px);
+            }
+        }
+        
+        @media (max-width: 575px) {
+            .product-card {
+                width: 100%;
+            }
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
+        }
+        
         .product-card img {
             max-width: 100%;
             height: auto;
-            border-radius: 5px;
+            border-radius: 10px 10px 0 0;
+            transition: transform 0.5s ease;
         }
-     
+        
+        .product-card:hover img {
+            transform: scale(1.1);
+        }
+        
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            z-index: 1;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .wishlist-btn:hover {
+            background-color: darkred;
+            transform: scale(1.1);
+        }
+        
         .add-to-cart-btn {
             background-color: #81C408;
             color: #fff;
@@ -125,51 +265,66 @@
             cursor: pointer;
             width: 100%;
             margin-top: 10px;
+            transition: background-color 0.3s ease;
         }
+        
+        .add-to-cart-btn:hover {
+            background-color: #6ca306;
+        }
+        
+        /* Pagination */
         .pagination {
             text-align: center;
             width: 100%;
             margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
         }
+        
         .pagination ul {
             display: inline-flex;
             list-style: none;
             padding: 0;
+            flex-wrap: wrap;
         }
+        
         .pagination .page-item {
-            margin: 0 5px;
+            margin: 5px;
         }
-        .pagination a {
+        
+        .pagination a.btn {
             padding: 8px 12px;
             background-color: #f0f0f0;
             border: 1px solid #ddd;
             color: #333;
             text-decoration: none;
+            margin: 0 5px;
+            border-radius: 5px;
+            display: inline-block;
         }
-        .pagination .active {
+        
+        .pagination a.active {
             background-color: #007bff;
             color: #fff;
         }
-
         
- .product-card { position: relative; 
-  overflow: hidden;
-  transition: transform 0.3s ease, 
-  box-shadow 0.3s ease; } 
-.product-card:hover { 
- transform: translateY(-10px);
- box-shadow: 0 0 55px rgba(0, 0, 0, 0.4);
- }
-.product-card img { 
- transition: transform 0.5s ease; 
-border-radius: 10px 10px 0 0;
- } 
- .product-card:hover img {
-transform: scale(1.3);
- }
-
-
-
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            padding-top: 30px;
+        }
+        
+        /* Responsive sort dropdown */
+        @media (max-width: 767px) {
+            .dropdown-menu {
+                min-width: 100%;
+                margin-left: 0;
+                position: static !important;
+                transform: none !important;
+                width: 100%;
+            }
+        }
     </style>
     <link href="/css/style.css" rel="stylesheet">
 </head>
@@ -181,82 +336,87 @@ transform: scale(1.3);
         <section class="shop-page container">
             <div class="shop-topbar">
                 <div class="search-bar">
-                        <form action="/shop" method="GET" class="search-form">
+                    <form action="/shop" method="GET" class="search-form">
                         <input type="text" name="query" placeholder="Search items..." value="<%= search || '' %>"
                             class="search-input" />
                         <input type="hidden" name="category" value="<%= selectedCategory || '' %>" />
+                        <input type="hidden" name="sort" value="<%= currentSort || '' %>">
                         <button type="submit" class="search-button">Search</button>
                     </form>
-    
                 </div>
             </div>
             <div class="product-list-container">
                 <aside class="sidebar">
-                    <div class="filter-section">
-                        <div class="filter-title">Categories</div>
-                         <ul>
-                            <% for(let i=0; i<category.length; i++) { %>
-                                <li class="filter-item" style="list-style: none;">
-                                 
-                                    <a href="/shop?category=<%= category[i]._id %>"
-                                        class="text-decoration-none text-dark <%= selectedCategory === (category._id) ? 'active' : '' %>">
-                                        <i class="fas fa-apple-alt me-2" style="color: #81C408;"></i>
-                                        <%= category[i].name %>
-                                    </a>
-                                 
-                                </li><br>
-                            <% } %>
-                        </ul>
-                    </div>
-                    <div>
-                    <div class="filter-section">
-                        
-                        <form action="" method="get">
-                           
-                            <!-- Sort Dropdown -->
-                             <div>
-                            <label for="sortBy">Sort By:</label><br>
-                            <select class="custom-select" id="sortSelect" onchange="handleSort(this.value)">
-                                <option value="default" <%=currentSort==='default' ? 'selected' : '' %>>Default</option>
-                                <option value="priceHighToLow" <%=currentSort==='priceHighToLow' ? 'selected' : '' %>>Price: High to Low</option>
-                                <option value="priceLowToHigh" <%=currentSort==='priceLowToHigh' ? 'selected' : '' %>
-                                    >Price: Low to High</option>
-                                <option value="nameAtoZ" <%=currentSort==='nameAtoZ' ? 'selected' : '' %>>Name: A to Z
-                                </option>
-                                <option value="nameZtoA" <%=currentSort==='nameZtoA' ? 'selected' : '' %>>Name: Z to A
-                                </option>
-                            </select>
-
-                         
+                    <div class="filter-options">
+                        <div class="filter-section">
+                            <div class="filter-title">Categories</div>
+                            <ul>
+                                <% for(let i=0; i<category.length; i++) { %>
+                                    <li class="filter-item" style="list-style: none;">
+                                        <a href="/shop?category=<%= category[i]._id %>&sort=<%= currentSort || '' %>&query=<%= search || '' %>"
+                                            class="text-decoration-none text-dark <%= selectedCategory === category[i]._id ? 'active' : '' %>">
+                                            <i class="fas fa-apple-alt me-2" style="color: #81C408;"></i>
+                                            <%= category[i].name %>
+                                        </a>
+                                    </li><br>
+                                <% } %>
+                            </ul>
                         </div>
-                           
-                             
-                            
-                          </form>
-                       </div>
+                        
+                        <div class="filter-section">
+                            <form action="" method="get">
+                                <!-- Sort Dropdown -->
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" style="width: 100%;" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Sort By
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="sortDropdown">
+                                        <a class="dropdown-item <%= currentSort === 'default' ? 'active' : '' %>"
+                                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=default&query=<%= search || '' %>">Default</a>
+                                        
+                                        <a class="dropdown-item <%= currentSort === 'priceHighToLow' ? 'active' : '' %>"
+                                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=priceHighToLow&query=<%= search || '' %>">Price: High to Low</a>
+                                        
+                                        <a class="dropdown-item <%= currentSort === 'priceLowToHigh' ? 'active' : '' %>"
+                                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=priceLowToHigh&query=<%= search || '' %>">Price: Low to High</a>
+                                        
+                                        <a class="dropdown-item <%= currentSort === 'nameAtoZ' ? 'active' : '' %>"
+                                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=nameAtoZ&query=<%= search || '' %>">Name: A to Z</a>
+                                        
+                                        <a class="dropdown-item <%= currentSort === 'nameZtoA' ? 'active' : '' %>"
+                                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=nameZtoA&query=<%= search || '' %>">Name: Z to A</a>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="/shop" class="w-100">
+                                        <button class="btn btn-primary" style="border-radius: 10px; padding: 5px; width: 100%;">
+                                            <strong>Clear All</strong>
+                                        </button>
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </aside>
                 
                 <main class="product-grid">
-                   <% for(let i=0; i<products.length; i++) { %>
-                      
-                     
+                    <% for(let i=0; i<products.length; i++) { %>
                         <div class="product-card">
-                           
-                                <span class="wishlist-btn"onclick="addToWishlist('<%=products[i]._id%>')">❤</span>
-                                <a href="/productDetails?id=<%=products[i]._id%>">
+                            <span class="wishlist-btn" onclick="addToWishlist('<%=products[i]._id%>')">❤</span>
+                            <a href="/productDetails?id=<%=products[i]._id%>">
                                 <img src="<%=products[i].productImage[0] %>" alt="<%=products[i].productName%>" />
                                 <h4><%= products[i].productName %></h4>
                                 <% if(products[i].salesPrice==products[i].price){ %>
-                                    <p class="text-dark fs-5 fw-bold mb-0 text-center ">₹<%=products[i].salesPrice %>/ kg</p>
-                                    <% }else{ %>
-                                        <p class="text-dark fs-5 fw-bold mb-0 text-center "><strike style="color:#81C408;">₹<%= products[i].price %>/ kg</strike> ₹<%= products[i].salesPrice %>/ kg</p>
-                                    <% } %>
+                                    <p class="text-dark fs-5 fw-bold mb-0 text-center">₹<%=products[i].salesPrice %>/ kg</p>
+                                <% }else{ %>
+                                    <p class="text-dark fs-5 fw-bold mb-0 text-center"><strike style="color:#81C408;">₹<%= products[i].price %>/ kg</strike> ₹<%= products[i].salesPrice %>/ kg</p>
+                                <% } %>
                             </a>
                             <% if (products[i].stock > 0) { %>
-                            <button class="add-to-cart-btn" onclick="addToCart('<%= products[i]._id %>')">Add to Cart</button>
+                                <button class="add-to-cart-btn" onclick="addToCart('<%= products[i]._id %>')">Add to Cart</button>
                             <% } else { %>
                                 <button class="btn btn-secondary" disabled>Out of Stock</button>
-                                <% } %>
+                            <% } %>
                         </div>
                     <% } %>
                 </main>
@@ -270,7 +430,9 @@ transform: scale(1.3);
  
 
     <div class="pagination">
-        <% if (currentPage> 1) { %>
+
+
+         <% if (currentPage> 1) { %>
             <a class="btn"
                 href="?page=<%= currentPage - 1 %>&category=<%= selectedCategory %>&sort=<%= currentSort %>&query=<%=search%>">Prev</a>
             <% } %>
@@ -285,25 +447,32 @@ transform: scale(1.3);
                         <% if (currentPage < totalPages) { %>
                             <a class="btn"
                                 href="?page=<%= currentPage + 1 %>&category=<%= selectedCategory %>&sort=<%= currentSort %>&query=<%=search%>">Next</a>
-                            <% } %>
+                            <% } %> 
    </div>
    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
     <div class="container py-5">
-        <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
+        <!-- Top Footer Section with Logo and Social Media -->
+        <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5);">
             <div class="row g-4">
-                <div class="col-lg-3">
-                
-                        <h1 class="text-primary mb-0">Fruitables</h1>
+                <!-- Logo Section -->
+                <div class="col-md-4 col-lg-3">
+                    
+                        <h1 class="text-primary mb-0 fs-3 fs-lg-1">Fruitables</h1>
                         <p class="text-secondary mb-0">Fresh products</p>
                     
                 </div>
-                <div class="col-lg-6">
+                <!-- Hidden Newsletter Section -->
+                <div class="col-lg-6 d-none d-lg-block" style="visibility: hidden;">
                     <div class="position-relative mx-auto">
                         <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="number" placeholder="Your Email">
                         <button type="submit" class="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white" style="top: 0; right: 0;">Subscribe Now</button>
                     </div>
                 </div>
-                </div></div></div></div>
+                </div>
+        </div>
+    </div>
+   </div>
+                
      
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
@@ -415,9 +584,7 @@ transform: scale(1.3);
                         document.getElementById("sortSelect").value = currentSort;
                     }
                 }
-
-                document.addEventListener("DOMContentLoaded", setSelectedSort);
-                
+               
     </script>     
 
 </body>

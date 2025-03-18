@@ -14,13 +14,8 @@
   z-index: 5;
 }
 
-
-
 </style>
 
-
-
-<!-- Single Page Header start -->
 <div class="container-fluid page-header py-5">
   <h1 class="text-center text-white display-6">Cart</h1>
   <ol class="breadcrumb justify-content-center mb-0">
@@ -29,7 +24,7 @@
     <li class="breadcrumb-item active text-white">Cart</li>
   </ol>
 </div>
-<!-- Single Page Header End -->
+
 
 <!-- Cart Page Start -->
 <div class="container-fluid py-5">
@@ -37,8 +32,7 @@
     
     <% if ((carts && carts.items)) { %>
      <script>
-      console.log(carts.items)
-      console.log(carts)
+    
      </script>
     <div class="table-responsive">
       <table class="table">
@@ -135,10 +129,6 @@
                   
                   <p class="mb-0" id="subtotal">₹<%= total || 0 %></p>
 
-
-
-
-
                 </div>
 
                 <div class="d-flex justify-content-between">
@@ -210,7 +200,7 @@ function updateQuantity(productId,change,stock,price) {
  
  var newQty = currentQty + change;
 
-  if (newQty < 1) {
+    if (newQty < 1) {
           Swal.fire({
             title: "Invalid Quantity",
             text: "Quantity cannot be less than 1",
@@ -237,49 +227,46 @@ function updateQuantity(productId,change,stock,price) {
           return;
         }
 
-var data = {
-    productId: productId,
-    quantity: newQty
-  };
-    $.ajax({
-    url: "/cart/update",
-    type: "POST",
-    contentType: "application/json",
+     var data = {
+     productId: productId,
+     quantity: newQty
+     };
+     $.ajax({
+     url: "/cart/update",
+     type: "POST",
+     contentType: "application/json",
    
-   data: JSON.stringify(data),
-    success: function (response) {
+     data: JSON.stringify(data),
+     success: function (response) {
 
 
-let $productRow = $(`#product-row-${productId}`);
+     let $productRow = $(`#product-row-${productId}`);
 
-if ($productRow.length) {
+     if ($productRow.length) {
   
-    let newTotal = price * newQty;
+     let newTotal = price * newQty;
    
     
-  let subtotalText = $(`#subtotal`).text().trim(); // Get text without extra spaces
+     let subtotalText = $(`#subtotal`).text().trim();
         let subtotal = parseFloat(subtotalText.replace("₹", "")) || 0;
 
-    $productRow.find(".product-total").text(`₹${newTotal.toFixed(2)}`);
-    $productRow.find(".quantity").text(newQty);
+     $productRow.find(".product-total").text(`₹${newTotal.toFixed(2)}`);
+     $productRow.find(".quantity").text(newQty);
            
       subtotal=(subtotal-oldprice)+newTotal;
         
-        $(`#subtotal`).text(`₹${subtotal.toFixed(2)}`); // Keep 2 decimal places
+        $(`#subtotal`).text(`₹${subtotal.toFixed(2)}`); 
     
-if (subtotal >= 1000) {
+  if (subtotal >= 1000) {
   $("#shipping").text(`₹ 0`);
-  $("#totalprice").text(`₹${(subtotal).toFixed(2)}`); // No shipping fee for orders ≥1000
+  $("#totalprice").text(`₹${(subtotal).toFixed(2)}`);
  
-} else {
+  } else {
   $("#shipping").text(`₹ 50`);
-  $("#totalprice").text(`₹${(subtotal + 50).toFixed(2)}`); // Add shipping fee for orders <1000
+  $("#totalprice").text(`₹${(subtotal + 50).toFixed(2)}`); 
 
-}
-}
+  }}
    
-
-     
     },
     error: function (xhr) {
       console.error("Error updating cart:", xhr.responseJSON);
@@ -312,10 +299,10 @@ function removeFromCart(productId,price) {
       var currentQty = parseInt($productRow.find(".quantity").text());
     
   $.ajax({
-    url: "/cart/remove", // Backend endpoint
+    url: "/cart/remove", 
     type: "POST",
     contentType: "application/json",
-    data: JSON.stringify({ productId}), // Send productId
+    data: JSON.stringify({ productId}), 
     success: function (response) {
       
       
@@ -328,10 +315,10 @@ function removeFromCart(productId,price) {
         let subtotalText = $(`#subtotal`).text().trim(); 
         let subtotal = parseFloat(subtotalText.replace("₹", "")) || 0;
         
-        // Subtract the product price from the subtotal
+        
         subtotal -= total;
         
-        // Update the displayed values
+       
         let shipping=0;
         if(subtotal>1000)
         shipping=50

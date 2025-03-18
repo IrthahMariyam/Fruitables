@@ -14,12 +14,14 @@ const razorpay = new Razorpay({
     key_secret: SecretKey,
 });
 
-//   Create Order for Adding Money
+
 const createAddmoneyWallet = async (req, res) => {
-   
+    let user=req.session.user;
+
+    if(user==null)return res.status(500).json({ error: "User blocked by admin" });
     const { amount } = req.body;
     const options = {
-        amount: amount * 100, // Convert to paise
+        amount: amount * 100, 
         currency: "INR",
         receipt: `receipt_order_${Date.now()}`,
     };
@@ -37,73 +39,110 @@ const createAddmoneyWallet = async (req, res) => {
     }
 };
 
-//   Confirm Payment & Update Wallet
 const addMoneyWallet = async (req, res) => {
-   
+    
+
+    let user = req.session.user;
+    if (user) {
+        user = await User.findOne({ _id: user._id, isBlocked: false });
+        if (!user) {
+            return res.status(403).json({ error: "User blocked by admin" });
+        }
+    } else {
+        return res.status(401).json({ error: "User not authenticated" });
+    }
+
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature, amount } = req.body;
 
-    const hash = crypto.createHmac("sha256", process.env.SECRET_KEY)
-    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-    .digest("hex");
+    
+    const hash = crypto
+        .createHmac("sha256", process.env.SECRET_KEY)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+        .digest("hex");
 
-if (hash !== razorpay_signature) {
-    return res.json({ ok: false, msg: "Payment verification failed!" });
-}
-
+    if (hash !== razorpay_signature) {
+        return res.status(403).json({ ok: false, msg: "Payment verification failed!" });
+    }
 
     try {
         let wallet = await Wallet.findOne({ userId: req.session.user._id });
+        
         if (!wallet) {
-            wallet = new Wallet({ userId: req.session.user._id, balance: 0, transactions: [] });
+            wallet = new Wallet({
+                userId: req.session.user._id,
+                balance: 0,
+                transactions: [],
+            });
         }
 
-        wallet.balance += Number(amount);
+        
+        const validAmount = Number(amount);
+        if (isNaN(validAmount) || validAmount <= 0) {
+            return res.status(400).json({ ok: false, msg: "Invalid amount specified." });
+        }
+
+    
+        wallet.balance += validAmount;
         wallet.transactions.push({
-            amount: amount,
-            transactionType: 'credit',
-            description: 'Money added to wallet',
+            amount: validAmount,
+            transactionType: "credit",
+            description: "Money added to wallet",
             productId: null,
-            reason: 'Wallet recharge',
+            reason: "Wallet recharge",
             date: new Date(),
         });
 
         await wallet.save();
-        res.json({ ok: true, msg: "Money added to wallet successfully!" });
+
+        return res.json({ ok: true, msg: "Money added to wallet successfully!" });
     } catch (error) {
         console.error("Error updating wallet:", error);
-        res.status(500).json({ ok: false, msg: "An error occurred while updating the wallet balance." });
+        return res.status(500).json({ ok: false, msg: "An error occurred while updating the wallet balance." });
     }
 };
-
-// Get Wallet Details
 const getWallet = async (req, res) => {
     try {
         const userId = req.session.user._id;
         const user = await User.findById(userId);
         if (!user) return res.redirect("/");
 
-        const cart = await Cart.findOne({ userId }) || { items: [] };
-        let wallet = await Wallet.findOne({ userId }).populate('transactions');
+        const cart = await Cart.findOne({ userId: userId }) || { items: [] };
+
+        const page = parseInt(req.query.page) || 1; 
+        const limit = 10; 
+        const skip = (page - 1) * limit;
+
+        let wallet = await Wallet.findOne({ userId: userId });
 
         if (!wallet) {
             wallet = new Wallet({ userId, balance: 0, transactions: [] });
             await wallet.save();
         }
 
-        const sortedTransactions = wallet.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const totalTransactions = wallet.transactions.length;
+        const totalPages = Math.ceil(totalTransactions / limit);
+
+        
+        const transactions = wallet.transactions
+            .sort((a, b) => new Date(b.date) - new Date(a.date)) 
+            .slice(skip, skip + limit); 
 
         res.render('wallet', {
             user,
             wallet,
             cart,
-            transactions: sortedTransactions,
+            transactions, 
+            currentPage: page,
+            totalPages
         });
     } catch (error) {
-        res.redirect("/pageNotFound");
+        console.error('Error fetching wallet:', error);
+        res.status(500).send('Server Error');
     }
 };
 
-//  Money from Wallet for Shopping
+
+
 const purchaseUsingWallet = async (req, res) => {
     try {
         const userId = req.session.user._id;
@@ -114,7 +153,7 @@ const purchaseUsingWallet = async (req, res) => {
             return res.json({ success: false, msg: "Insufficient wallet balance!" });
         }
 
-        // Deduct from wallet
+        
         wallet.balance -= totalAmount;
         wallet.transactions.push({
             amount: totalAmount,
