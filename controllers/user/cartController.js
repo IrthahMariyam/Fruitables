@@ -53,90 +53,91 @@ const getCartPage = async (req, res) => {
   };
 
 
-  
-
- const addToCart = async (req, res) => {
-  try {
-    const { productId } = req.body; 
-   
-    const userId = req.session.user; 
-  
-    let cartitemcount=0;
-    if(!userId)
-    return res.status(404).json({error:"Please Login to add a product"})
-    const product = await Product.findOne({_id:productId,isListed:true});
-   
-    if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
-    if (product.stock === 0) {
-      return res.status(400).json({ error: 'This product is out of stock' });
-    }
-
-    let cart = await Cart.findOne({userId: userId._id });
-  
-    if (!cart) {
-      if (product.stock < 1) {
-        return res.status(400).json({ error: 'Insufficient stock to add to cart' });
+  const addToCart = async (req, res) => {
+    try {
+      const { productId } = req.body; 
+     
+         
+      let cartitemcount=0;
+      const userId = req.session.user?._id; 
+      if(!userId) {
+        return res.status(401).json({ error: 'Not logged in', redirect: '/login' });
       }
-
-      cart = new Cart({
-       userId: userId._id,
-        items: [
-          {
+      const product = await Product.findOne({_id:productId,isListed:true});
+     
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+  
+      if (product.stock === 0) {
+        return res.status(400).json({ error: 'This product is out of stock' });
+      }
+  
+      let cart = await Cart.findOne({userId: userId });
+    
+      if (!cart) {
+        // if (product.stock < 1) {
+        //   return res.status(400).json({ error: 'Insufficient stock to add to cart' });
+        // }
+  
+        cart = new Cart({
+         userId: userId,
+          items: [
+            {
+              productId,
+              quantity: 1,
+              price: product.salesPrice,
+              totalPrice: product.salesPrice,
+              status:"pending",
+            },
+          ],
+        });
+        cartitemcount=1
+      } else {
+        const existingProduct = cart.items.find((item) => item.productId.toString() === productId);
+  
+        if (existingProduct) {
+          if (existingProduct.quantity >= product.stock) {
+            return res
+              .status(400)
+              .json({ error: `Only ${product.stock} units are available in stock` });
+          }
+  
+          if (existingProduct.quantity + 1 > 5) {
+            return res.status(400).json({ error: 'You cannot add more than 5 units of this product' });
+          }
+  
+          existingProduct.quantity += 1;
+          existingProduct.totalPrice = existingProduct.quantity * existingProduct.price;
+          await cart.save();
+          return res.status(400).json({ error: 'Product already in cart' });
+      
+        }
+         else {
+         
+  
+          cart.items.push({
             productId,
             quantity: 1,
             price: product.salesPrice,
             totalPrice: product.salesPrice,
             status:"pending",
-          },
-        ],
-      });
-      cartitemcount=1
-    } else {
-      const existingProduct = cart.items.find((item) => item.productId.toString() === productId);
-
-      if (existingProduct) {
-        if (existingProduct.quantity >= product.stock) {
-          return res
-            .status(400)
-            .json({ error: `Only ${product.stock} units are available in stock` });
-        }
-
-        if (existingProduct.quantity + 1 > 5) {
-          return res.status(400).json({ error: 'You cannot add more than 5 units of this product' });
-        }
-
-        existingProduct.quantity += 1;
-        existingProduct.totalPrice = existingProduct.quantity * existingProduct.salesPrice;
+          });
+        }}
+          await cart.save();
+      cart = await Cart.findOne({ userId:userId })
+      cartitemcount=cart.items.length
+      res.status(200).json({ message: 'Product added to cart successfully!', cart,cartitemcount:cartitemcount });
+        
       
-      }
-       else {
-       
-
-        cart.items.push({
-          productId,
-          quantity: 1,
-          price: product.salesPrice,
-          totalPrice: product.salesPrice,
-          status:"pending",
-        });
-      }}
-        await cart.save();
-    cart = await Cart.findOne({ userId:userId._id })
-    cartitemcount=cart.items.length
-    res.status(200).json({ message: 'Product added to cart successfully!', cart,cartitemcount:cartitemcount });
+  
       
-    
-
-    
-  } catch (error) {
-    console.error('Error adding product to cart:', error);
-    res.status(500).json({ error: 'Failed to add product to cart.Please login again ' });
-  }
-};
-
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      res.status(500).json({ error: 'Failed to add product to cart.Please login again ' });
+    }
+  };
+  
   
 
   

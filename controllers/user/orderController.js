@@ -196,7 +196,7 @@ const razorpayInstance = new Razorpay({
           
               const user = req.session.user
                if(!user)
-                 res.redirect('/login')
+                 res.render('login')
               
                  const userData = await User.findOne({_id: user._id });
                  const cartitem=await Cart.findOne({userId:user._id})
@@ -501,38 +501,37 @@ await order.save();
 }
 };
 
+
 const handleWalletPayment = async (userId, cartItems, orderData) => {
   try {
-    
     let wallet = await Wallet.findOne({ userId: userId });
     if (!wallet) {
       wallet = new Wallet({ userId, balance: 0, transactions: [] });
       await wallet.save();
     }
+    
     let amount = parseFloat(orderData.finalAmount);
-     if (!wallet || wallet.balance < amount) {
-      throw new Error('Insufficient wallet balance');
+    
+    if (!wallet || wallet.balance < amount) {
+      return { success: false, error: 'Insufficient wallet balance' };
     }
 
-      wallet.transactions.push({
-        amount: amount,
-        transactionType: 'debit',
-        description: 'Order payment',
-         reason: 'Shopping',
-        
-      });
+    wallet.transactions.push({
+      amount: amount,
+      transactionType: 'debit',
+      description: 'Order payment',
+      reason: 'Shopping',
+    });
 
-   wallet.balance=parseFloat(wallet.balance)-parseFloat(amount);
-   
+    wallet.balance = parseFloat(wallet.balance) - parseFloat(amount);
     await wallet.save();
-    return { success: true };
-   } catch (error) {
     
-    res.redirect("/pageNotFound");
-   }
+    return { success: true };
+  } catch (error) {
+    console.error("Wallet payment error:", error.message);
+    return { success: false, error: error.message || 'An error occurred during wallet payment' };
+  }
 };
-
-
 
 
 const handleRefund = async (userId, amount, productNames, orderId) => {

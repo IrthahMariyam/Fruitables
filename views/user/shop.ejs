@@ -523,9 +523,7 @@
  }
 
 
-
-
-     function addToCart(productId) {
+function addToCart(productId) {
                        const cartitem=document.getElementById('cartitems')
             fetch('/cart/add', {
          method: 'POST',
@@ -534,8 +532,14 @@
   },
   body: JSON.stringify({ productId }),
 })
-  .then((response) => response.json())
+.then((response) => response.json())
   .then((data) => {
+    if (data.redirect) {
+      // Handle redirect to login page
+      window.location.href = data.redirect;
+      return;
+    }
+    
     if (data.message) {
       Swal.fire({
         title: "Success",
@@ -543,23 +547,23 @@
         icon: "success",
       })
       .then(() => {
-        
-       
         setTimeout(() => {
-            if (data.cartitemcount !== undefined) {
-        
-          document.getElementById('cartitems').textContent = data.cartitemcount
-        }
-       
+          if (data.cartitemcount !== undefined) {
+            document.getElementById('cartitems').textContent = data.cartitemcount
+          }
         }, 500);
-       
-    });
-     } else { 
-      
-        Swal.fire({
-        title: "OOps",
+      });
+    } else if (data.error) {
+      Swal.fire({
+        title: "Error",
+        text: data.error,
+        icon: "error",
+      });
+    } else { 
+      Swal.fire({
+        title: "Oops",
         text: "Product already in cart",
-        icon: "OOps",
+        icon: "warning",
       })
     }
   })
@@ -567,8 +571,7 @@
     console.error('Error:', error);
     Swal.fire('Error', 'Something went wrong!', 'error');
   });
-
-          }
+}
       
             function handleSort(sortOption) {
                     const urlParams = new URLSearchParams(window.location.search);
