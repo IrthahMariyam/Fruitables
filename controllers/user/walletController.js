@@ -100,6 +100,46 @@ const addMoneyWallet = async (req, res) => {
         return res.status(500).json({ ok: false, msg: "An error occurred while updating the wallet balance." });
     }
 };
+// const getWallet = async (req, res) => {
+//     try {
+//         const userId = req.session.user._id;
+//         const user = await User.findById(userId);
+//         if (!user) return res.redirect("/");
+
+//         const cart = await Cart.findOne({ userId: userId }) || { items: [] };
+
+//         const page = parseInt(req.query.page) || 1; 
+//         const limit = 10; 
+//         const skip = (page - 1) * limit;
+
+//         let wallet = await Wallet.findOne({ userId: userId });
+
+//         if (!wallet) {
+//             wallet = new Wallet({ userId, balance: 0, transactions: [] });
+//             await wallet.save();
+//         }
+
+//         const totalTransactions = wallet.transactions.length;
+//         const totalPages = Math.ceil(totalTransactions / limit);
+
+        
+//         const transactions = wallet.transactions
+//             .sort((a, b) => new Date(b.date) - new Date(a.date)) 
+//             .slice(skip, skip + limit); 
+
+//         res.render('wallet', {
+//             user,
+//             wallet,
+//             cart,
+//             transactions, 
+//             currentPage: page,
+//             totalPages
+//         });
+//     } catch (error) {
+//         console.error('Error fetching wallet:', error);
+//         res.status(500).send('Server Error');
+//     }
+// };
 const getWallet = async (req, res) => {
     try {
         const userId = req.session.user._id;
@@ -119,13 +159,14 @@ const getWallet = async (req, res) => {
             await wallet.save();
         }
 
+        // Get total count for pagination
         const totalTransactions = wallet.transactions.length;
         const totalPages = Math.ceil(totalTransactions / limit);
 
-        
+        // Sort and paginate transactions
         const transactions = wallet.transactions
-            .sort((a, b) => new Date(b.date) - new Date(a.date)) 
-            .slice(skip, skip + limit); 
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(skip, skip + limit);
 
         res.render('wallet', {
             user,
@@ -133,7 +174,9 @@ const getWallet = async (req, res) => {
             cart,
             transactions, 
             currentPage: page,
-            totalPages
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPrevPage: page > 1
         });
     } catch (error) {
         console.error('Error fetching wallet:', error);
