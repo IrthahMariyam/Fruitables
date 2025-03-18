@@ -239,7 +239,6 @@ function updateQuantity(productId,change,stock,price) {
      data: JSON.stringify(data),
      success: function (response) {
 
-
      let $productRow = $(`#product-row-${productId}`);
 
      if ($productRow.length) {
