@@ -58,58 +58,70 @@
         }
       }
       
-      /* Small to medium screens */
-      @media (max-width: 991.98px) {
-        .navbar-collapse {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background-color: white;
-          padding: 15px;
-          z-index: 1000;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-          border-radius: 0 0 8px 8px;
-        }
-        
-        .navbar-brand .display-6 {
-          font-size: 1.5rem;
-        }
-        
-        .inline-nav {
-          display: flex;
-          flex-direction: column !important;
-          align-items: center;
-          width: 100%;
-        }
-        
-        .inline-nav .nav-item {
-          margin: 5px 0;
-        }
-        
-        .icon-container {
-          display: flex;
-          justify-content: center;
-          margin-top: 10px;
-          width: 100%;
-        }
-      }
-      
-      /* Extra small screens */
-      @media (max-width: 575.98px) {
-        .navbar-brand .display-6 {
-          font-size: 1.2rem;
-        }
-        
-        .navbar-toggler {
-          padding: 0.25rem 0.5rem;
-        }
-        
-        .topbar {
-          font-size: 0.8rem;
-        }
-      }
-      
+     /* Small to medium screens */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 0 0 8px 8px;
+  }
+  
+  .navbar-brand .display-6 {
+    font-size: 1.5rem;
+  }
+  
+  .inline-nav {
+    display: flex;
+    flex-direction: row !important; /* Changed from column to row */
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .inline-nav .nav-item {
+    margin: 5px 0;
+  }
+  
+  .icon-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  /* Add this to make nav links fit on one line */
+  .nav-link {
+    padding: 0.5rem 0.5rem !important;
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra small screens - further reduce padding */
+@media (max-width: 575.98px) {
+  .navbar-brand .display-6 {
+    font-size: 1.2rem;
+  }
+  
+  .navbar-toggler {
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .topbar {
+    font-size: 0.8rem;
+  }
+  
+  /* Add this to make nav links fit on one line on very small screens */
+  .nav-link {
+    padding: 0.5rem 0.3rem !important;
+    font-size: 0.8rem;
+  }
+}
       /* Back to top button position */
       .back-to-top {
         position: fixed;
@@ -141,7 +153,7 @@
           <div class="top-link pe-2">
             <% if (locals.user!=null) { %>
               <%=locals.user.name %>
-            <% console.log(locals.user) }%>
+            <%  }%>
           </div>
         </div>
       </div>
@@ -180,19 +192,24 @@
             
             <div class="collapse navbar-collapse" id="navbarCollapse">
               <!-- Navigation Links -->
-              <div class="navbar-nav mx-auto inline-nav">
-                <a href="/home" class="nav-item nav-link active">Home</a>
-                <a href="/shop" class="nav-item nav-link">Shop</a>
-                
-                <% if (locals.user != null) { %>
-                  <a href="/userProfile/<%= user._id %>" class="nav-item nav-link">Profile</a>
-                  <a href="/logout" class="nav-item nav-link">Logout</a>
-                <% } else { %>
-                  <a href="/login" class="nav-item nav-link">Login</a>
-                  <a href="/signup" class="nav-item nav-link">Sign up</a>
-                <% } %>
-              </div>
-              
+              <!-- Navigation Links -->
+<!-- Navigation Links -->
+<div class="navbar-nav mx-auto inline-nav">
+  <div class="d-flex flex-row justify-content-center w-100">
+    <a href="/home" class="nav-item nav-link active">Home</a>
+    <a href="/shop" class="nav-item nav-link">Shop</a>
+    
+    <% if (locals.user != null) { %>
+      <a href="/userProfile/<%= user._id %>" class="nav-item nav-link">Profile</a>
+      <form action="/logout" method="POST" class="nav-item m-0 p-0 d-flex align-items-center">
+        <button type="submit" class="nav-link" style="background: none; border: none; line-height: normal; padding: 0.5rem; cursor: pointer; font-size: inherit;">Logout</button>
+      </form>
+    <% } else { %>
+      <a href="/login" class="nav-item nav-link">Login</a>
+      <a href="/signup" class="nav-item nav-link">Sign up</a>
+    <% } %>
+  </div>
+</div>
               <!-- Shopping Icons for Desktop - Visible only on desktop -->
               <div class="d-none d-lg-flex icon-container">
                 <a href="getWishlist" class="shop-icon">

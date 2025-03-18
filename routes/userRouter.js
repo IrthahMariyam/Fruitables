@@ -53,7 +53,7 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
 router.get('/login',userController.loadLogin)
 router.post('/login',userController.userlogin)
 
-router.get('/logout',userController.logout)
+router.post('/logout',userController.logout)
 
 
 router.get("/shop",productController.loadShopping)
