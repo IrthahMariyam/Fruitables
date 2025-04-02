@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const User = require("../../models/userSchema");
 const bcrypt = require("bcrypt");
 
-
+// error page
 const pageerror = async (req, res) => {
   res.render("admin-error");
 };
