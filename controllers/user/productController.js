@@ -1,12 +1,8 @@
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
-const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
-const nodemailer = require("nodemailer");
-const env = require("dotenv").config();
-const bcrypt = require("bcrypt");
-const session = require("express-session");
+
 
 
 
@@ -67,7 +63,7 @@ const searchProducts = async (req, res) => {
       const products = await Product.find({
         isDeleted: false,
         isListed:true,
-        productName: { $regex: query, $options: 'i' } // Case-insensitive regex search
+        productName: { $regex: query, $options: 'i' }
       }).lean()     
       
         .sort(sortOption)
@@ -132,185 +128,11 @@ const searchProducts = async (req, res) => {
     } 
   }
     catch (error) {
-      console.error('Error in searchProducts:', error);
+      
       res.status(500).send('Internal Server Error');
     }
   };
-  
-const filterCategory=async(req,res)=>{
-    try {
-      const userId = req.session.user ? req.session.user._id : null;
-      const category = req.query.category;
-     
-      const findCategory = category ? await Category.findOne({ _id: category }) : null;
-  
-      const query = {
-        isDeleted: false,
-      
-      };
-  
-      if (findCategory) {
-        query.category = findCategory._id;
-      }
-  
-      const findProducts = await Product.find(query).lean();
-  
-      const limit = 4;
-      const page = parseInt(req.query.page) || 1;
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const totalPages = Math.ceil(findProducts.length / limit);
-      const currentProduct = findProducts.slice(startIndex, endIndex);
-      const categories = await Category.find({ isListed: true });
-      let userData = null;
-      if (userId) {
-        userData = await User.findById(userId);
-        const cartitem=await Cart.findOne({userId:userId})
-        
-        res.locals.user = userData.name;
-      res.render("shop", {
-         user: userData,
-        products: currentProduct,
-        category: categories,
-        totalPages,
-        currentPage: page,
-        search:"",
-        currentSort:"",
-        selectedCategory: category || null,
-        cart:cartitem
-      });
-    }
-    else{
-      res.locals.user = null;
-    res.render("shop", {
-      user: userData,
-     products: currentProduct,
-     category: categories,
-     totalPages,
-     currentPage: page,
-     search:"",
-     currentSort:"",
-     selectedCategory: category || null,
-   
-   });
-  }
-    } catch (error) {
-      console.error("Error in filterProduct:", error);
-  
-      
-      res.status(500).render("page-404", { error: "An error occurred while filtering products." });
-    
-    }
-  };
-  
 
-
-
-  const filterProduct = async (req, res) => {
-
-    try {
-      const userId = req.session.user ? req.session.user._id : null;
-      const category = req.query.category;
-     const sort=req.query.sort
-     const findCategory = category ? await Category.findOne({ _id: category }) : null;
-  
-      let query = {
-        isDeleted: false,
-     
-      };
-     
-    
-      let sortOption = {};
-      if(sort)
-  {
-  
-    switch(sort) {
-      case 'popularity':
-        sortOption = { popularity: -1 };
-        break;
-      case 'priceAsc':
-        sortOption = { salesPrice: 1 };
-        break;
-      case 'priceDesc':
-        sortOption = { salesPrice: -1 };
-        break;
-     
-      case 'averageRatings':
-        sortOption = { averageRating: -1 };
-        break;
-      case 'featured':
-        sortOption = { isFeatured: "true" };
-        break;
-      case 'newArrivals':
-        sortOption = { createdOn: -1 };
-        break;
-      case 'aToZ':
-        sortOption = { productName: 1 };
-        break;
-      case 'zToA':
-        sortOption = { productName: -1 };
-        break;
-      default:
-        sortOption = { createdOn: -1 };
-
-    }
-   
-  }
-   
-      if (findCategory) {
-        query.category = findCategory._id;
-      }
-  
-    
-  
-      const limit = 4;
-      const page = parseInt(req.query.page) || 1;
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const findProducts = await Product.find(query).sort(sortOption)
-      .skip(startIndex)
-      .limit(limit)
-      .lean();
-      const totalPages = Math.ceil(findProducts.length / limit);
-      const currentProduct = findProducts.slice(startIndex, endIndex);
-      const categories = await Category.find({ isListed: true });
-    
-      let userData = null;
-      if (userId) {
-        userData = await User.findById(userId);
-        const cartitem=await Cart.findOne({userId:userId})
-     
-      res.render("shop", {
-         user: userData,
-        products: currentProduct,
-        category: categories,
-        totalPages,
-        currentPage:page,
-        selectedCategory: category || null,
-        cart:cartitem,
-        query:""
-      });
-    }
-    else{
-    res.render("shop", {
-      user: userData,
-     products: currentProduct,
-     category: categories,
-     totalPages,
-     currentPage:page,
-     query:"",
-     selectedCategory: category || null,
-   
-   });
-  }
-    } catch (error) {
-      console.error("Error in filterProduct:", error);
-      res.status(500).render("page-404", { error: "An error occurred while filtering products." });
-    
-    }
-  };
-  
-  
 const productDetails = async (req, res) => {
   try {
      const userId = req.session.user;
@@ -362,11 +184,82 @@ const productDetails = async (req, res) => {
     }
    
   } catch (error) {
-    console.error("Error for fetching product details", error.stack);
+    
     res.redirect("/pageNotFound");
    
   }
 };
+
+
+const filterCategory=async(req,res)=>{
+  try {
+    const userId = req.session.user ? req.session.user._id : null;
+    const category = req.query.category;
+   
+    const findCategory = category ? await Category.findOne({ _id: category }) : null;
+
+    const query = {
+      isDeleted: false,
+    
+      
+    };
+
+    if (findCategory) {
+      query.category = findCategory._id;
+    }
+
+    const findProducts = await Product.find(query).lean();
+
+    const limit = 4;
+    const page = parseInt(req.query.page) || 1;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const totalPages = Math.ceil(findProducts.length / limit);
+    const currentProduct = findProducts.slice(startIndex, endIndex);
+    const categories = await Category.find({ isListed: true });
+    let userData = null;
+    if (userId) {
+      userData = await User.findById(userId);
+      const cartitem=await Cart.findOne({userId:userId})
+     
+          
+      res.locals.user = userData.name;
+    res.render("shop", {
+       user: userData,
+      products: currentProduct,
+      category: categories,
+      totalPages,
+      currentPage: page,
+      search:"",
+      currentSort:"",
+      selectedCategory: category || null,
+      cart:cartitem
+    });
+  }
+  else{
+    res.locals.user = null;
+  res.render("shop", {
+    user: userData,
+   products: currentProduct,
+   category: categories,
+   totalPages,
+   currentPage: page,
+   search:"",
+   currentSort:"",
+   selectedCategory: category || null,
+ 
+ });
+}
+  } catch (error) {
+    
+
+    
+    res.status(500).render("page-404", { error: "An error occurred while filtering products." });
+  
+  }
+};
+
+
 const productReview = async (req, res) => {
   const { productId, username, rating, reviewText } = req.body;
 
@@ -391,7 +284,7 @@ const productReview = async (req, res) => {
           },
         },
       },
-      { new: true } // Ensures you get the updated document
+      { new: true } 
     );
 
     if (updatedProduct) {
@@ -401,19 +294,123 @@ const productReview = async (req, res) => {
       return res.status(500).send("Failed to update product with review");
     }
   } catch (error) {
-    console.error("Error submitting review:", error);
+    
     res.status(500).send("Failed to submit review");
   }
 };
 
 
+const loadShopping = async (req, res) => {
+  
+  try {
+ 
+   const user = req.session.user;
+   let userData,cartitem;
+   if(user)
+    { 
+    
+     userData = await User.findOne({ _id: user });
+     
+    cartitem=await Cart.findOne({userId:user._id})
+   }
+   const categories = await Category.find({ isListed: true ,isDeleted:false}).lean();
+   const categoriesIds = categories.map(category => category._id.toString());
+ 
+   const search = req.query.query || ""; 
+   const selectedCategory = req.query.category || ""; 
+   const sort = req.query.sort || "default"; 
+   
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = parseInt(req.query.limit) || 9;
+   const skip = (page - 1) * limit;
+  
+   let baseQuery = {
+   isDeleted: false,
+      isListed:true,
+   };
+ 
+ 
+ if (search) {
+   baseQuery.productName = { $regex: search, $options: "i" };
+ }
+ 
+ if (selectedCategory) {
+   baseQuery.category = selectedCategory;
+ } else {
+   baseQuery.category = { $in: categoriesIds }; 
+ }
+ 
+ let products;
+ let sortOptions = {};
+ if (sort === "priceHighToLow") {
+     sortOptions = { salesPrice: -1,productOffer: -1  };
+ } else if (sort === "priceLowToHigh") {
+     baseQuery.salesPrice = { $gte: 0 };
+     sortOptions = { salesPrice: 1 };
+ } else if (sort === "nameAtoZ") {
+     sortOptions = { productName: 1 };
+ } else if (sort === "nameZtoA") {
+     sortOptions = { productName: -1 };
+ } else {
+     sortOptions = {}; 
+ }
+ if(sort!='default')
+  products = await Product.find(baseQuery).sort(sortOptions).skip(skip).limit(limit).lean();
+ 
+ else
+   products = await Product.find(baseQuery)
+  .sort({ productOffer: -1 })
+  .skip(skip)
+  .limit(limit)
+  .lean();
+ 
+ const totalProducts = await Product.countDocuments(baseQuery);
+ const totalPages = Math.ceil(totalProducts / limit);
+ 
+ if(user){
+   res.locals.user = userData.name; 
+  res.render("shop", {
+  user: userData,
+  products,
+  category:categories,
+  totalPages,
+  currentPage: page,
+  search,
+  selectedCategory,
+  currentSort: sort,
+  cart:cartitem,
+  });
+ }else
+ {
+     userData=null;
+     res.locals.user = null;
+     res.render("shop", {
+     user: userData,
+     products,
+     category:categories,
+     totalPages,
+     currentPage: page,
+     search,
+     selectedCategory,
+     currentSort: sort,
+       
+    });
+ }
+ } catch (error) {
+  
+  res.redirect("/pageNotFound");
+    }
+ };
+ 
+
 module.exports={
 
-  filterProduct,
+
   productDetails,
   productReview,
   searchProducts,
-  filterCategory,
+  loadShopping,
+ filterCategory,
   
 
 }

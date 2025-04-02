@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>success</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Link to your CSS -->
+    <link rel="stylesheet" href="/css/styles.css"> 
     <style>
         body {
-            background-color: #4CAF50; /* Green background */
+            background-color: #4CAF50; 
             color: white;
             display: flex;
             flex-direction: column;
@@ -16,20 +16,20 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden; 
         }
         .container {
             text-align: center;
-            background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white */
+            background-color: rgba(255, 255, 255, 0.1);
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            max-width: 500px; /* Set a maximum width for the container */
-            position: relative; /* For absolute positioning of confetti */
-            z-index: 2; /* Keep it above the background */
+            max-width: 500px; 
+            position: relative; 
+            z-index: 2; 
         }
         h1 {
-            color: #ffeb3b; /* Bright yellow */
+            color: #ffeb3b;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
             animation: glow 1s infinite alternate;
         }
@@ -40,14 +40,14 @@
             margin: 20px 0;
         }
         .btn-custom {
-            background-color: #ffeb3b; /* Bright yellow button */
-            color: #4CAF50; /* Green text */
+            background-color: #ffeb3b;
+            color: #4CAF50;
             padding: 10px 20px;
             border-radius: 5px;
             transition: background-color 0.3s, transform 0.3s;
         }
         .btn-custom:hover {
-            background-color: #fdd835; /* Slightly darker yellow */
+            background-color: #fdd835; 
             transform: scale(1.05);
         }
         @keyframes glow {
@@ -76,12 +76,12 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script> <!-- Confetti library -->
 
     <script>
-        // Show confetti on page load
+       
         window.onload = function() {
-            // Trigger confetti
-            var end = Date.now() + (5 * 1000); // 5 seconds
+          
+            var end = Date.now() + (5 * 1000);
             var interval = setInterval(function() {
-                // Launch confetti
+                
                 confetti({
                     particleCount: 100,
                     startVelocity: 30,

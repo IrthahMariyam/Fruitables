@@ -17,7 +17,7 @@ router.get("/loadSalesPage",adminAuth,salesController.loadSalesPage);
 router.get("/sales-report",adminAuth,salesController.salesReport)
 router.get('/top-selling-products',adminAuth,salesController.getTopSellingProducts);
 router.get('/top-selling-categories',adminAuth,salesController.getTopCategories)
-
+router.get('/cancelled-returned-orders', adminAuth,salesController.cancelledReturnedOrdersReport);
 
 router.get("/pageerror",adminController.pageerror)
 router.get("/login",adminController.loadLogin)
@@ -62,7 +62,7 @@ router.delete('/deleteImage',adminAuth,productController.deleteSingleImage);
 // Order Management
 router.get('/orders',adminAuth, orderController.listOrders);
 router.post('/orders/updateorderstatus/:orderId', adminAuth,orderController.updateOrderStatus);
-router.post('/orders/cancel/:id',adminAuth, orderController.cancelOrder);
+//router.post('/orders/cancel/:id',adminAuth, orderController.cancelOrder);
 router.get('/getorderdetails/:orderid',adminAuth,orderController.getordedetailspage)
 router.post('/order/approve-return/:orderId', adminAuth, orderController.approveReturnRequest);
 router.post('/order/decline-return/:orderId',adminAuth,orderController.declineReturnRequest)

@@ -94,7 +94,7 @@
     
     <div class="container">
       <h2>Sign Up</h2>
-      <!-- <form id="signupForm" method="post" action="/signup"> -->
+      
       <form class="form" id="signupForm" method="post" action="/signup">
         <div id="error" class="error-message" style="color: red;">
           <% if (typeof message !== 'undefined' && message) { %>
@@ -151,7 +151,7 @@
           />
           <label style="font-size: 10px"
             >Password must contain atleast one alphabet,digit and special
-            symbols like @ $ ! & Password length 8-16 characters. eg:Passw0rd!
+            symbols like @ $ ! & # Password length 8-16 characters. eg:Password!
             Hello@123</label
           >
         </div>
@@ -174,7 +174,7 @@
           placeholder="(optional)"
           
         />
-          <!-- <div class="error" id="error"></div> -->
+          
         </div>
         <button type="submit" class="btn">Sign Up</button>
       </form>
@@ -232,11 +232,11 @@
         } else if (password.length < 8) {
            document.getElementById('error').innerText="Password is invalid must be at least 8 characters"
         
-          return false; // Stop form submission
+          return false; 
         } else if (!validateEmail(email)) {
          document.getElementById('error').innerText="Email is not validated"
         
-          return false; // Stop form submission
+          return false; 
         } else if (!validateName(name)) {
            document.getElementById('error').innerText="Give in correct format"
         
@@ -263,7 +263,7 @@
 
       function validatePassword(password) {
         const alpha =
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!&])[A-Za-z\d@$!&]{8,16}$/;
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!&#])[A-Za-z\d@$!&#]{8,16}$/;
         return alpha.test(password);
       }
     </script>

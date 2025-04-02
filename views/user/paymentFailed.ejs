@@ -68,10 +68,14 @@ body {
 <body>
     <div class="container"></div>
         <div class="card">
+
+            <form action="/viewfailedOrder/<%= orderId %>" method="GET">
             <h1>Payment Failed</h1>
             <p>Oops! Something went wrong with your transaction.</p>
             <p>Please try again or check your orders for details and can complete transaction.</p>
-            <a href=/shop class="btn">Shop</a>
+            <button type="submit"  class="btn">View Order</button>
+            <a href="/shop" class="btn">Continue Shopping</a>
+            </form>
         </div>
     </div>
 </body>

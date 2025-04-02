@@ -6,9 +6,7 @@ const Cart = require("../../models/cartSchema");
 const Wallet=require('../../models/walletSchema')
 const Referrel=require('../../models/referralSchema')
 const nodemailer = require("nodemailer");
-const env = require("dotenv").config();
 const bcrypt = require("bcrypt");
-const session = require("express-session");
 const crypto = require("crypto");
 
 
@@ -54,27 +52,27 @@ const loadHomepage = async (req, res) => {
     
   } catch (error) {
     res.status(500).send("server error");
-    console.log("not found", error.message);
+    
   }
 };
 
 
-// Function to get reviews from all products for the homepage
-const getProductReviewsForHomepage = async () => {
-  try {
-    // Find all listed products that have at least one review
-    const productsWithReviews = await Product.find({
+   // Function to get reviews from all products for the homepage
+   const getProductReviewsForHomepage = async () => {
+     try {
+     // Find all listed products that have at least one review
+     const productsWithReviews = await Product.find({
       isListed: true,
       isDeleted: false,
-      'review.0': { $exists: true } // Only products with at least one review
-    }).select('productName productImage review')
+      'review.0': { $exists: true }
+     }).select('productName productImage review')
     
     // Format the review data for homepage display
-    const formattedReviews = [];
+        const formattedReviews = [];
     
-    productsWithReviews.forEach(product => {
-      product.review.forEach(review => {
-        formattedReviews.push({
+          productsWithReviews.forEach(product => {
+          product.review.forEach(review => {
+          formattedReviews.push({
           productId: product._id,
           productName: product.productName,
           productImage: product.productImage[0], 
@@ -82,7 +80,7 @@ const getProductReviewsForHomepage = async () => {
           text: review.text,
           rating: review.rating,
           date: review.date
-        });
+          });
       });
     });
     
@@ -90,11 +88,11 @@ const getProductReviewsForHomepage = async () => {
     formattedReviews.sort((a, b) => new Date(b.date) - new Date(a.date));
     
     // Optionally limit the number of reviews returned
-    const latestReviews = formattedReviews.slice(0, 10); // Return 10 most recent reviews
+    const latestReviews = formattedReviews.slice(0, 10);
     
     return latestReviews;
   } catch (error) {
-    console.error("Error fetching product reviews:", error);
+    
     return [];
   }
 };
@@ -126,7 +124,7 @@ const loadSignup = async (req, res) => {
   try {
     return res.render("signup");
   } catch (error) {
-    console.log("SignUp page not loading", error);
+    
     res.status(500).send("server Error");
   }
 };
@@ -174,26 +172,26 @@ if (selectedCategory) {
   baseQuery.category = { $in: categoriesIds }; 
 }
 
- let sortOption = {};
- switch (sort) {
-     case "priceHighToLow":
-         sortOption = { salesPrice: -1 };
-         break;
-     case "priceLowToHigh":
-         sortOption = { salesPrice: 1 };
-         break;
-     case "nameAtoZ":
-         sortOption = { productName: 1 };
-         break;
-     case "nameZtoA":
-         sortOption = { productName: -1 };
-         break;
-     default:
-         sortOption = { createdOn: -1 }; 
- }
+let products;
+let sortOptions = {};
+if (sort === "priceHighToLow") {
+    sortOptions = { salesPrice: -1,productOffer: -1  }; 
+} else if (sort === "priceLowToHigh") {
+    baseQuery.salesPrice = { $gte: 0 };
+    sortOptions = { salesPrice: 1 };
+} else if (sort === "nameAtoZ") {
+    sortOptions = { productName: 1 };
+} else if (sort === "nameZtoA") {
+    sortOptions = { productName: -1 };
+} else {
+    sortOptions = {}; 
+}
+if(sort!='default')
+ products = await Product.find(baseQuery).sort(sortOptions).skip(skip).limit(limit).lean();
 
- let products = await Product.find(baseQuery)
- .sort({ productOffer: -1 }||sortOption)
+else
+  products = await Product.find(baseQuery)
+ .sort({ productOffer: -1 })
  .skip(skip)
  .limit(limit)
  .lean();
@@ -231,7 +229,7 @@ if(user){
    });
 }
 } catch (error) {
- console.error("Error loading the shop page:", error);
+ 
  res.redirect("/pageNotFound");
    }
 };
@@ -268,7 +266,7 @@ function generateOTP() {
 
     return info.accepted.length > 0;
   } catch (error) {
-    console.error("Error sending email", error);
+    
     return false;
   }
 }
@@ -301,7 +299,7 @@ const signup = async (req, res) => {
       }
     }
   } catch (error) {
-    console.error("signup error for newUser", error);
+    
     res.redirect("/pageNotFound");
   }
  };
@@ -312,7 +310,7 @@ const securePassword = async (password) => {
   } catch (error) {}
 };
 const generateReferralCode = () => {
-  const randomString = crypto.randomBytes(3).toString("hex").toUpperCase(); // Generates a 6-character string
+  const randomString = crypto.randomBytes(3).toString("hex").toUpperCase(); 
 
    return `FR${randomString}`; 
 };
@@ -390,7 +388,7 @@ const generateReferralCode = () => {
 
     res.json({ success: true, redirectUrl: "/" });
   } catch (error) {
-    console.error("Error verifying OTP:", error);
+    
     res.status(500).json({ success: false, message: "An error occurred" });
   }
 };
@@ -423,7 +421,7 @@ const resendOtp = async (req, res) => {
         });
     }
   } catch (error) {
-    console.error("Error resending OTP", error);
+    
     res
       .status(500)
       .json({
@@ -469,7 +467,7 @@ const userlogin = async (req, res) => {
     
     res.redirect("/");
   } catch (error) {
-    console.error("login error", error);
+    
     res.render("login", { message: "login failed.plase try again later" });
   }
 };
@@ -484,7 +482,7 @@ const logout = async (req, res) => {
       return res.redirect("/login");
     });
   } catch (error) {
-    console.log("logout error", error);
+    
     res.redirect("/pageNotFound");
   }
 };
@@ -499,10 +497,15 @@ const getforgotPasswordPage = async (req, res) => {
 
 const forgotpasswordEmail = async (req, res) => {
   try {
-    const { email } = req.body;
-    const findUser = User.findOne({ email: email });
+    const {email} = req.body;
+       const findUser = await User.findOne({email:email });
+    
+  if(!findUser)res.render("forgot-password", {
+        message: "User with this email does not exists",
+  });
     if (findUser) {
       const otp = generateOTP();
+      console.log(otp,"otp")
       const sendEmail = await sendVerificationEmail(email, otp);
       if (sendEmail) {
         req.session.userOtp = otp;
@@ -515,10 +518,7 @@ const forgotpasswordEmail = async (req, res) => {
           message: "failed to send otp,please try again",
         });
       }
-    } else {
-      res.render("forgot-password", {
-        message: "User with this email does not exists",
-      });
+    
     }
   } catch (error) {
     res.redirect("/pageNotFound");
@@ -533,7 +533,7 @@ const forgotverifyOTP = async (req, res) => {
       res.json({ success: true, redirectUrl: "/reset-password" });
     } else res.json({ success: false, message: "OTP mismatch" });
   } catch (error) {
-    console.error("Error Verifyimg OTP", error);
+    
     res
       .status(500)
       .json({ success: false, message: "An error occured.please try again" });
@@ -580,7 +580,7 @@ const getProfilePage = async (req, res) => {
     const cartitem=await Cart.findOne({userId:userId})
     res.render("profile", { user: userData.name,cart:cartitem});
   } catch (error) {
-    console.log("Error for retrieve profile data", error);
+    
     res.redirect("/page-404");
   }
 };
@@ -612,7 +612,7 @@ const loadProfile=async (req, res) => {
         }
     } catch (error) {
         res.render("page-404",{message:"server error"});
-        console.log("not found", error.message);
+        
     }
 }
 const deleteAccount=async(req,res)=>{
@@ -636,7 +636,7 @@ const deleteAccount=async(req,res)=>{
              }
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
-        console.log("not found", error.message);
+        
     }
 }
 

@@ -42,7 +42,349 @@
   top: 50%;
   transform: translateY(-50%);
 }
-    </style>
+
+
+/* Enhanced Responsive Checkout Styles */
+
+/* Base responsive container adjustments */
+.container-fluid.py-5 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Responsive table with improved spacing */
+.table-responsive {
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+/* Product image adjustments */
+.table tbody tr th .d-flex img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+}
+
+/* Reduce spacing for summary rows */
+.table tbody tr:nth-last-child(-n+4) .py-5 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+/* Improve spacing in table cells */
+.table th, .table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+/* Summary rows styling */
+.table tbody tr:nth-last-child(-n+4) .py-3 {
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+}
+
+/* Payment methods section enhancements */
+.payment-methods-container {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+.payment-method-title {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 0.5rem;
+}
+
+/* Payment method options */
+.payment-option {
+  padding: 10px 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin-bottom: 0.25rem;
+}
+
+.payment-option:hover {
+  background-color: #f1f1f1;
+}
+
+/* Address selection improvements */
+#additional-addresses {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+#additional-addresses h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+#additional-addresses div {
+  margin-bottom: 0.5rem;
+}
+
+/* Form styling */
+.form-item {
+  margin-bottom: 1.25rem;
+}
+
+/* Coupon area improvements */
+.coupon-area {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+#couponapplied {
+  margin: 0;
+  padding: 8px 12px !important;
+  background-color: #e9ecef;
+  border-radius: 6px;
+  font-weight: 500;
+  min-width: 120px;
+  display: inline-block;
+  text-align: center;
+}
+
+/* Place order button */
+#placeorder {
+  background-color: #28a745;
+  color: white !important;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  padding: 12px 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .col-lg-6:first-child {
+    margin-bottom: 1.5rem;
+  }
+  
+  .payment-methods-container {
+    margin-top: 1rem;
+  }
+}
+@media (max-width: 767px) {
+  h1.mb-4 {
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 1rem !important;
+  }
+  
+  .coupon-area {
+    justify-content: center;
+  }
+  
+  /* Mobile table fixes */
+  .table thead {
+    display: none; /* Hide table headers on mobile */
+  }
+  
+  .table, .table tbody, .table tr, .table td, .table th {
+    display: block;
+    width: 100%;
+  }
+  
+  .table tr {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #dee2e6;
+    padding: 10px 0;
+  }
+  
+  .table th { /* Product image column */
+    text-align: center;
+    padding: 0.5rem 0;
+  }
+  
+  .table td { /* Other columns */
+    text-align: right;
+    padding: 0.5rem 0.75rem;
+    position: relative;
+    padding-left: 50%;
+    border: none; /* Remove default borders */
+  }
+  
+  .table td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0.75rem;
+    width: 45%;
+    padding-right: 10px;
+    font-weight: 600;
+    text-align: left;
+    color: #333;
+  }
+  
+  /* Ensure product image aligns properly */
+  .table tbody tr th .d-flex {
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Summary rows in mobile view */
+  .table tbody tr:nth-last-child(-n+4) td {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  /* Fix for product name not centering awkwardly */
+  .table td:nth-child(2) {
+    text-align: left;
+    padding-left: 0.75rem;
+  }
+}
+  /* Summary rows in mobile view */
+  .table tbody tr:nth-last-child(-n+4) td {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  
+  /* Product image in mobile view */
+  .table tbody tr th .d-flex {
+    justify-content: center;
+  }
+
+
+@media (max-width: 576px) {
+  .container-fluid.page-header {
+    padding: 1.5rem 0;
+  }
+  
+  h1.display-6 {
+    font-size: 1.5rem;
+  }
+  
+  .breadcrumb {
+    font-size: 0.85rem;
+  }
+  
+  .table tbody tr th .d-flex img {
+    width: 60px;
+    height: 60px;
+  }
+  
+  /* Compact coupon buttons */
+  .coupon-area {
+    padding: 0.5rem;
+  }
+  
+  .coupon-area button {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.9rem;
+  }
+  
+  #couponapplied {
+    padding: 6px 10px !important;
+    font-size: 0.9rem;
+  }
+}
+
+/* Improved spacing between billing details and order summary on smaller screens */
+@media (max-width: 991px) {
+  .row.g-5 {
+    row-gap: 1rem !important;
+  }
+}
+
+/* Fix for the extra space in payment methods section */
+.payment-option .form-check {
+  margin-bottom: 0 !important;
+}
+
+/* Fix for the spacing between payment methods and place order button */
+.row.g-4.text-center.align-items-center.justify-content-center.pt-4 {
+  padding-top: 1rem !important;
+}   
+ </style>
+ <style>
+          /* Responsive coupon modal styles */
+          .modal-dialog {
+            max-width: 500px;
+            margin: 1.75rem auto;
+          }
+          
+          /* Make modal smaller on extra small screens */
+          @media (max-width: 576px) {
+            .modal-dialog {
+              max-width: 95%;
+              margin: 1rem auto;
+            }
+          }
+          
+          /* Coupon container styling */
+          .coupon-container {
+            max-height: 400px;
+            overflow-y: auto;
+          }
+          
+          /* Individual coupon styling - add this if you have coupon items */
+          .coupon-item {
+            padding: 1rem;
+            border: 1px dashed #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease;
+          }
+          
+          .coupon-item:hover {
+            border-color: #6c757d;
+            background-color: #f1f3f5;
+          }
+          
+          .coupon-code {
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #495057;
+            padding: 0.25rem 0.5rem;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            display: inline-block;
+          }
+          
+          .coupon-description {
+            margin-top: 0.5rem;
+            color: #6c757d;
+          }
+          
+          /* Button styling if you have select buttons */
+          .coupon-select-btn {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+          }
+          
+          @media (max-width: 400px) {
+            .coupon-item {
+              padding: 0.75rem;
+            }
+            
+            .coupon-description {
+              font-size: 0.875rem;
+            }
+          }
+        </style>
        
 
 
@@ -129,122 +471,78 @@
                             
                         </div>
                         <div class="col-md-12 col-lg-6 col-xl-5">
+                          
                             <div class="table-responsive">
                               <%if(carts){%>
                               <input type="text"  id="cartId" hidden value="<%=carts._id %>">
 
                               <%}%>
-                                <table class="table text-center">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Products</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Quantity</th>
-                                            <th scope="col">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% carts.items.forEach(item => { %>
-                                        <tr>
-                                            <th scope="row">
-                                                <div class="d-flex align-items-center mt-2">
-                                                    <img src="<%=item.productId.productImage[0]%>" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
-                                                </div>
-                                            </th>
-                                           
-                                            <td class="py-5"><%=item.productId.productName%></td>
-                                            <td class="py-5">₹<%= item.price.toFixed(2) %></td>
-                                            <td class="py-5"><%= item.quantity %></td>
-                                            <td class="py-5">₹<%= item.totalPrice.toFixed(2) %></td>
-                                            <td><input type="hidden" id="productid" value="<%=item.productId._id%>"></td>
-                                        </tr>
-                                        <% }); %>
-                                       
-                                        
-                                        <tr>
-
-
-
-                                          <th scope="row">
-                                          </th>
-                                          <td class="py-5">
-                                              <p class="mb-0 text-dark py-3">Subtotal</p>
-                                          </td>
-                                          <td class="py-5"></td>
-                                          <td class="py-5"></td>
-                                          <td class="py-5">
-                                              <div class="py-3 border-bottom border-top">
-                                                  <p class="mb-0 text-dark" id="totalprice">  ₹<%=total%> </p>
-                                              </div>
-                                          </td>
-
-
-                                        </tr>
-                                        
-                                       
-                                        <tr>
-
-                                          <th scope="row">
-                                          </th>
-                                          <td class="py-5">
-                                              <p class="mb-0 text-dark py-3">Shipping charge</p>
-                                          </td>
-                                          <td class="py-5"></td>
-                                          <td class="py-5"></td>
-                                          <td class="py-5">
-                                              <div class="py-3 border-bottom border-top">
-                                                  <p class="mb-0 text-dark" >
-                                                    <% if(total >= 1000) { %>
-                                                      ₹0
-                                                  <% } else { %>
-                                                      ₹50
-                                                  <% } %>
-                                                </p>
-                                              </div>
-                                          </td>
-
-
-                                        </tr>
-                                        <tr>
-                                          
-                                          <th scope="row">
-                                          </th>
-                                          <td class="py-5">
-                                              <p class="mb-0 text-dark py-3">Coupon Discount</p>
-                                          </td>
-                                          <td class="py-5"></td>
-                                          <td class="py-5"></td>
-                                          <td class="py-5">
-                                              <div class="py-3 border-bottom border-top">
-                                                  <p class="mb-0 text-dark" id="discountprice"> ₹ 0 </p>
-                                              </div>
-                                          </td>
-
-
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">
-                                            </th>
-                                            <td class="py-5">
-                                                <p class="mb-0 text-dark text-uppercase py-3">TOTAL</p>
-                                            </td>
-                                            <td class="py-5"></td>
-                                            <td class="py-5"></td>
-                                            <td class="py-5">
-                                                <div class="py-3 border-bottom border-top">
-                                                    <p class="mb-0 text-dark" id="totalorderamount"> 
-                                                      <% if(total >= 1000) { %>
-                                                        ₹<%=total + 0 %>
-                                                    <% } else { %>
-                                                      ₹<%=total + 50 %>
-                                                    <% } %>
-                                                    </p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                              <table class="table text-center">
+                                <thead>
+                                  <tr>
+                                    <h3 class="my-4 text-center">Order Details</h3>
+                                  </tr>
+                                  <tr>
+                                    <th scope="col">Products</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <% carts.items.forEach(item => { %>
+                                  <tr>
+                                    <th scope="row">
+                                      <div class="d-flex align-items-center mt-2">
+                                        <img src="<%= item.productId.productImage[0] %>" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
+                                      </div>
+                                    </th>
+                                    <td class="py-5" data-label="Name"><%= item.productId.productName %></td>
+                                    <td class="py-5" data-label="Price">₹<%= item.price.toFixed(2) %></td>
+                                    <td class="py-5" data-label="Quantity"><%= item.quantity %></td>
+                                    <td class="py-5" data-label="Total">₹<%= item.totalPrice.toFixed(2) %></td>
+                                    <td><input type="hidden" id="productid" value="<%= item.productId._id %>"></td>
+                                  </tr>
+                                  <% }); %>
+                                  
+                                  <tr>
+                                    <th scope="row"></th>
+                                    <td class="py-5" data-label="Description"><p class="mb-0 text-dark py-3"><strong>Subtotal</strong></p></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5" data-label="Subtotal"><div class="py-3 border-bottom border-top"><p class="mb-0 text-dark" id="totalprice">₹<%= total %></p></div></td>
+                                  </tr>
+                                  
+                                  <tr>
+                                    <th scope="row"></th>
+                                    <td class="py-5" data-label="Description"><p class="mb-0 text-dark py-3">Shipping charge</p></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5" data-label="Shipping"><div class="py-3 border-bottom border-top"><p class="mb-0 text-dark">
+                                      <% if(total >= 1000|| total==0) { %>₹0<% } else { %>₹50<% } %>
+                                    </p></div></td>
+                                  </tr>
+                                  
+                                  <tr>
+                                    <th scope="row"></th>
+                                    <td class="py-5" data-label="Description"><p class="mb-0 text-dark py-3">Coupon Discount</p></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5" data-label="Discount"><div class="py-3 border-bottom border-top"><p class="mb-0 text-dark" id="discountprice">₹0</p></div></td>
+                                  </tr>
+                                  
+                                  <tr>
+                                    <th scope="row"></th>
+                                    <td class="py-5" data-label="Description"><p class="mb-0 text-dark text-uppercase py-3"><strong>TOTAL</strong></p></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5"></td>
+                                    <td class="py-5" data-label="Total"><div class="py-3 border-bottom border-top"><p class="mb-0 text-dark" id="totalorderamount">
+                                      <% if(total >= 1000 || total == 0) { %>₹<%= total + 0 %><% } else { %>₹<%= total + 50 %><% } %>
+                                    </p></div></td>
+                                  </tr>
+                                </tbody>
+                              </table>
                             </div>
                             <!-- Payment Methods -->
                             <h5 class="my-4">Payment Method</h5>
@@ -294,6 +592,7 @@
                         <p id="couponapplied" class="rounded border border-light p-5 " placeholder="coupon code"></p>
 
                               </div>
+                              <div id="errorCoupon" class="text-danger"></div>
                             <div class="row g-4 text-center align-items-center justify-content-center pt-4">
                                 <button type="button" id="placeorder" name="placeorder"class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary" >Place Order</button>
                             </div>
@@ -303,23 +602,25 @@
             </div>
         </div>
         <!-- Checkout Page End -->
+         
 
         <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="couponModalLabel">Available Coupons</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <div class="coupon-container" id="couponsList">
-                    <!-- Coupons will be dynamically inserted here -->
-                  </div>
-                 
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="couponModalLabel">Available Coupons</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="coupon-container" id="couponsList">
+                  <!-- Coupons will be dynamically inserted here -->
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        
+        
         <%- include("../../views/partials/user/footer") %>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -332,9 +633,7 @@
         const deletecouponButton = document.getElementById('deleteCouponsButton');
         if (couponButton) {
     couponButton.addEventListener('click', fetchAndDisplayCoupons);
-  } else {
-    console.log("viewCouponsButton not found!");
-  }
+  } 
   document.querySelector("#couponModal .btn-close").addEventListener("click", function () {
     couponModal.hide(); // Manually close modal
     });
@@ -412,7 +711,7 @@
                             status:"Ordered",
                         });
                     }
-                    //console.log(products,"products")
+                    
                 });
                 return products;
             }
@@ -425,18 +724,18 @@
       
 const tp=$(`#totalorderamount`).text()
 const totalPrice=parseFloat(tp.replace("₹", ""))
-console.log(totalPrice,"totalPrice")
+
 
 const cd=$(`#discountprice`).text()
 const couponDiscount=parseFloat(cd.replace("₹", ""))||0
-console.log(couponDiscount,"couponDiscount")
+
 
 const totalamount=parseFloat($(`#totalprice`).text().replace("₹", ""))
 const cartt=$(`#cartId`).text()
-console.log(cartt)
+
 
                 
-               console.log("payment when place order button clicked",paymentMethod)
+               
                 if (!paymentMethod) {
                     Swal.fire({
                         title: "Payment Method Required",
@@ -480,11 +779,11 @@ if(!address)
     return;
   }
  
-  console.log("before order couponCode befor orderData {}",couponCode)
-  console.log("couponDiscount",couponDiscount)
+  
+  
   
   const cartId=document.getElementById("cartId").value
-  console.log("cartid=",cartId)
+ 
 
                 const orderData = {
                    
@@ -497,12 +796,10 @@ if(!address)
                     finalAmount:totalPrice,
                     orderedItems: getProductDetails(), // Include product details
                 };
-                console.log(orderData,"ejs")
+                
                 
   //payment implemetation starts
-  console.log("cartId before place",cartId)
-  console.log("address",address)
-  console.log("orderData",orderData)
+ 
   if(paymentMethod=="COD" && orderData.finalAmount>1000)
   {
     Swal.fire({
@@ -539,14 +836,114 @@ if(!address)
             // Initialize with the default address
             loadDefaultAddress();
            })
+
+
+           document.addEventListener("DOMContentLoaded", function() {
+  // Add data-label attributes to table cells for mobile view
+  const tableHeaders = document.querySelectorAll('.table thead th');
+  if (tableHeaders.length > 0) {
+    const headerTexts = Array.from(tableHeaders).map(th => th.textContent.trim());
+    
+    const tableRows = document.querySelectorAll('.table tbody tr');
+    tableRows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      cells.forEach((cell, index) => {
+        if (index < headerTexts.length) {
+          cell.setAttribute('data-label', headerTexts[index]);
+        }
+      });
+    });
+  }
+
+  // Create a container for payment methods to improve styling
+  const paymentMethodsSection = document.querySelector('h5.my-4');
+  if (paymentMethodsSection) {
+    const paymentContainer = document.createElement('div');
+    paymentContainer.className = 'payment-methods-container';
+    
+    // Get the payment section title
+    const title = paymentMethodsSection;
+    title.className = 'payment-method-title';
+    
+    // Get all payment options
+    const paymentRows = document.querySelectorAll('.row.g-4.text-center.align-items-center.justify-content-center.border-bottom.py-3');
+    
+    // Restructure the DOM
+    const parentElement = title.parentNode;
+    parentElement.insertBefore(paymentContainer, title);
+    paymentContainer.appendChild(title);
+    
+    paymentRows.forEach(row => {
+      row.classList.add('payment-option');
+      paymentContainer.appendChild(row);
+    });
+  }
+
+  // Enhance coupon area
+  const couponButtonsArea = document.querySelector('.mt-5.d-flex.align-items-center');
+  if (couponButtonsArea) {
+    couponButtonsArea.className = 'coupon-area';
+  }
+  
+  // Optimize summary rows spacing
+  const summaryRows = document.querySelectorAll('.table tbody tr:nth-last-child(-n+4)');
+  summaryRows.forEach(row => {
+    const cells = row.querySelectorAll('.py-5');
+    cells.forEach(cell => {
+      cell.classList.remove('py-5');
+      cell.classList.add('py-2');
+    });
+    
+    const innerDivs = row.querySelectorAll('.py-3');
+    innerDivs.forEach(div => {
+      div.classList.remove('py-3');
+      div.classList.add('py-2');
+    });
+  });
+  
+  // Make the page responsive to orientation changes
+  window.addEventListener('resize', function() {
+    adjustLayoutForScreenSize();
+  });
+  
+  // Initial adjustment
+  adjustLayoutForScreenSize();
+});
+
+// Function to adjust layout based on screen size
+function adjustLayoutForScreenSize() {
+  const isMobile = window.innerWidth <= 767;
+  
+  // Adjust table layout
+  if (isMobile) {
+    document.querySelectorAll('.table tbody tr th').forEach(header => {
+      header.style.borderBottom = 'none';
+    });
+  } else {
+    document.querySelectorAll('.table tbody tr th').forEach(header => {
+      header.style.borderBottom = '';
+    });
+  }
+}
+
+  
+  const couponButtonsArea = document.querySelector('.mt-5.d-flex.align-items-center');
+  if (couponButtonsArea) {
+    couponButtonsArea.className = 'coupon-area';
+  }
+
+
+
+
+
 function removeCoupon(total){
-console.log("remove coupon")
+
 let couponCode=$('#couponapplied').text().trim();
-console.log("coupon",couponCode)
+
 const cartTotal = parseFloat($(`#totalprice`).text().replace('₹', '').trim()) ;
 if (!couponCode){
- 
-alert("No coupons applied")
+ document.getElementById('errorCoupon').innerText="No coupons available"
+
 return false
 }
 fetch(`/removeCoupon?couponCode=${couponCode}`, {
@@ -568,7 +965,7 @@ fetch(`/removeCoupon?couponCode=${couponCode}`, {
   .then(data => {
     if (data.success) {
       // Update the subtotal
-      console.log("retuned")
+      
     
       Swal.fire({
         title: 'Success',
@@ -594,7 +991,7 @@ fetch(`/removeCoupon?couponCode=${couponCode}`, {
       });
   }})  
   .catch(error => {
-    console.log('Error fetching coupons:', error);
+    
     Swal.fire({
       title: 'Error',
       text: 'Failed to remove coupons. Please try again.',
@@ -606,7 +1003,12 @@ fetch(`/removeCoupon?couponCode=${couponCode}`, {
 }
 
  function fetchAndDisplayCoupons() {
-  console.log("inside")
+  let couponCode=$('#couponapplied').text().trim();
+  if(couponCode)
+ {
+  document.getElementById('errorCoupon').innerText="Coupon already exists"
+  return;
+ }
  const cartTotal = parseFloat($(`#totalprice`).text().replace('₹', '').trim()) ;
  
   // Fetch coupons from the server
@@ -621,7 +1023,7 @@ fetch(`/removeCoupon?couponCode=${couponCode}`, {
    
     const couponsContainer = document.getElementById('couponsList');
     if (!couponsContainer) {
-        console.log('Coupons container not found!');
+        
         return;
       }
     couponsContainer.innerHTML = '';
@@ -643,7 +1045,7 @@ fetch(`/removeCoupon?couponCode=${couponCode}`, {
       modalInstance.show();
   })
   .catch(error => {
-    console.log('Error fetching coupons:', error);
+    
     Swal.fire({
       title: 'Error',
       text: 'Failed to load available coupons. Please try again.',
@@ -682,11 +1084,11 @@ function applyCoupon(couponCode) {
  
   const cartTotal = parseFloat($(`#totalprice`).text().replace('₹', '').trim()) ;
  
-  console.log("Cart Total:", cartTotal); // Debug log
+  
 
   if (isNaN(cartTotal)) {
     
-    console.log('Invalid cart total:', cartTotal);
+    
     Swal.fire({
       title: 'Error',
       text: 'Could not determine cart total. Please try again.',
@@ -714,24 +1116,23 @@ function applyCoupon(couponCode) {
   .then(data => {
     if (data.success) {
       // Update the subtotal
-      console.log("retuned")
-      console.log(data)
+    
      
      const totalamount = parseFloat($('#totalorderamount').text().replace('₹', '').trim());
 
-      console.log(couponCode)
+      
       $(`#couponapplied`).text(`${couponCode}`);
 
 
       $(`#discountprice`).text( `₹${data.discount.toFixed(2)}`)
       let delivery=0;
-      if(parseFloat(data.finalAmount)<1000)
+      if(parseFloat(data.finalAmount)<1000 && parseFloat(data.finalAmount)!== 0 )
       delivery=50;
-      const finalTotal = delivery + parseFloat(data.finalAmount)
+      const finalTotal = (delivery + parseFloat(data.finalAmount))- parseFloat(data.discount)
 
     
     
-      $('#totalorderamount').text(`₹${finalTotal.toFixed(2)}`);
+      $('#totalorderamount').text(`₹${data.finalAmount.toFixed(2)}`);
 
 
 
@@ -767,7 +1168,7 @@ function applyCoupon(couponCode) {
     }
   })
   .catch(error => {
-    console.log('Error applying coupon:', error);
+    
     Swal.fire({
       title: 'Error',
       text: 'Failed to apply coupon. Please try again.',
@@ -778,7 +1179,7 @@ function applyCoupon(couponCode) {
 
 const placeOrder = async (orderData) => {
     try {
-        console.log("Placing COD order:", orderData);
+       
         const response = await fetch("/placeOrder", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -789,7 +1190,7 @@ const placeOrder = async (orderData) => {
 
         const result = await response.json();
 
-        console.log("result in COD",result)
+       
       
         if (result.success) {
             await Swal.fire({
@@ -804,7 +1205,7 @@ const placeOrder = async (orderData) => {
             throw new Error(result.message || 'Order placement failed');
         }
     } catch (error) {
-        console.log("Error placing order:", error);
+        
         await Swal.fire({
             icon: 'error',
             text: error.message || 'An error occurred while placing the order.',
@@ -816,7 +1217,7 @@ const placeOrder = async (orderData) => {
 
 const createOrder = async (orderData) => {
     try {
-        console.log("Creating Razorpay order:", orderData);
+       
         const response = await fetch("/placeOrder", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -824,15 +1225,14 @@ const createOrder = async (orderData) => {
             body: JSON.stringify({ orderData })
         });
       
-      
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
         const order = await response.json();
-        console.log('Response data:', order);
+     
       
         if (!order.success) {
             throw new Error(result.error || "Failed to create order");
         }
+        const orderId = order.orderId; 
+       
         const options = {
             key: "rzp_test_lcQt1KNawGzBhX",
             amount: order.order.amount * 100,
@@ -841,23 +1241,18 @@ const createOrder = async (orderData) => {
             description: "Order Payment",
             order_id:order.order.id,
             handler: async function(response) {
-              console.log("reponse before verify payment",response)
-                await verifyPayment(response, orderData.cartId);
+            
+                await verifyPayment(response,  orderData.cartId,orderId);
             },
             prefill: {
                 name: orderData.address.name,
                 contact: orderData.address.phone
             },
-            modal: {
-                ondismiss: function() {
-                    console.log("Payment modal closed");
-                }
-            }
+           
         };
 
         const rzp = new Razorpay(options);
-        console.log("Amount sent to Razorpay:", options.amount);
-        /////////failure
+       
         rzp.on('payment.failed', function (response) {
         Swal.fire({
             icon: 'error',
@@ -866,14 +1261,16 @@ const createOrder = async (orderData) => {
             confirmButtonText: 'Okey',
             confirmButtonColor: '#d33'
         }).then(() => {
-            window.location.href="/failedPayment"
+        
+            window.location.href=`/failedPayment/${orderId}`
+           
         });
         
-        console.error("Payment failure details:", response.error); // Optional: Log detailed error information
+        
     });
         rzp.open();//open
     } catch (error) {
-        console.log("Error creating Razorpay order:", error);
+        
         await Swal.fire({
             icon: 'error',
             text: error.message || 'Failed to initialize payment',
@@ -886,16 +1283,16 @@ const createOrder = async (orderData) => {
 
 const verifyPayment = async (paymentData, cartId) => {
     try {
-        console.log("Verifying payment:", paymentData);
+      
         const response = await fetch("/razorpayverifyPayment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-           // credentials: 'include',
+           
             body: JSON.stringify({ paymentData, cartId })
         });
 
         const result = await response.json();
-        console.log("Verification result:", result);
+       
 
         if (result.success) {
             await Swal.fire({
@@ -906,13 +1303,13 @@ const verifyPayment = async (paymentData, cartId) => {
         
         
               });
-            console.log("result",result)
+           
             setTimeout(() => {
                 window.location.href = `/success?id=${result.orderId}`;
             }, 1500);
         } 
     } catch (error) {
-        console.error("Error verifying payment:", error);
+        
         await Swal.fire({
             icon: "error",
             text: error.message || 'Payment verification failed',
@@ -921,7 +1318,7 @@ const verifyPayment = async (paymentData, cartId) => {
         });
         
         setTimeout(() => {
-            window.location.href = '/failedPayment';
+            window.location.href = `/failedPayment/${result.orderId}`;
         }, 1500);
     }
 };
@@ -929,7 +1326,7 @@ const verifyPayment = async (paymentData, cartId) => {
 
 const processWalletPayment = async (orderData) => {
     try {
-        console.log("Processing wallet payment:", orderData);
+        
         const response = await fetch("/placeOrder", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -938,7 +1335,7 @@ const processWalletPayment = async (orderData) => {
 
         if (!response.ok) {
           const errorResponse = await response.json();
-            console.error("Backend Error Response:", errorResponse);
+            
             throw new Error(errorResponse.message || `HTTP error! status: ${response.status}`);
         }
 
@@ -956,7 +1353,7 @@ const processWalletPayment = async (orderData) => {
 }
 
     } catch (error) {
-        console.error("Error processing wallet payment:", error);
+        
         await Swal.fire({
             icon: "error",
             text: error.message || 'Wallet payment processing failed',

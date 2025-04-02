@@ -323,7 +323,7 @@ document.querySelector('.zoomable').addEventListener('mouseleave', function() {
       }).then(() => {
         
         if (data.cartitemcount !== undefined) {
-          // Get the cart badge element
+          
           const cartItemBadge = document.getElementById('cartitems');
 
           // Update the badge count with the new total
@@ -335,7 +335,7 @@ document.querySelector('.zoomable').addEventListener('mouseleave', function() {
     }
   })
   .catch((error) => {
-    console.error('Error:', error);
+    
     Swal.fire('Error', 'Something went wrong!', 'error');
   });
 
@@ -367,7 +367,7 @@ document.querySelector('.zoomable').addEventListener('mouseleave', function() {
          }
      })
      .catch(error => {
-        console.error("Error:", error);
+        
        
        Swal.fire({
                 title: "error",

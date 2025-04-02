@@ -15,7 +15,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
     <link rel="stylesheet" href="/assets/css/style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- End layout styles -->
+    
     
     <style>
         body {
@@ -32,16 +32,16 @@
   }
   #editOfferId {
     display: block;
-    /* Add other styling as needed */
+    
 }
   .table {
     width: 100%;
     margin-top: 20px;
-    border-collapse: separate; /* Ensures border radius works 
-    border-spacing: 0; /* Removes gaps between table cells */
-    overflow: hidden; /* Ensures rounded corners */
-    border-radius: 8px; /* Adjust this value for more/less rounding */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better appearance */
+    border-collapse: separate; 
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-color: #28A745;
   }
   
@@ -113,7 +113,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <div class="container-scroller">
-      <!-- partial:partials/_sidebar.html -->
+      
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
           <a class="sidebar-brand brand-logo text-white" href="dashboard">FRUITABLES</a>
@@ -219,9 +219,9 @@
           </li>
         </ul>
       </nav>
-      <!-- partial -->
+      
       <div class="container-fluid page-body-wrapper">
-        <!-- partial:partials/_navbar.html -->
+        
         <nav class="navbar p-0 fixed-top d-flex flex-row">
           <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
             <a class="navbar-brand brand-logo-mini" href=""><img src="/assets/images/logo-mini.svg" alt="logo" /></a>
@@ -337,7 +337,7 @@
                   </div>
                 </div>
                     <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center">
+                        <ul class="pagination justify-content-center d-flex mb-20" >
                             <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
                                 <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
@@ -345,7 +345,7 @@
                             </li>
                             <% for (let i = 1; i <= totalPages; i++) { %>
                                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                    <a style="background-color: #28A745;" class="page-link" href="?page=<%= i %>"><%= i %></a>
                                 </li>
                             <% } %>
                             <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
@@ -373,18 +373,18 @@
                     <form id="createOfferForm">
                         <div class="form-group">
                             <label for="offerName">Offer Name</label>
-                            <input type="text" class="form-control" id="offerName" required>
+                            <input type="text" class="form-control" id="offerName">
                             <small id="offerNameError" class="text-danger" style="display: none;">Offer Name is required.</small>
                         </div>
                         <div class="form-group">
                             <label for="offerDescription">Description</label>
-                            <textarea class="form-control" id="offerDescription" required></textarea>
+                            <textarea class="form-control" id="offerDescription" ></textarea>
                             <small id="offerDescriptionError" class="text-danger" style="display: none;">Description is required.</small>
                         </div>
                         <div class="form-group">
                             <label for="discountAmount">Discount (%)</label>
-                            <input type="number" class="form-control" id="discountAmount" required>
-                            <small id="discountError" class="text-danger" style="display: none;">Discount must be between 1 and 100.</small>
+                            <input type="number" class="form-control" id="discountAmount" >
+                            <small id="discountError" class="text-danger" style="display: none;">Discount must be between 1 and 70.</small>
                         </div>
                         <div class="form-group">
                             <label for="applicableType">Applicable Type</label>
@@ -419,12 +419,12 @@
                         </div>
                         <div class="form-group">
                             <label for="startDate">Start Date</label>
-                            <input type="date" class="form-control" id="startDate" required>
+                            <input type="date" class="form-control" id="startDate" >
                             <small id="startDateError" class="text-danger" style="display: none;">Start Date is required.</small>
                         </div>
                         <div class="form-group">
                             <label for="endDate">End Date</label>
-                            <input type="date" class="form-control" id="endDate" required>
+                            <input type="date" class="form-control" id="endDate" >
                             <small id="endDateError" class="text-danger" style="display: none;">End Date is required.</small>
                         </div>
                         <button type="submit" class="btn " style="background-color:  #28A745;;">Create Offer</button>
@@ -449,22 +449,22 @@
                             
                             <input type="text" hidden id="editOfferId" >
                             <label for="editOfferName">Offer Name</label>
-                            <input type="text" class="form-control" id="editOfferName" required>
+                            <input type="text" class="form-control" id="editOfferName" >
                             <small id="editOfferNameError" class="text-danger" style="display: none;">Offer Name is required.</small>
                         </div>
                         <div class="form-group">
                             <label for="editOfferDescription">Description</label>
-                            <textarea class="form-control" id="editOfferDescription" required></textarea>
+                            <textarea class="form-control" id="editOfferDescription" ></textarea>
                             <small id="editOfferDescriptionError" class="text-danger" style="display: none;">Description is required.</small>
                         </div>
                         <div class="form-group">
                             <label for="editDiscountAmount">Discount (%)</label>
-                            <input type="number" class="form-control" id="editDiscountAmount" required>
+                            <input type="number" class="form-control" id="editDiscountAmount" >
                             <small id="editDiscountError" class="text-danger" style="display: none;">Discount must be between 1 and 100.</small>
                         </div>
                         <div  class="form-group">
                             <label  for="editApplicableType">Applicable Type</label>
-                            <input style="background-color: lightgrey;" type="text" class="form-control" id="editApplicableType" readonly> <!-- Read-only input -->
+                            <input style="background-color: lightgrey;" type="text" class="form-control" id="editApplicableType" readonly> 
                             <small id="editApplicableTypeError" class="text-danger" style="display: none;">Applicable Type is required.</small>
                         </div>
                         <div class="form-group" id="editCategorySelection" style="display:none;">
@@ -491,12 +491,12 @@
                         </div>
                         <div class="form-group">
                             <label for="editStartDate">Start Date</label>
-                            <input type="date" class="form-control" id="editStartDate" required>
+                            <input type="date" class="form-control" id="editStartDate" >
                             <small id="editStartDateError" class="text-danger" style="display: none;">Start Date is required.</small>
                         </div>
                         <div class="form-group">
                             <label for="editEndDate">End Date</label>
-                            <input type="date" class="form-control" id="editEndDate" required>
+                            <input type="date" class="form-control" id="editEndDate" >
                             <small id="editEndDateError" class="text-danger" style="display: none;">End Date is required.</small>
                         </div>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -523,20 +523,19 @@
     <script>
        
     document.getElementById("createOfferForm").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent actual form submission
+        event.preventDefault(); 
     
-        // Clear any previous error messages
+        
         clearErrors();
-    
-        // Collect form values
+   
         const offerName = document.getElementById('offerName').value.trim();
         const offerDescription = document.getElementById('offerDescription').value.trim();
         const discountAmount = document.getElementById('discountAmount').value;
         const applicableType = document.getElementById('applicableType').value;
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
+        const startDate = new Date(document.getElementById('startDate').value);
+        const endDate = new Date(document.getElementById('endDate').value);
     
-        // Get selected categories or products based on applicable type
+        
         let selectedItems = [];
         if (applicableType === 'category') {
             document.querySelectorAll('#categorySelection input[type=checkbox]:checked').forEach(function (el) {
@@ -548,7 +547,7 @@
             });
         }
     
-        // Validate form fields
+        
         let isValid = true;
     
         if (!offerName) {
@@ -559,8 +558,8 @@
             showError('offerDescriptionError', 'Description is required.');
             isValid = false;
         }
-        if (!discountAmount || discountAmount < 1 || discountAmount > 100) {
-            showError('discountError', 'Discount must be between 1 and 100.');
+        if (!discountAmount || discountAmount < 1 || discountAmount > 70) {
+            showError('discountError', 'Discount must be between 1 and 70.');
             isValid = false;
         }
         if (!applicableType) {
@@ -583,18 +582,34 @@
             showError('endDateError', 'End Date is required.');
             isValid = false;
         }
-        if (endDate<startDate) {
-            showError('endDateError', 'End Date must be after start date.');
-            isValid = false;
+        if (startDate < new Date().setHours(0,0,0,0)) {
+             showError('startDateError', 'Start Date must be on or after current date.');
+               isValid = false;
         }
-        if (startDate < new Date()) {
-            showError('startDateError', 'Start Date must be after current date.');
-            isValid = false;
-        }
+    //     const tod = new Date();
+    // tod.setHours(0, 0, 0, 0);  
     
-        // If all validations pass, send the form data
+    
+    // startDate.setHours(0, 0, 0, 0);
+    
+    // if (startDate < tod) {
+    
+    //     showError('startDateError', 'Start Date must be on or after current date.');
+       
+    //     isValid = false;
+    // }
+        if (endDate<startDate) {
+          
+            showError('endDateError', 'End Date must be after start date.');
+          
+            isValid = false;
+        }
+         
+        
         if (isValid) {
-            // Show confirmation dialog with SweetAlert
+           
+
+            
             Swal.fire({
                 title: 'Confirm Action',
                 text: 'Are you sure you want to create this offer?',
@@ -606,7 +621,7 @@
                 cancelButtonText: 'Cancel'
              }).then((result) => {
                 if (result.isConfirmed) {
-                    // Create data object to send to backend
+                    
                     const formData = {
                         offerName,
                         offerDescription,
@@ -617,9 +632,9 @@
                         endDate
                     };
     
-                   console.log(formData,"formData in addmodal")
+                   
     
-                    // Send data to backend using Axios
+                    
                     axios.post('/admin/offers/create', formData)
                         .then(function (response) {
                             if (response.data){
@@ -657,14 +672,14 @@
         }
     });
     
-    // Helper function to show error messages
+    
     function showError(fieldId, message) {
         const errorField = document.getElementById(fieldId);
         errorField.textContent = message;
         errorField.style.display = 'block';
     }
     
-    // function to clear previous error messages
+    
     function clearErrors() {
         const errorFields = document.querySelectorAll('.text-danger');
         errorFields.forEach(function (field) {
@@ -681,7 +696,7 @@
             const categorySelectionCreate = document.getElementById("categorySelection");
             const productItemsFieldCreate = document.getElementById("productItemsField");
     
-            // Show/hide fields based on applicable type selection in Create Offer modal
+            
             applicableTypeCreate.addEventListener("change", function () {
                 if (this.value === "category") {
                     categorySelectionCreate.style.display = "block";
@@ -695,38 +710,23 @@
                 }
             });
     
-           
-    
-            // Example form submission handling
-       
-    
-    
-    
         });
     
       
         $(document).on('click', '.edit-button', function () {
        
         const dataAttributes = $(this).data();
-       // Log all data attributes
-        
-        // Access the data attributes with the correct names
-        const offerId = dataAttributes.id; // This should work
-        const offerName = dataAttributes.code; // This should work
-        const offerDescription = dataAttributes.offerDescription; // This should work if accessed correctly
-        const discountAmount = dataAttributes.discount; // This should work
-        const applicableType = dataAttributes.applicableType; // This should work
-        const startDate = dataAttributes.startDate; // This should work
-        const endDate = dataAttributes.endDate; // This should work
+      
+        const offerId = dataAttributes.id;
+        const offerName = dataAttributes.code; 
+        const offerDescription = dataAttributes.offerDescription; 
+        const discountAmount = dataAttributes.discount; 
+        const applicableType = dataAttributes.applicableType; 
+        const startDate = dataAttributes.startDate; 
+        const endDate = dataAttributes.endDate; 
         const items  = dataAttributes.applicableItems
     
-        
-     
-        // Check if any of these values are undefined
-       
-        console.log("Setting offerId to:", offerId);
-        $('#editOfferId').val(offerId);
-        console.log("After setting, value is:", $('#editOfferId').val());
+        $('#editOfferId').val(offerId);        
         $('#editOfferName').val(offerName);
         $('#editOfferDescription').val(offerDescription);
         $('#editDiscountAmount').val(discountAmount);
@@ -734,12 +734,12 @@
         $('#editStartDate').val(startDate);
         $('#editEndDate').val(endDate);
     
-        // Show or hide the category and product selection fields based on applicableType
-        const applicableTypeEdit = document.getElementById("editApplicableType");
+        
+            const applicableTypeEdit = document.getElementById("editApplicableType");
             const editCategorySelection = document.getElementById("editCategorySelection");
             const editProductItemsField = document.getElementById("editProductItemsField");
     
-            // Show/hide fields based on applicable type selection in Edit Offer modal
+            
            
                 if (applicableType === "category") {
                     editCategorySelection.style.display = "block";
@@ -754,7 +754,7 @@
             
                 
     
-        // Reset checkboxes and pre-select previously selected categories and products
+        
         $('#editCategorySelection input[type="checkbox"]').prop('checked', false);
         items.forEach(item => {
            
@@ -766,27 +766,26 @@
             $(`#edit-product-${item._id}`).prop('checked', true);
         });
     
-        // Show the modal
+        
         $('#editOfferModal').modal('show');
     });
     
     $('#editOfferForm').on('submit', function (e) {
         e.preventDefault();
     
-        // Clear any previous error messages
+        
         clearErrors();
     
-        // Gather the updated values from the form fields
+        
         const offerId = $('#editOfferId').val().trim()
-        const offerName = $('#editOfferName').val().trim();
-        console.log("editOfferName=",offerName)
+        const offerName = $('#editOfferName').val().trim();        
         const offerDescription = $('#editOfferDescription').val().trim();
         const discountAmount = $('#editDiscountAmount').val();
         const applicableType = $('#editApplicableType').val();
         const startDate = $('#editStartDate').val();
         const endDate = $('#editEndDate').val();
     
-        // Collect selected categories or products based on applicableType
+        
         let applicableItems = [];
         if (applicableType === 'category') {
             $('#editCategorySelection input[type="checkbox"]:checked').each(function () {
@@ -798,7 +797,7 @@
             });
         }
     
-        // Validate form fields
+        
         let isValid = true;
     
         if (!offerName) {
@@ -833,13 +832,18 @@
             showError('editEndDateError', 'End Date is required.');
             isValid = false;
         }
-    
-         // If validation fails, stop further processing
+        if (endDate<startDate) {
+          
+          showError('editEndDateError', 'End Date must be after start date.');
+        
+          isValid = false;
+      }
+         
          if (!isValid) {
             return;
          }
     
-        // If all validations pass, show SweetAlert confirmation
+        
          Swal.fire({
             title: 'Confirm Action',
             text: 'Are you sure you want to update this offer?',
@@ -851,20 +855,20 @@
             cancelButtonText: 'Cancel'
          }).then((result) => {
             if (result.isConfirmed) {
-                // Prepare the data object to send to the server
+                
                 const updatedOfferData = {
                     offerId: offerId,
                     name: offerName,
                     description: offerDescription,
                     discount: discountAmount,
                     applicableType: applicableType,
-                    applicableItems: applicableItems, // Array of selected category/product IDs
+                    applicableItems: applicableItems, 
                     startDate: startDate,
                     endDate: endDate
                  };
-                 console.log(updatedOfferData,"formData in editmodal")
+                 
     
-                 // Send data to backend using Axios
+                 
                  axios.put(`/admin/offers/update/`, updatedOfferData)
                     .then(response => {
                         if (response.data && response.data.success) {
@@ -873,7 +877,7 @@
                                 response.data.message,
                                 'success'
                             ).then(() => {
-                                // Close modal and reload page
+                               
                                 $('#editOfferModal').modal('hide');
                                 location.reload();
                             });
@@ -902,14 +906,14 @@
         });
     });
     
-    // Function to display error messages
+    
     function showError(fieldId, message) {
         const errorField = document.getElementById(fieldId);
         errorField.textContent = message;
         errorField.style.display = 'block';
     }
     
-    // Helper function to clear previous error messages
+    
     function clearErrors() {
         const errorFields = document.querySelectorAll('.text-danger');
         errorFields.forEach(function (field) {
@@ -921,11 +925,11 @@
     
     
         function changeStatus(button) {
-        const offerId = button.value; // Get the offer ID from the button's value
-        const isActive = button.classList.contains('btn-danger'); // Check if the offer is currently active
+        const offerId = button.value; 
+        const isActive = button.classList.contains('btn-danger');
         const action = isActive ? 'deactivate' : 'activate';
     
-        // SweetAlert2 confirmation dialog
+        
         Swal.fire({
             title: `Are you sure you want to ${action} this offer?`,
             text: `Are you sure you want to ${action} this offer?`,
@@ -936,11 +940,11 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                // Send a POST request to toggle the offer status
+              
                 axios.patch(`/admin/offers/action/${offerId}`)
                     .then(response => {
                         if (response.data.success) {
-                            // Update the button class and text based on the new state
+                            
                             if (response.data.isActive) {
                                 button.classList.remove('btn-success');
                                 button.classList.add('btn-danger');
@@ -951,15 +955,14 @@
                                 button.textContent = 'Activate';
                             }
     
-                            // Success message
+                          
                             Swal.fire("Success!", `Offer has been ${action}d successfully.`, "success");
                         } else {
                             Swal.fire("Error!", "Failed to toggle offer status.", "error");
                         }
                     })
                     .catch(error => {
-                        console.log(error)
-                        console.error('Error toggling offer status:', error);
+                        
                         Swal.fire("Error!", "An error occurred while trying to toggle the offer status.", "error");
                     });
             }

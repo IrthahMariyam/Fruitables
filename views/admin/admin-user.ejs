@@ -7,7 +7,7 @@
           <div class="card-body">
             <h2 class="card-title text-center text-dark">User Details</h2>
 
-            <!-- Move Search Form Here -->
+            
             <form action="/admin/searchUser" method="GET" class="search-form mb-4">
               <div class="input-group">
                 <input
@@ -118,14 +118,20 @@
           
           body: JSON.stringify({_id:userId, name: userName})
         })
-        .then(response => response.json())
+        .then(response =>  {
+        if (!response.ok) {
+          throw new Error('Server responded with an error');
+        }
+        return response.json(); 
+      })
         .then(data => {
+          if(data.success){
           Swal.fire(
             'Blocked!',
             "Blocked successfully",
             'success'
           );
-         
+          }
           window.location.href = '/admin/user';
         })
         .catch(error => {

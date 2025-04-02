@@ -1,9 +1,8 @@
-
 const Product= require('../../models/productSchema')
 const Offer= require('../../models/offerSchema');
 const Category = require('../../models/categorySchema');
 const cron = require('node-cron');
-
+const { MESSAGES, STATUS } = require('../../config/constants');
 const getOfferPage = async (req, res) => {
     try {
        
@@ -39,8 +38,7 @@ const getOfferPage = async (req, res) => {
            
         const products = await Product.find();
         const categories = await Category.find();
-
-        
+       
         res.render('admin-offer', { 
             products, 
             categories, 
@@ -50,7 +48,7 @@ const getOfferPage = async (req, res) => {
         });
     } catch (error) {
         
-        res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+        res.status(STATUS.SERVER_ERROR).json({ success: false, message: MESSAGES.INTERNAL_ERROR });
     }
 };
 
@@ -64,14 +62,14 @@ const createOffer = async (req, res) => {
        
         if (!offerName || !offerDescription || !discountAmount || 
             !applicableType || !selectedItems || !startDate || !endDate) {
-            return res.status(400).json({ 
+            return res.status(STATUS.BAD_REQUEST).json({ 
                 success: false, 
-                message: 'All fields are required' 
+                message: MESSAGES.ALL_FIELDS_REQUIRED
             });
         }
 
         if (!Array.isArray(selectedItems) || selectedItems.length === 0) {
-            return res.status(400).json({ 
+            return res.status(STATUS.BAD_REQUEST).json({ 
                 success: false, 
                 message: `Please select at least one ${applicableType}` 
             });
@@ -81,7 +79,7 @@ const createOffer = async (req, res) => {
         
         if (existingOffer) {
          
-            return res.status(400).json({ success: false, message: 'Offer name already used!' });
+            return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.OFFER_NAME_EXISTS });
         }
        
 
@@ -112,7 +110,7 @@ const createOffer = async (req, res) => {
                         { _id: { $in: selectedItems } },
                         { 
                             $set: { categoryOffer: discountAmount,offer: savedOffer._id },
-                           // $addToSet: { offer: savedOffer._id }
+                           
                         }
                     );
                    }
@@ -132,7 +130,7 @@ const createOffer = async (req, res) => {
                 );
                 
             } catch (error) {
-                console.error('Error updating products:', error);
+                
                 throw error;
             }
         }
@@ -141,10 +139,10 @@ const createOffer = async (req, res) => {
         await handleOfferChange(savedOffer._id);
       
       
-        res.status(201).json({ success: true, message: "Offer created successfully!" });
+        res.status(STATUS.CREATED).json({ success: true, message: MESSAGES.OFFER_CREATED});
     } catch (error) {
-        console.error('Error creating offer:', error);
-        res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+        
+        res.status(STATUS.SERVER_ERROR).json({ success: false, message: MESSAGES.SERVER_ERROR});
     }
 };
 
@@ -154,26 +152,26 @@ const updateOffer = async (req, res) => {
         const { offerId, name, description, discount, applicableType, applicableItems, startDate, endDate } = req.body;
 
         if (!offerId || !name || !description || !discount || !applicableType || !applicableItems || !startDate || !endDate) {
-            return res.status(400).json({ success: false, message: 'All fields are required' });
+            return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.FIELD_REQUIRED });
         }
 
         if (!Array.isArray(applicableItems) || applicableItems.length === 0) {
-            return res.status(400).json({ success: false, message: `Please select at least one ${applicableType}` });
+            return res.status(STATUS.BAD_REQUEST).json({ success: false, message: `Please select at least one ${applicableType}` });
         }
 
         const existingOffer = await Offer.findById(offerId);
         if (!existingOffer) {
-            return res.status(404).json({ success: false, message: 'Offer not found!' });
+            return res.status(STATUS.NOT_FOUND).json({ success: false, message: MESSAGES.OFFER_NOT_FOUND });
         }
 
-        // Remove the offer from old applicable categories or products
+        
         if (existingOffer.applicableType === 'category') {
             await Category.updateMany(
                 { _id: { $in: existingOffer.applicableItems } },
                 { 
-                    $set: { categoryOffer: 0 }, // Reset previous discount
+                    $set: { categoryOffer: 0 }, 
                     $unset:  { offer: 1 } 
-                   // $unset: { offer: existingOffer._id }
+                   
                 }
             );
            
@@ -181,7 +179,7 @@ const updateOffer = async (req, res) => {
             await Product.updateMany(
                 { _id: { $in: existingOffer.applicableItems } },
                 { 
-                    $set: { productOffer: 0 }, // Reset previous discount
+                    $set: { productOffer: 0 }, 
                     $unset:  { offer: 1 } 
                   
                 }
@@ -207,7 +205,7 @@ const updateOffer = async (req, res) => {
                 { _id: { $in: applicableItems } },
                 { 
                     $set: { categoryOffer: discount, offer: updatedOffer._id },
-                   // $addToSet: { offer: updatedOffer._id }
+                   
                 }
             );
            
@@ -216,15 +214,15 @@ const updateOffer = async (req, res) => {
                 { _id: { $in: applicableItems } },
                 { 
                     $set: { productOffer: discount ,offer: updatedOffer._id },
-                   // $addToSet: { offer: updatedOffer._id }
+                  
                 }
             );
         }
         await handleOfferChange(offerId);
-        res.status(200).json({ success: true, message: 'Offer updated successfully!', offer: updatedOffer });
+        res.status(STATUS.SUCCESS).json({ success: true, message: MESSAGES.OFFER_UPDATED, offer: updatedOffer });
     } catch (error) {
  
-        res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+        res.status(STATUS.SERVER_ERROR).json({ success: false, message: MESSAGES.INTERNAL_ERROR });
     }
 };
 
@@ -249,7 +247,7 @@ const activateOffer= async(req,res)=>{
         res.json({ success: true, isActive: offer.isActive });
     } catch (error) {
         
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(STATUS.SERVER_ERROR).json({ success: false, message:MESSAGES.INTERNAL_ERROR });
     }
 }
 
@@ -260,7 +258,7 @@ const deactivateOffer= async(req,res)=>{
         const offerId= req.params.id;
         await Offer.findByIdAndUpdate(offerId,{isActive:false})
         await handleOfferChange(offerId);
-        res.json({ success: true, message: 'Offer deactivated successfully.' });
+        res.json({ success: true, message: MESSAGES.OFFER_DEACTIVATED });
     } catch (error) {
         
         res.redirect("/pageerror");
@@ -276,7 +274,7 @@ async function updateProductSalesPrice(productId) {
         const product = await Product.findById(productId);
         
         if (!product) {
-            throw new Error('Product not found');
+            throw new Error(MESSAGES.PRODUCT_NOT_FOUND);
         }
         
         
@@ -328,7 +326,7 @@ async function updateProductSalesPrice(productId) {
                 salesPrice: newSalesPrice,
                 productOffer: bestDiscount
             },
-            { new: true }  // Return the updated document
+            { new: true } 
         );
         
                
@@ -338,7 +336,7 @@ async function updateProductSalesPrice(productId) {
             appliedDiscount: bestDiscount
         };
     } catch (error) {
-        console.error('Error updating product sales price:', error);
+        
         throw error;
     }
 }
@@ -352,7 +350,7 @@ async function handleOfferChange(offerId) {
         const offer = await Offer.findById(offerId);
         if (!offer) {
            
-            throw new Error('Offer not found');
+            throw new Error(MESSAGES.OFFER_NOT_FOUND);
         }
         
         // If it's a category offer, update all products in that category
@@ -365,7 +363,7 @@ async function handleOfferChange(offerId) {
                 await updateProductSalesPrice(product._id);
             }
         } 
-        // If it's a product offer, update those specific products
+        
         else if (offer.applicableType === 'product') {
             
             for (const productId of offer.applicableItems) {
@@ -376,7 +374,7 @@ async function handleOfferChange(offerId) {
        
         return {
             success: true,
-            message: 'Offers updated successfully'
+            message: MESSAGES.OFFER_UPDATED
         };
     } catch (error) {
         console.error('Error handling offer change:', error);
@@ -399,16 +397,12 @@ cron.schedule('0 0 * * *', async () => {
     }
 });
 
-// After saving a new offer or updating an existing one
-//await handleOfferChange(savedOffer._id);
-
 module.exports={
     getOfferPage,
     createOffer,
     updateOffer,
     activateOffer,
     deactivateOffer,
-    //
     updateProductSalesPrice,
     handleOfferChange
 }

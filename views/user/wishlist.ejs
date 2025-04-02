@@ -25,9 +25,6 @@
         }
 </style>
 
-<!-- Modal Search Start -->
-
-<!-- Modal Search End -->
 
 <!-- Single Page Header start -->
 <div class="container-fluid page-header py-5">
@@ -105,12 +102,12 @@
  
 function removeFromWishlist(productId) {
      $.ajax({
-    url: "/wishlist/remove", // Backend endpoint
+    url: "/wishlist/remove", 
     type: "POST",
     contentType: "application/json",
-    data: JSON.stringify({ productId }), // Send productId
+    data: JSON.stringify({ productId }), 
     success: function (response) {
-      // Handle success response
+      
       
 
       // Remove the product row
@@ -128,7 +125,7 @@ function removeFromWishlist(productId) {
     },
     error: function (xhr) {
       // Handle errors
-      console.error("Error removing product from wishlist:", xhr.responseJSON);
+      
       const errorMessage =
         xhr.responseJSON?.error || "Failed to remove product from wishlist";
       Swal.fire({
@@ -180,7 +177,7 @@ function removeFromWishlist(productId) {
     }
   })
   .catch((error) => {
-    console.error('Error:', error);
+    
     Swal.fire('Error', 'Something went wrong!', 'error');
   });
 

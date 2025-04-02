@@ -36,10 +36,7 @@
   <div class="container py-5">
     
     <% if ((carts && carts.items)) { %>
-     <script>
-      console.log(carts.items)
-      console.log(carts)
-     </script>
+    
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -265,15 +262,15 @@ if ($productRow.length) {
            
       subtotal=(subtotal-oldprice)+newTotal;
         
-        $(`#subtotal`).text(`₹${subtotal.toFixed(2)}`); // Keep 2 decimal places
+        $(`#subtotal`).text(`₹${subtotal.toFixed(2)}`); 
     
 if (subtotal >= 1000) {
   $("#shipping").text(`₹ 0`);
-  $("#totalprice").text(`₹${(subtotal).toFixed(2)}`); // No shipping fee for orders ≥1000
+  $("#totalprice").text(`₹${(subtotal).toFixed(2)}`); 
  
 } else {
   $("#shipping").text(`₹ 50`);
-  $("#totalprice").text(`₹${(subtotal + 50).toFixed(2)}`); // Add shipping fee for orders <1000
+  $("#totalprice").text(`₹${(subtotal + 50).toFixed(2)}`);
 
 }
 }
@@ -282,7 +279,7 @@ if (subtotal >= 1000) {
      
     },
     error: function (xhr) {
-      console.error("Error updating cart:", xhr.responseJSON);
+      
       Swal.fire({
         title: "Error",
         text: "There was an error updating your cart. Please try again.",
@@ -312,10 +309,10 @@ function removeFromCart(productId,price) {
       var currentQty = parseInt($productRow.find(".quantity").text());
     
   $.ajax({
-    url: "/cart/remove", // Backend endpoint
+    url: "/cart/remove", 
     type: "POST",
     contentType: "application/json",
-    data: JSON.stringify({ productId}), // Send productId
+    data: JSON.stringify({ productId}), 
     success: function (response) {
       
       
@@ -360,7 +357,7 @@ function removeFromCart(productId,price) {
     },
     error: function (xhr) {
       // Handle errors
-      console.error("Error removing product from cart:", xhr.responseJSON);
+      
       const errorMessage = xhr.responseJSON?.error || "Failed to remove product from cart";
       Swal.fire({
         title: "Error",

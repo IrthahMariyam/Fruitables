@@ -1,30 +1,27 @@
 const User = require("../models/userSchema");
-const Address = require("../models/addressSchema");
+
 
 const userAuth = async (req, res, next) => {
-  try {console.log("inside userrauth start");
+  try {
   
     if (req.session.user) {
-      const user = await User.findById(req.session.user);
+      const user = await User.findById(req.session.user._id);
 
       if (user && !user.isBlocked) {
-        res.locals.user = user.name; // Store username in locals.user
-        console.log("User authenticated,locals.user:", res.locals.user);
-        console.log("User authenticated:", req.session.user);
-        next(); 
+        res.locals.user = user.name; 
+         next(); 
       } else {
         res.locals.user = null; 
-        next();
-       // res.redirect("/login");
+        req.session.user=null
+       res.render("signup",{message:"user blocked by admin"})
+       // res.redirect('/')
+        // next();
+      
        
       }
     } else {
       res.locals.user =null; 
-      console.log("inside userrauth start no session");
-      console.log(res.locals.user);
-     // res.redirect("/login");
-     //  res.render("home")
-   next();
+      next();
     }
   } catch (error) {
     console.log("Error in user auth middleware:", error);

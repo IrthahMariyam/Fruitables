@@ -27,7 +27,7 @@
         color: white;
       }
 
-      /* Title styling */
+      
       .content-title {
         font-size: 32px;
         font-weight: bold;
@@ -37,7 +37,7 @@
         margin-left: 50px;
       }
 
-      /* Form section styling */
+    
       form {
         display: flex;
         flex-direction: column;
@@ -46,12 +46,11 @@
       .mb-4 {
         margin-bottom: 20px;
       }
-     
+
       .form-label {
         font-size: 14px;
         font-weight: 600;
         color: #555;
-       
       }
 
       .form-control {
@@ -69,14 +68,14 @@
         box-shadow: 0 0 5px rgba(129, 196, 8, 0.5);
       }
 
-      /* Error message styling */
+      
       .error-message {
         color: #dc3545;
         font-size: 12px;
         margin-top: 5px;
       }
 
-      /* Button styling */
+      
       button[type="submit"] {
         background-color: #218838;
         color: white;
@@ -93,7 +92,7 @@
         background-color: #218838;
       }
 
-      /* Select dropdown styling */
+      
       .select-dropdown {
         padding: 12px;
         border-radius: 6px;
@@ -102,11 +101,10 @@
         background-color: #fff;
       }
 
-      /* Radio buttons and labels styling */
+      
       .form-check-input {
         margin-right: 10px;
         background-color: #dacfd0;
-
       }
 
       .form-check-label {
@@ -154,7 +152,7 @@
     />
   </head>
   <body>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -181,7 +179,7 @@
                     type="text"
                     placeholder="Type here"
                     name="productName"
-                    class="form-control bg-white text-dark "
+                    class="form-control bg-white text-dark"
                     id="product_name"
                   />
                   <div id="productNameError" class="error-message"></div>
@@ -202,7 +200,7 @@
                 <div class="row">
                   <div class="col-lg-4">
                     <div class="mb-4">
-                      <label class="form-label">Regular Price  ( / kg)</label>
+                      <label class="form-label">Regular Price ( / kg)</label>
                       <input
                         placeholder="₹"
                         name="regularPrice"
@@ -214,7 +212,7 @@
                   </div>
                   <div class="col-lg-4">
                     <div class="mb-4">
-                      <label class="form-label">Sale Price  ( / kg)</label>
+                      <label class="form-label">Sale Price ( / kg)</label>
                       <input
                         placeholder="₹"
                         name="salePrice"
@@ -227,14 +225,23 @@
                   <div class="col-lg-4">
                     <div class="mb-4">
                       <label class="form-label">Stock</label>
-                      <input name="stock" type="text" class="form-control bg-white text-dark" />
+                      <input
+                        name="stock"
+                        type="text"
+                        class="form-control bg-white text-dark"
+                      />
                       <div id="stockError" class="error-message"></div>
                     </div>
                   </div>
                   <div class="col-lg-4">
                     <div class="mb-4">
                       <label class="form-label">Color</label>
-                      <input name="color" type="text" id="color" class="form-control bg-white text-dark" />
+                      <input
+                        name="color"
+                        type="text"
+                        id="color"
+                        class="form-control bg-white text-dark"
+                      />
                       <div id="colorError" class="error-message"></div>
                     </div>
                   </div>
@@ -247,11 +254,11 @@
                   <div class="col-lg-4">
                     <div class="mb-4">
                       <input
-                        class="form-check-input bg-white "
+                        class="form-check-input bg-white"
                         type="radio"
                         name="item"
                         id="item1"
-                        value="Fruit" 
+                        value="Fruit"
                       />
                       <label class="form-check-label" for="item1">Fruit</label>
                     </div>
@@ -263,7 +270,6 @@
                         type="radio"
                         value="Vegetable"
                         id="item2"
-                        
                       />
                       <label class="form-check-label" for="item2"
                         >Vegetable</label
@@ -275,7 +281,8 @@
                 <div class="mb-4">
                   <label class="form-label">Category</label>
                   <select class="form-select" name="category" id="category">
-                    <% for (let i = 0; i < cat.length; i++) { %>
+                    <option value="" disabled selected>Select</option>
+                    <% for (let i = 0; i < cat.length; i++) { %>                    
                     <option value="<%= cat[i].name %>">
                       <%= cat[i].name %>
                     </option>
@@ -342,18 +349,17 @@
     </section>
 
     <script>
-      const cloudName = "dwwxgavec"; 
-      const uploadPreset = "my_images"; 
+      const cloudName = "dwwxgavec";
+      const uploadPreset = "my_images";
       let croppers = {};
-      let croppedImages = []; 
+      let croppedImages = [];
 
       const handleImage = (e) => {
-        const files = e.target.files; 
-        
+        const files = e.target.files;
 
         const cropperContainers = document.getElementById("cropperContainers");
         cropperContainers.innerHTML = "";
-        
+
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           const reader = new FileReader();
@@ -383,7 +389,7 @@
             }
 
             croppers[i] = new Cropper(img, {
-              aspectRatio: 1, 
+              aspectRatio: 1,
               viewMode: 1,
               autoCropArea: 1,
             });
@@ -398,11 +404,10 @@
                 function (blob) {
                   const url = URL.createObjectURL(blob);
 
-                  img.src = url; 
+                  img.src = url;
 
-                  img.dataset.blob = blob; 
+                  img.dataset.blob = blob;
                   croppedImages.push(blob);
-                  
 
                   const croppedImagePreview = document.createElement("img");
                   croppedImagePreview.src = url;
@@ -410,7 +415,7 @@
                   croppedImagePreview.style.height = "200px";
                   cropperContainer.appendChild(croppedImagePreview);
 
-                  cropperContainer.innerHTML = ""; 
+                  cropperContainer.innerHTML = "";
                   cropperContainer.appendChild(croppedImagePreview);
 
                   const reCropButton = document.createElement("button");
@@ -423,14 +428,14 @@
                     croppers[i].destroy();
 
                     croppers[i] = new Cropper(img, {
-                      aspectRatio: 1, 
+                      aspectRatio: 1,
                       viewMode: 1,
                       autoCropArea: 1,
                     });
 
                     cropperContainer.innerHTML = "";
-                    cropperContainer.appendChild(img); 
-                    cropperContainer.appendChild(saveButton); 
+                    cropperContainer.appendChild(img);
+                    cropperContainer.appendChild(saveButton);
                   };
                 },
                 "image/jpeg",
@@ -445,8 +450,8 @@
 
       const uploadImageToCloudinary = (blob) => {
         const formData = new FormData();
-        formData.append("file", blob); 
-        formData.append("upload_preset", uploadPreset); 
+        formData.append("file", blob);
+        formData.append("upload_preset", uploadPreset);
         return fetch(
           `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
           {
@@ -457,71 +462,74 @@
           .then((response) => response.json())
           .then((data) => {
             const imageUrl = data.secure_url;
-            
+
             return imageUrl;
           })
           .catch((error) => {
-            console.error("Error uploading image:", error);
+           
             return null;
           });
       };
 
       document.getElementById("productForm").onsubmit = async function (event) {
         event.preventDefault();
-        
+
         const productName = document.getElementById("product_name").value;
         const description = document.getElementById("descriptionid").value;
-        const regularPrice = parseInt(document.querySelector(
-          '[name="regularPrice"]'
-        ).value);
-        
-       if(productName.length<3)
-       {
-        document.getElementById("productNameError").innerText="Enter a valid product name"
-        return
-       }
-       if(description.length<3)
-       {
-        document.getElementById("descriptionError").innerText="Enter a valid description"
-        return
-       }
-       if(regularPrice<0)
-       {
-        document.getElementById("regularPriceError").innerText="regular Price must positive value"
-        return
-       }
-       if(regularPrice==0)
-       {
-        document.getElementById("regularPriceError").innerText="Price must be a value greater than zero"
-        return
-       }
+        const regularPrice = parseInt(
+          document.querySelector('[name="regularPrice"]').value
+        );
 
-  const salePrice = parseInt(document.querySelector('[name="salePrice"]').value);
-  if(salePrice<0)
-       {
-        document.getElementById("salePriceError").innerText="sale Price must positive value"
-        return
-       }
-       if(salePrice==0)
-       {
-        document.getElementById("salePriceError").innerText="sale Price must be a value greater than zero"
-        return
-       }
-if(parseInt( salePrice)>parseInt( regularPrice)){  
-   document.getElementById("regularPriceError").innerText="regular price must be greater than sales price"
-       
-return 
-}
+        if (productName.length < 3) {
+          document.getElementById("productNameError").innerText =
+            "Enter a valid product name";
+          return;
+        }
+        if (description.length < 3) {
+          document.getElementById("descriptionError").innerText =
+            "Enter a valid description";
+          return;
+        }
+        if (regularPrice < 0) {
+          document.getElementById("regularPriceError").innerText =
+            "regular Price must positive value";
+          return;
+        }
+        if (regularPrice == 0) {
+          document.getElementById("regularPriceError").innerText =
+            "Price must be a value greater than zero";
+          return;
+        }
+
+        const salePrice = parseInt(
+          document.querySelector('[name="salePrice"]').value
+        );
+        if (salePrice < 0) {
+          document.getElementById("salePriceError").innerText =
+            "sale Price must positive value";
+          return;
+        }
+        if (salePrice == 0) {
+          document.getElementById("salePriceError").innerText =
+            "sale Price must be a value greater than zero";
+          return;
+        }
+        if (parseInt(salePrice) > parseInt(regularPrice)) {
+          document.getElementById("regularPriceError").innerText =
+            "regular price must be greater than sales price";
+
+          return;
+        }
         const stock = document.querySelector('[name="stock"]').value;
         const color = document.querySelector('[name="color"]').value;
         const Status = document.querySelector('[name="Available"]').value;
         const category = document.getElementById("category").value;
         const radios = document.getElementsByName("item");
-        const picture=document.getElementById('upload').value;
-        if(picture.length==0)
-        {
-          document.getElementById('imageError').innerText="please select images"
-          return
+        const picture = document.getElementById("upload").value;
+        if (picture.length == 0) {
+          document.getElementById("imageError").innerText =
+            "please select images";
+          return;
         }
         let selectedValue;
         for (const radio of radios) {
@@ -530,41 +538,42 @@ return
             break;
           }
         }
-        if(Status=='Available' && stock<=0)
-        {
-          document.getElementById("stockError").innerText="If no stock please select status 'Out of stock' ";
-           
-            return
+        if (Status == "Available" && stock <= 0) {
+          document.getElementById("stockError").innerText =
+            "If no stock please select status 'Out of stock' ";
+
+          return;
         }
-        if(Status=='Out of Stock' && stock>0 )
-        {
-            
-          document.getElementById("stockError").innerText="If 'Out of stock',please set stock to 0 ";
-          
-            return
+        if (Status == "Out of Stock" && stock > 0) {
+          document.getElementById("stockError").innerText =
+            "If 'Out of stock',please set stock to 0 ";
+
+          return;
         }
-        if(stock <0){
-          document.getElementById("stockError").innerText="Negative values not allowed";
-        
-          return
+        if (stock < 0) {
+          document.getElementById("stockError").innerText =
+            "Negative values not allowed";
+
+          return;
         }
-        if(salePrice<=0){
-          document.getElementById("salePriceError").innerText="Enter a valid price";
-        
-          return
+        if (salePrice <= 0) {
+          document.getElementById("salePriceError").innerText =
+            "Enter a valid price";
+
+          return;
         }
-        if(regularPrice<=0){
-          document.getElementById("regularPriceError").innerText="Enter a valid price";
-        
-          return
+        if (regularPrice <= 0) {
+          document.getElementById("regularPriceError").innerText =
+            "Enter a valid price";
+
+          return;
         }
-        if(regularPrice<salePrice)
-        {
-          document.getElementById("regularPriceError").innerText="reguar price must be greater than or equal to saleprice";
-          return
+        if (regularPrice < salePrice) {
+          document.getElementById("regularPriceError").innerText =
+            "reguar price must be greater than or equal to saleprice";
+          return;
         }
 
-        
         const data = {
           productName: productName,
           description: description,
@@ -593,22 +602,22 @@ return
             },
           })
           .then((response) => {
-             Swal.fire({
-             icon: 'success',
-             title: 'Success',
-             text: 'Product Added Successfully!',
-        });
+            Swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Product Added Successfully!",
+            });
             window.location.href = "/admin/products";
           })
           .catch((error) => {
             Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error?.response?.data?.message ||
+              icon: "error",
+              title: "Error",
+              text:
+                error?.response?.data?.message ||
                 error?.message ||
-                "Error adding product"
-        });
-            
+                "Error adding product",
+            });
           });
         document.getElementById("productForm").reset();
         const imageField = document.getElementById("cropperContainers");

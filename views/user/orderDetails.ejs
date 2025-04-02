@@ -6,7 +6,7 @@
   <title>Order Details</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* General Reset */
+   
     * {
       margin: 0;
       padding: 0;
@@ -20,7 +20,7 @@
       line-height: 1.6;
     }
 
-    /* Container */
+    
     .container {
       width: 90%;
       max-width: 1200px;
@@ -34,7 +34,7 @@
       margin-bottom: 20px;
     }
 
-    /* Card Styles */
+    
     .card {
       background: #fff;
       border: 1px solid #ddd;
@@ -50,7 +50,7 @@
       margin-bottom: 15px;
     }
 
-    /* Product Card */
+    
     .product-card {
       display: flex;
       align-items: center;
@@ -78,7 +78,7 @@
       margin-bottom: 5px;
     }
 
-    /* Buttons */
+    
     .btn {
       display: inline-block;
       padding: 10px 15px;
@@ -89,8 +89,13 @@
       font-size: 1rem;
       cursor: pointer;
       transition: background-color 0.3s ease;
+    
     }
+a {
+color: #81C408 !important;
 
+}
+   
     .btn-danger {
       background-color: #81C408;
       color: #fff;
@@ -109,7 +114,7 @@
       background-color: #5a6268;
     }
 
-    /* Cancellation Reason Section */
+    
     .cancellation-reason-container, 
      .return-reason-container {
       padding: 15px;
@@ -135,7 +140,7 @@
       margin-bottom: 15px;
     }
 
-    /* Footer */
+    
     .footer {
       text-align: center;
       padding: 20px;
@@ -144,7 +149,7 @@
       margin-top: 20px;
     }
 
-    /* tracking */
+    
     .order-status.pending {
             background-color: #fff3cd;
             color: #ffc107;
@@ -154,7 +159,7 @@
             background-color: #f8d7da;
             color: #dc3545;
         }
-  /* Tracking Progress Styles */
+  
   .tracking-progress {
             display: flex;
             justify-content: space-between;
@@ -219,7 +224,7 @@
             background-color: #c82333;
         }
 
-        /* Order Details Layout Improvements */
+        
         .order-details-section {
             margin-bottom: 20px;
         }
@@ -318,10 +323,12 @@
       
    </script>
    
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 
   <div class="container">
     <h1 style="background-color: #81C408;">Order Details</h1>
-    <a href="/home">Home</a>
+   <center><a href="/home">Home</a> / <a href="/shop">Shop</a> / <a href="/userProfile/<%=order.userId%>">Profile</a></center> 
     <!-- Order Information -->
     <div class="card">
       <p id="ordersId"><strong>ORDER ID:</strong> <%= order.orderId %></p>
@@ -417,12 +424,14 @@
           </div>
   
 <!-- Cancel/Return Button Section -->
-<div class="d-flex flex-column align-items-end">
+<div class="d-flex flex-row align-items-center gap-2">
   <% if ((order.orderedItems[i].status === 'Pending' ||
          order.orderedItems[i].status === 'Processing')&&(order.status!='Cancelled')){ %>
-               <select class="form-select mb-2 cancel-single-reason"
-                data-cancel-order-id="<%= order._id%>"
-               data-cancel-product-id="<%= order.orderedItems[i].productId._id%>">
+          <button class="btn btn-danger btn-sm " id="btnSingleCancel" style="width:150px;  background-color: #81C408;">  Cancel Order  </button>
+                        
+               <select  id="singleProductCancelReason" class="form-select mb-2 cancel-single-reason shadow-sm rounded-3" style="width:250px; display:none;" 
+                data-order-id="<%= order._id%>"
+               data-product-id="<%= order.orderedItems[i].productId._id%>">
               <option value="">Select Cancellation Reason</option>
               <option value="Changed My Mind">Changed My Mind</option>
               <option value="Found a Cheaper Alternative">Found a Cheaper Alternative</option>
@@ -431,36 +440,40 @@
               <option value="Product Quality Concern">Product Quality Concern</option>
               <option value="Other Reason">Other Reason</option>
       </select>
-      <button class="btn btn-danger btn-sm cancel-single-product"
-              data-cancel-order-id="<%= order._id %>"
-              data-cancel-product-id="<%= order.orderedItems[i].productId._id%>">
-          Cancel Order
-      </button>
+      <button class="btn btn-danger btn-sm cancel-single-product" id="cancelok" style="display: none;width:100px;"
+      data-order-id="<%= order._id %>"
+      data-product-id="<%= order.orderedItems[i].productId._id%>">
+  Cancel
+</button>
+             
   <% } else if (order.orderedItems[i].status === 'Delivered') { %>
       <% if (order.orderedItems[i].returnDeclinedReason||0) { %>
-          <button class="btn btn-danger btn-sm" disabled>
+          <button  class="btn btn-danger btn-sm" disabled>
               Return Declined
           </button>
           <small class="text-muted d-block mt-1">
               Reason: <%= order.orderedItems[i].returnDeclinedReason %>
           </small>
       <% } else { %>
-          <select class="form-select mb-2 return-reason" 
-                  data-order-id="<%= order._id %>" 
-                  data-product-id="<%= order.orderedItems[i].productId._id %>">
-              <option value="">Select Return Reason</option>
-              <option value="Defective Product">Defective Product</option>
-              <option value="Not as Described">Not as Described</option>
-              <option value="Better Alternative Found">Better Alternative Found</option>
-              <option value="Quality Issues">Quality Issues</option>
-              <option value="Other">Other</option>
-          </select>
-         
-          <button class="btn btn-warning btn-sm return-product" 
+        
+        <button id="btnSingleReturn" class="btn btn-sm btnSingleReturn" style="width:150px;  background-color: #81C408;">Return Order </button>
+       
+          <select id="singleProductReturnReason" class="form-select mb-2 return-reason shadow-sm rounded-3" style=" width:250px;display: none;"
         data-order-id="<%= order._id %>" 
-        data-product-id="<%= order.orderedItems[i].productId._id || order.orderedItems[i].productId %>">
-    Return
+        data-product-id="<%= order.orderedItems[i].productId._id %>">
+    <option value="">Select Return Reason</option>
+    <option value="Defective Product">Defective Product</option>
+    <option value="Not as Described">Not as Described</option>
+    <option value="Better Alternative Found">Better Alternative Found</option>
+    <option value="Quality Issues">Quality Issues</option>
+    <option value="Other">Other</option>
+</select>
+<button  class="btn btn-sm return-product" id="returnok"  style="display: none;width:100px;background-color: #81C408;"
+data-order-id="<%= order._id %>" 
+data-product-id="<%= order.orderedItems[i].productId._id || order.orderedItems[i].productId %>">
+Return
 </button>
+         
       <% } %>
   <% } else { %>
       <button class="btn btn-secondary btn-sm" disabled>
@@ -501,7 +514,7 @@
 <%if(order.paymentStatus=='Paid' && order.status!='Cancelled'){%>
       <!-- Add the download button right here, after the total -->
       <div class="mt-3">
-          <a href="/download-invoice/<%= order._id %>" class="btn btn-primary">
+          <a href="/download-invoice/<%= order._id %>" class="btn text-dark" style=" background-color: #81C408; ">
               <i class="bi bi-download me-2"></i>Download Invoice
           </a>
        </div>
@@ -536,6 +549,7 @@
         <h3>Reason for Return</h3>
         <div class="text-danger text-center" id="errorreturn"></div>
         <input type="text" id="return-reason" placeholder="Enter reason for return">
+        <div id="'errorreturn" class="text-center text-danger"></div>
         <div style="text-align: center;">
           <button id="go-back-return" class="btn btn-secondary">Go Back</button>
           <button id="return-order"class="btn btn-danger"  >Submit</button>
@@ -554,7 +568,51 @@
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-  
+  //singlecancel
+    
+      // const singleProductReturnReason = document.getElementById('singleProductReturnReason'); 
+      // const singleProductCancelReason = document.getElementById('singleProductCancelReason');   
+      // const returnok = document.getElementById('returnok'); 
+      // const btnSingleReturn = document.getElementById('btnSingleReturn');     
+      // if(singleProductReturnReason && btnSingleReturn){
+      //     btnSingleReturn.addEventListener('click', () => {
+      //         singleProductReturnReason.style.display = 'block';
+      //          returnok.style.display = 'block';
+      //     });
+      // }
+      
+      document.querySelectorAll('.btnSingleReturn').forEach(button => {
+    button.addEventListener('click', () => {
+        const parentDiv = button.closest('.d-flex');
+        if (!parentDiv) return;
+
+        const reasonDropdown = parentDiv.querySelector('.return-reason');
+        const returnOkButton = parentDiv.querySelector('.return-product');
+
+        if (reasonDropdown && returnOkButton) {
+            reasonDropdown.style.display = 'block';
+            returnOkButton.style.display = 'block';
+        }
+    });
+});
+
+
+      document.querySelectorAll('.btn-danger.btn-sm').forEach(button => {
+      button.addEventListener('click', () => {
+        const parentDiv = button.closest('.d-flex'); 
+        if (!parentDiv) return;
+
+        const reasonDropdown = parentDiv.querySelector('.cancel-single-reason');
+        const cancelOkButton = parentDiv.querySelector('.cancel-single-product');
+
+        if (reasonDropdown && cancelOkButton) {
+            reasonDropdown.style.display = 'block';
+            cancelOkButton.style.display = 'block';
+        }
+    });
+});
+
+
     const buttonCancel = document.getElementById('button-cancel');
     const buttonGoBack = document.getElementById('go-back');
     const buttonCancelOrder = document.getElementById('cancel-order');
@@ -567,8 +625,8 @@
     });
 
     buttonGoBack.addEventListener('click', () => {
-      cancelReason.style.display = 'none';
-      buttonCancel.style.display = 'block';
+      cancelReason.style.display = 'block';
+      
     });
     buttonCancelOrder.addEventListener('click', () => {
   if (reason.value.trim() === "") {
@@ -594,7 +652,7 @@
 })
 .catch((err) => {
   Swal.fire('Error!', 'Server Error', 'error');
-  console.error(err);
+  
 });
   
 });
@@ -645,7 +703,7 @@
 })
 .catch((err) => {
   Swal.fire('Error!', "Something went wrong", 'error');
-  console.error(err);
+  
 });
   
 });
@@ -653,16 +711,16 @@
     }
   
 
-
-
 // return and cancel
-                    document.querySelectorAll('.cancel-single-product').forEach(button => {
-                    button.addEventListener('click', async () => {
-                        const orderId = button.getAttribute('data-cancel-order-id');
-                        const productId = button.getAttribute('data-cancel-product-id');
+
+                      document.addEventListener('click', async (event) => {
+               if (event.target.classList.contains('cancel-single-product')) {
+                const button = event.target;
+                        const orderId = button.getAttribute('data-order-id');
+                        const productId = button.getAttribute('data-product-id');
                         
                         
-                        const reasonDropdown1 = document.querySelector(`.cancel-single-reason[data-cancel-order-id="${orderId}"][data-cancel-product-id="${productId}"]`);
+                        const reasonDropdown1 = document.querySelector(`.cancel-single-reason[data-order-id="${orderId}"][data-product-id="${productId}"]`);
                         if (!reasonDropdown1) {
                 
                 return;
@@ -672,7 +730,7 @@
                         const cancellationReason = reasonDropdown1.value;
 
                         
-                        if (!cancellationReason) {
+                        if (!cancelReason) {
                             Swal.fire({
                                 icon: 'warning',
                                 title: 'Oops...',
@@ -717,7 +775,7 @@
                                         text: result.message,
                                         confirmButtonText: 'OK',
                                     }).then(() => {
-                                        location.reload(); // Refresh the page to reflect changes
+                                        location.reload();
                                     });
                                 } else {
                                     Swal.fire({
@@ -728,7 +786,7 @@
                                     });
                                 }
                             } catch (error) {
-                                console.error('Error:', error);
+                                
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error!',
@@ -737,8 +795,11 @@
                                 });
                             }
                         }
-                    });
-                });
+      
+                };
+
+              })
+
 
                 //return
                 document.querySelectorAll('.return-product').forEach(button => {
@@ -747,7 +808,7 @@
             const orderId = button.getAttribute('data-order-id');
             const productId = button.getAttribute('data-product-id');
 
-            // Find the corresponding reason dropdown for this specific product
+            // reason dropdown for  product
             const reasonDropdown = button.closest('.d-flex').querySelector('.return-reason');
             
             if (!reasonDropdown) {
@@ -810,7 +871,7 @@
             }
 
         } catch (error) {
-            console.error('Return request error:', error);
+            
             await Swal.fire({
                 icon: 'error',
                 title: 'Return Request Failed',
@@ -852,7 +913,7 @@ async function handlePayment(orderId) {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         paymentData: response,
-                        orderId: orderId,  // Use orderId instead of cartId
+                        orderId: orderId,
                     }),
                 });
 
@@ -893,7 +954,7 @@ async function handlePayment(orderId) {
         
         razorpay.open();
     } catch (error) {
-        console.error("Payment error:", error);
+        
         Swal.fire({
             icon: "error",
             title: "Insufficient stock",

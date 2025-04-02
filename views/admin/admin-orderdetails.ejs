@@ -6,7 +6,7 @@
   <title>Admin Order Details</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* General Reset */
+    
     * {
       margin: 0;
       padding: 0;
@@ -20,7 +20,7 @@
       line-height: 1.6;
     }
 
-    /* Container */
+    
     .container {
       width: 90%;
       max-width: 1200px;
@@ -34,7 +34,7 @@
       margin-bottom: 20px;
     }
 
-    /* Card Styles */
+    
     .card {
       background: #fff;
       border: 1px solid #ddd;
@@ -50,7 +50,7 @@
       margin-bottom: 15px;
     }
 
-    /* Product Card */
+    
     .product-card {
       display: flex;
       align-items: center;
@@ -78,7 +78,7 @@
       margin-bottom: 5px;
     }
 
-    /* Buttons */
+    
     .btn {
       display: inline-block;
       padding: 10px 15px;
@@ -115,7 +115,7 @@
       opacity: 0.8;
     }
 
-    /* Footer */
+    
     .footer {
       text-align: center;
       padding: 20px;
@@ -132,7 +132,7 @@
             background-color: #f8d7da;
             color: #dc3545;
         }
-  /* Tracking Progress Styles */
+  
   .tracking-progress {
             display: flex;
             justify-content: space-between;
@@ -191,9 +191,9 @@
 <body>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-       const orderId = "<%= order._id %>"
-       let orderStatus="<%=order.status%>"
-       if(orderStatus=='Return Request')
+      const orderId = "<%= order._id %>"
+       let orderStatus1="<%=order.status%>"
+       if(orderStatus1=='Return Request')
        {
        let returnReason="<%=order.returnReason%>"
        }
@@ -203,7 +203,7 @@
     <h1>Order Details</h1>
     <a href="/admin/orders">Back to Orders</a>
     
-    <!-- Order Information -->
+    
     <div class="card">
       <p id="ordersId"><strong>ORDER ID:</strong> <%= order.orderId %></p>
       <p><strong>Status:</strong> <%= order.status %></p>
@@ -211,43 +211,43 @@
       <p><strong>Order Date:</strong><%= order.createdOn.toLocaleDateString() %></p>
       <input type="hidden" id="returnReason" value="<%=order.returnReason%>">
     </div>
-     <!-- Tracking Progress -->
+     
   <div class="tracking-progress">
-    <!-- Order Placed -->
+    
     <div class="tracking-step <%= ['Pending', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
         <div class="icon">✔</div>
         <p>Order Placed</p>
     </div>
     <div class="tracking-line <%= ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>"></div>
 
-    <!-- Order Processed -->
+    
     <div class="tracking-step <%= ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
         <div class="icon">✔</div>
         <p>Order Processed</p>
     </div>
     <div class="tracking-line <%= ['Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>"></div>
 
-    <!-- Shipped -->
+    
     <div class="tracking-step <%= ['Shipped', 'Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
         <div class="icon">🚚</div>
         <p>Shipped</p>
     </div>
     <div class="tracking-line <%= ['Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>"></div>
-    <!-- Out for Delivery -->
+    
     <div class="tracking-step <%= ['Out for Delivery', 'Delivered'].includes(order.status) ? 'completed' : '' %>">
       <div class="icon">📦</div>
       <p>Out for Delivery</p>
   </div>
   <div class="tracking-line <%= order.status === 'Delivered' ? 'completed' : '' %>"></div>
 
-  <!-- Delivered -->
+  
   <div class="tracking-step <%= order.status === 'Delivered' ? 'completed' : '' %>">
       <div class="icon">✔</div>
       <p>Delivered</p>
   </div>
 </div>
   <!-- Price Details -->
-  <div class="card">
+  <div class="card"> 
     <div class="card-header">Price Details</div>
     <p>Total Price: ₹<%= order.subtotal %></p>
     <p>Coupon Discount: ₹<%= order.discount %></p>
@@ -286,7 +286,7 @@
             <p>Status:<%= item.status %></p>
           </div>
        </div>
-        <!-- ////////////////////////////////////// -->
+      
         <% if (item.status==='Return Request' ) { %>
           <h3>Return RequestDetails</h3>
         <p><strong>Return Reason:</strong><%= item.returnReason %></p>
@@ -310,7 +310,7 @@
             Decline Return Request
         </button>
     </form>
-<!-- //////////////////////////////////////////////// -->
+
 </div>
 <%  }}) %>
 
@@ -329,18 +329,18 @@
       <div class="card-header">Update Order Status</div>
       <form id="statusForm" data-order-id="<%= order._id %>">
         <label for="orderStatus">Choose Status:</label>
-        <select id="orderStatus" name="status" class="form-control"
+        <select  id="orderStatus" name="status" class="form-select mb-2  shadow-sm rounded-3"  style=" width:200px; padding:10px; border-radius:10px" 
+        
          <%= order.status === 'Cancelled' || order.status === 'Returned' ? 'disabled' : '' %>>
          
         
              
-              <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+              
               <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
               <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancel</option>
               <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-              <option value="Out for Delivery" <%= order.status === 'Out for Delivery' ? 'selected' : '' %>>Out for Delivery</option>
               <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-              <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
+              <!-- <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option> -->
               <option value="Return Approved" <%= order.status === 'Return Approved' ? 'selected' : '' %>>Return Approved</option>
               <option value="Return Rejected" <%= order.status === 'Return Rejected' ? 'selected' : '' %>>Return Rejected</option>
               <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
@@ -368,7 +368,7 @@
    
 
     
-    if (orderStatus === "Return Request") {
+    if (orderStatus1 === "Return Request") {
         setTimeout(() => {
             Swal.fire({
                 title: "Return Request",
@@ -381,6 +381,7 @@
                 if (result.isConfirmed) {
                     statusSelect.value = "Return Approved"; 
                     disableInvalidOptions("Return Approved");
+                   
                 } else {
                     statusSelect.value = "Return Rejected"; 
                     disableInvalidOptions("Return Rejected");
@@ -396,22 +397,21 @@
 
         // Define valid transitions
         const allowedTransitions = {
-            "Pending": ["Processing","Cancelled"],
+            
             "Processing": ["Shipped", "Cancelled"],
-            "Shipped": ["Out for Delivery"],
-            "Out for Delivery": ["Delivered"],
-            "Delivered": ["Return Request"],
-            "Return Request": ["Return Approved","Return Rejected","Returned"],
+            "Shipped": ["Delivered"],
+            // "Delivered": ["Return Request"],
+            "Delivered": ["Return Approved","Return Rejected","Returned"],
             "Return Approved":["Returned"],
-            "Returned": ["Returned"] // Final state
+            "Returned": ["Returned"]
         };
 
-        // Disable all options first
+       
         for (let i = 0; i < options.length; i++) {
             options[i].disabled = true;
         }
 
-        // Enable only valid transitions
+       
         if (allowedTransitions[currentStatus]) {
             allowedTransitions[currentStatus].forEach(status => {
                 let option = [...options].find(opt => opt.value === status);
@@ -421,17 +421,17 @@
         
     }
 
-    // Ensure correct dropdown behavior on load
+    
     disableInvalidOptions(orderStatus);
 
-    // Update dropdown restrictions when status changes
+   
     statusSelect.addEventListener("change", function () {
         disableInvalidOptions(this.value);
     });
 
-    // 
+    
     document.getElementById("statusForm").addEventListener("submit", function (e) {
-        e.preventDefault(); // Stop default form submission
+        e.preventDefault();
         
         if (!orderId) {
             
@@ -451,7 +451,7 @@
         .then((data) => {
             Swal.fire({
                 title: "Success!",
-                text: `Order status updated to ${statusSelect.value}.`,
+                text:` Order status updated to ${statusSelect.value}`,
                 icon: "success"
             }).then(() => {
                 window.location.href = '/admin/orders'; 
@@ -459,12 +459,11 @@
         })
         .catch((err) => {
             Swal.fire("Error!", "Failed to update the order status.", "error");
-            console.error(err);
+           
         });
     });
 
-});
-
+})
   </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

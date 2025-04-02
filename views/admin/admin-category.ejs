@@ -17,7 +17,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
     <link rel="stylesheet" href="/assets/css/style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- End layout styles -->
+    
     
  
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
@@ -28,13 +28,13 @@
     .th{
       color:white
     }
-    /* Styling for readonly (disabled) text fields */
+    
     .desc-field, .name-field {
       background-color: #ffffff !important;
       color: #212529 !important;
       border: none !important;
     }
-    /* Styling for editable text fields */
+    
     .desc-field.editable, .name-field.editable {
       background-color: #ffffff !important;
       color: #212529 !important;
@@ -43,7 +43,7 @@
     
   
  
-  /* Override any bootstrap styles that might be changing colors */
+  
   #addCategoryModal .modal-content,
   #addCategoryModal .modal-header,
   #addCategoryModal .modal-body,
@@ -116,11 +116,11 @@
   .table {
     width: 100%;
     margin-top: 20px;
-    border-collapse: separate; /* Ensures border radius works 
-    border-spacing: 0; /* Removes gaps between table cells */
-    overflow: hidden; /* Ensures rounded corners */
-    border-radius: 8px; /* Adjust this value for more/less rounding */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better appearance */
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden; 
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
     border-color: #28A745;
   }
   
@@ -178,7 +178,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <div class="container-scroller">
-      <!-- partial:partials/_sidebar.html -->
+      
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
           <a class="sidebar-brand brand-logo text-white" href="dashboard">FRUITABLES</a>
@@ -501,7 +501,7 @@
     const editIcon = editButton.querySelector('.material-icons');
     
     if (nameField.hasAttribute('readonly')) {
-      // Enable editing
+      
       nameField.removeAttribute('readonly');
       descField.removeAttribute('readonly');
       nameField.classList.add('editable');
@@ -510,7 +510,7 @@
       editButton.classList.remove('btn-warning');
       editButton.classList.add('btn-success');
     } else {
-      // Save changes
+      
       const updatedName = nameField.value;
       const updatedDescription = descField.value;
       
@@ -537,7 +537,7 @@
           timer: 2000
         });
         
-        // Disable editing
+        
         nameField.setAttribute('readonly', 'readonly');
         descField.setAttribute('readonly', 'readonly');
         nameField.classList.remove('editable');

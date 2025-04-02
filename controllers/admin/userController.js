@@ -1,12 +1,7 @@
 const mongoose=require('mongoose')
 const User=require("../../models/userSchema")
-const Category=require("../../models/categorySchema")
-const Product=require('../../models/productSchema')
-const Order = require('../../models/orderSchema')
-const Address=require('../../models/addressSchema')
-const bcrypt=require('bcrypt')
-const fs=require('fs')
-const path=require('path')
+const {STATUS,MESSAGES}=require('../../config/constants')
+
 
 
 const findUsers=async(req,res)=>{
@@ -43,7 +38,7 @@ const findUsers=async(req,res)=>{
          currentPage: page
      });
  } catch (error) {
-     console.error(error);
+     
      res.redirect("/pageerror");
  }
  
@@ -54,7 +49,7 @@ const userBlocked=async (req,res)=>{
 
  try {
     const { name } = req.body;
-     const {id}=req.params // Use req.body to get the values
+     const {id}=req.params 
    
      const user = await User.findById(id);
     
@@ -62,12 +57,12 @@ const userBlocked=async (req,res)=>{
        
        const blockUser = await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
      
-       res.status(200).json({ success:true,message: 'Blocked user successfully' });
+       res.status(STATUS.SUCCESS).json({ success:true,message: MESSAGES.USER_BLOCKED });
      } else {
         res.redirect("/pageerror");
      }
    } catch (error) {
-    console.log(error)
+    
     res.redirect("/pageerror");
  };
 }
@@ -79,7 +74,7 @@ const userunBlocked=async(req,res)=>{
      await User.updateOne({_id:id},{$set:{isBlocked:false}})
      res.redirect("/admin/user")
  } catch (error) {
-    console.log(error)
+    
     res.redirect("/pageerror");
 }
 }
@@ -89,7 +84,7 @@ const userListed=async (req,res)=>{
      await User.updateOne({_id:id},{$set:{isListed:true}})
      res.redirect("/admin/user")
  } catch (error) {
-    console.log(error)
+    
     res.redirect("/pageerror");
  }
 }
@@ -100,7 +95,7 @@ const userunListed=async(req,res)=>{
      await User.updateOne({_id:id},{$set:{isListed:false}})
      res.redirect("/admin/user")
  } catch (error) {
-    console.log(error)
+    
     res.redirect("/pageerror");
  }
 }

@@ -1,12 +1,7 @@
 const User = require("../../models/userSchema");
 const Cart = require("../../models/cartSchema");
 const Coupon=require("../../models/couponSchema")
-const env = require("dotenv").config();
-
-
-
-
-
+const {STATUS,MESSAGES}=    require('../../config/constants')
 
 const getCouponCodes= async(req, res)=>{
     try {
@@ -24,10 +19,10 @@ const getCouponCodes= async(req, res)=>{
       return !usage || usage.usageCount < coupon.usageLimit;
       });
       
-      res.status(200).json(availableCoupons);
+      res.status(STATUS.SUCCESS).json(availableCoupons);
     } catch (error) {
-      console.error("Error fetching coupons:", error);
-      res.status(500).json({success:false, error: "Internal Server Error" });
+      
+      res.status(STATUS.SERVER_ERROR).json({success:false, error:"Internal server error"});
     }
   }
   
@@ -41,25 +36,25 @@ const applyCoupon = async (req, res) => {
         const userId = req.session.user._id;
        
         if (!couponCode || !cartTotal) {
-            return res.status(400).json({
+            return res.status(STATUS.BAD_REQUEST).json({
                 success: false,
-                message: 'Coupon code and total amount are required'
+                message: MESSAGES.COUPON_REQUIRED
             });
         }
 
         const parsedAmount = parseFloat(cartTotal);
         if (isNaN(parsedAmount) || parsedAmount <= 0) {
-            return res.status(400).json({
+            return res.status(STATUS.BAD_REQUEST).json({
                 success: false,
-                message: 'Invalid total amount'
+                message: MESSAGES.INVALID_AMOUNT
             });
         }
 
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(400).json({
+            return res.status(STATUS.BAD_REQUEST).json({
                 success: false,
-                message: 'User not found'
+                message:MESSAGES.USER_NOT_FOUND,
             });
         }
 
@@ -69,23 +64,24 @@ const applyCoupon = async (req, res) => {
         });
 
         if (!coupon) {
-            return res.status(400).json({
+            return res.status(STATUS.BAD_REQUEST).json({
                 success: false,
-                message: 'Invalid coupon code'
+                message: MESSAGES.INVALID_COUPON,
             });
         }
+        
 
         // Check coupon validity
         if (coupon.endDate < new Date()) {
-            return res.status(400).json({
+            return res.status(STATUS.BAD_REQUEST).json({
                 success: false,
-                message: 'Coupon has expired'
+                message: MESSAGES.COUPON_EXPIRED
             });
         }
 
-        // **ENSURE THAT THE MINIMUM PURCHASE AMOUNT IS CHECKED**
+        
         if (parsedAmount < coupon.minPrice) {
-            return res.status(400).json({
+            return res.status(STATUS.BAD_REQUEST).json({
                 success: false,
                 message: `Minimum purchase of ₹${coupon.minPrice} required`
             });
@@ -98,7 +94,7 @@ const applyCoupon = async (req, res) => {
 
         // Check if the user has already used the coupon
         if (coupon.userUsage.includes(userId)) {
-            return res.status(400).json({
+            return res.status(STATUS.BAD_REQUEST).json({
                 success: false,
                 message: 'Coupon already used'
             });
@@ -108,8 +104,12 @@ const applyCoupon = async (req, res) => {
         let discount = coupon.discount;
          req.session.discount = discount
          req.session.couponCode=couponCode;
+         let Delivery=50;
+         if(cartTotal>=1000 || cartTotal==0)
+Delivery=0
         // Prevent discount from exceeding total amount
-        let finalAmount = Math.max(parsedAmount - discount, 0);
+        
+        let finalAmount = Math.max(Delivery + parsedAmount - discount, 0);
         
         // Mark coupon as used for the user
 
@@ -144,7 +144,7 @@ if (!existingUserUsage) {
         });
 
     } catch (error) {
-        console.error('Error in applyCoupon:', error);
+        
         res.status(500).json({
             success: false,
             message: 'Failed to apply coupon'
@@ -205,7 +205,7 @@ if (appliedCoupon) {
                 } catch (error) {
                     console.error("Error updating coupon:", error);
                 }
-                break; // Exit loop once the user is found and handled
+                break;
             }
         }
     }
@@ -218,11 +218,11 @@ if (appliedCoupon) {
         res.status(200).json({
             success: true,
             message: 'Coupon removed successfully',
-          //  finalAmount: total
+         
         });
 
     } catch (error) {
-        console.error('Error in removeCoupon:', error);
+        
         res.status(500).json({
             success: false,
             message: 'Failed to remove coupon'

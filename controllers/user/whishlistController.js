@@ -50,7 +50,7 @@ const addtoWishlist = async (req, res) => {
         return res.status(200).json({ success: "Product successfully added to wishlist" });
 
     } catch (error) {
-        console.error("Error adding to wishlist:", error);
+        
         return res.status(500).json({error: "Internal server error" });
     };
 }  
@@ -83,7 +83,7 @@ const addtoWishlist = async (req, res) => {
     });
  
  }catch (error) {
-   console.error('Error fetching wishlist:', error);
+   
    res.status(500).send('An error occurred while loading the wishlist page.');
  }
 };
@@ -125,7 +125,7 @@ const removeFromWishlist = async (req, res) => {
    
       res.status(200).json({ success: 'Product removed from wishlist' });
     } catch (error) {
-      console.error('Error removing product from wishlist:', error);
+      
       res.status(500).json({ error: 'Failed to remove product from wishlist' });
     }
   };

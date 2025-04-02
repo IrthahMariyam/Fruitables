@@ -1,16 +1,22 @@
 const mongoose=require('mongoose')
-const User=require("../../models/userSchema")
-const Category=require("../../models/categorySchema")
-const Product=require('../../models/productSchema')
-const Order = require('../../models/orderSchema')
+
 const Coupon=require('../../models/couponSchema')
+const {STATUS,MESSAGES}=require("../../config/constants")
 
 
-// Get all coupons
 const getCouponPage = async (req, res) => {
     try {
-        const coupons = await Coupon.find();
-        res.status(200).render("admin-coupon",{coupons:coupons});
+       
+        const page=req.query.page || 1 ;
+        const totalCoupons=await Coupon.countDocuments();
+        const limit=10;
+        const totalPages=Math.ceil(totalCoupons/limit)
+        const coupons = await Coupon.find()
+        .lean()
+        .skip((page-1)*limit)
+        .limit(limit)
+
+        res.status(STATUS.SUCCESS).render("admin-coupon",{coupons:coupons,totalPages,currentPage:page});
     } catch (error) {
         
         res.status(500).json({ error: "Internal Server Error" });
@@ -32,26 +38,36 @@ const addCoupon = async (req, res) => {
 
     // Validation
     const now = new Date();
+    const start = new Date(startDate);
+  
+    // Reset both dates to midnight for comparison
+    now.setHours(0,0,0,0);
+    start.setHours(0,0,0,0);
+  
+    if (start < now) {
+      return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.START_DATE });
+    }
+
     if (!couponCode || !startDate || !endDate || !minPrice || !usageLimit || !discount || !description) {
-      return res.status(400).json({ success: false, message: "All fields are required." });
+      return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.FIELD_REQUIRED });
     }
 
     if (new Date(startDate) < now) {
-      return res.status(400).json({ success: false, message: "Start date must be in the future." });
+      return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.START_DATE });
     }
 
     if (new Date(endDate) <= new Date(startDate)) {
-      return res.status(400).json({ success: false, message: "End date must be after the start date." });
+      return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.END_DATE });
     }
 
-    if (minPrice <= 0) {
-      return res.status(400).json({ success: false, message: "Minimum price must be greater than zero." });
+    if (minPrice <= 100) {
+      return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.MIN_PRICE});
     }
 
    
 
-    if (discount <= 0 || discount > 150) {
-      return res.status(400).json({ success: false, message: "Discount must be between 1 and 100." });
+    if (discount <= 1 || discount > 70) {
+      return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.DISCOUNT_RANGE });
     }
 
     // Create a new coupon
@@ -67,10 +83,10 @@ const addCoupon = async (req, res) => {
    
 
     await coupon.save();
-    res.status(201).json({ success: true, message: "Coupon added successfully." });
+    res.status(STATUS.CREATED).json({ success: true, message: MESSAGES.CATEGORY_ADDED });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error." });
+    res.status(STATUS.SERVER_ERROR).json({ success: false, message: MESSAGES.SERVER_ERROR});
   }
 };
 
@@ -84,26 +100,26 @@ const deleteCoupon = async (req, res) => {
       res.redirect("/pageerror");
     }
 
-    res.status(200).json({ success: true, message: "Coupon deleted successfully." });
+    res.status(STATUS.SUCCESS).json({ success: true, message:MESSAGES.COUPON_DELETED });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error." });
+    
+    res.status(STATUS.SERVER_ERROR).json({ success: false,message: MESSAGES.INTERNAL_ERROR});
   }
 };
 
 const updateCoupon = async( req,res)=>{
-  
+ 
   try {
       const couponId = req.params.id
      
       const {code,discount,minPrice,startDate,endDate, usageLimit,description,}=req.body
      
-      if (!code || discount < 0 || discount > 100 || minPrice < 0 || new Date(endDate) <= new Date(startDate)) {
-          return res.status(400).json({ success: false, message: 'Invalid input data' });
+      if (!code || discount < 1 || discount > 70 || minPrice <=100 || new Date(endDate) <= new Date(startDate)) {
+          return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.INVALID_INPUT });
       }
       let changeCode= code.toUpperCase()
     
-      const check = await Coupon.find({code:changeCode})
+      
     
      const updatedCoupon= await Coupon.findByIdAndUpdate(couponId,{
       couponCode:changeCode,
@@ -119,10 +135,10 @@ const updateCoupon = async( req,res)=>{
       res.redirect("/pageerror");
   }
   
-  res.json({ success: true, message: 'Coupon updated successfully'});
+  res.json({ success: true, message: MESSAGES.COUPON_UPDATED});
   } catch (error) {
-      console.log(error)
-      res.status(500).json({ success: false, message: 'Server error' });
+      
+      res.status(STATUS.SERVER_ERROR).json({ success: false, message: MESSAGES.INTERNAL_ERROR });
       
   }
 }
@@ -138,10 +154,10 @@ const couponStatus = async (req,res)=>{
       if (!coupon) {
         res.redirect("/pageerror");
       }
-      res.status(200).json({ success:true,message: 'Coupon updated successfully', coupon });
+      res.status(STATUS.SUCCESS).json({ success:true,message: MESSAGES.CATEGORY_UPDATED, coupon });
   } catch (error) {
-      console.log('Error updating coupon:', error);
-      res.status(500).json({success:false, message: 'Server error' });
+      
+      res.status(STATUS.SERVER_ERROR).json({success:false, message: MESSAGES.INTERNAL_ERROR });
   }
 
 }

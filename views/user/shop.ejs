@@ -6,6 +6,23 @@
     <title>Shop Page</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        .dropdown-menu {
+    min-width: 400px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    margin-left: 500px;
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.dropdown-item.active {
+    background-color: #007bff;
+    color: white;
+}
+
         .main-container {
             max-width: 1200px;
             margin: 175px auto 0;
@@ -185,8 +202,11 @@ transform: scale(1.3);
                         <input type="text" name="query" placeholder="Search items..." value="<%= search || '' %>"
                             class="search-input" />
                         <input type="hidden" name="category" value="<%= selectedCategory || '' %>" />
+                        <input type="hidden" name="sort" value="<%= currentSort || '' %>">
                         <button type="submit" class="search-button">Search</button>
                     </form>
+                   
+                    
     
                 </div>
             </div>
@@ -198,40 +218,46 @@ transform: scale(1.3);
                             <% for(let i=0; i<category.length; i++) { %>
                                 <li class="filter-item" style="list-style: none;">
                                  
-                                    <a href="/shop?category=<%= category[i]._id %>"
-                                        class="text-decoration-none text-dark <%= selectedCategory === (category._id) ? 'active' : '' %>">
+                                    <a href="/shop?category=<%= category[i]._id %>&sort=<%= currentSort || '' %>&query=<%= search || '' %>"
+                                        class="text-decoration-none text-dark <%= selectedCategory === category[i]._id ? 'active' : '' %>">
                                         <i class="fas fa-apple-alt me-2" style="color: #81C408;"></i>
                                         <%= category[i].name %>
                                     </a>
-                                 
+                                    
                                 </li><br>
                             <% } %>
                         </ul>
                     </div>
-                    <div>
+                    
                     <div class="filter-section">
                         
                         <form action="" method="get">
                            
                             <!-- Sort Dropdown -->
-                             <div>
-                            <label for="sortBy">Sort By:</label><br>
-                            <select class="custom-select" id="sortSelect" onchange="handleSort(this.value)">
-                                <option value="default" <%=currentSort==='default' ? 'selected' : '' %>>Default</option>
-                                <option value="priceHighToLow" <%=currentSort==='priceHighToLow' ? 'selected' : '' %>>Price: High to Low</option>
-                                <option value="priceLowToHigh" <%=currentSort==='priceLowToHigh' ? 'selected' : '' %>
-                                    >Price: Low to High</option>
-                                <option value="nameAtoZ" <%=currentSort==='nameAtoZ' ? 'selected' : '' %>>Name: A to Z
-                                </option>
-                                <option value="nameZtoA" <%=currentSort==='nameZtoA' ? 'selected' : '' %>>Name: Z to A
-                                </option>
-                            </select>
-
-                         
-                        </div>
                            
-                             
-                            
+                        <div class="dropdown" >
+                            <button class="btn btn-primary dropdown-toggle" style="width: 100px;" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Sort By
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="sortDropdown">
+                        <a class="dropdown-item <%= currentSort === 'default' ? 'active' : '' %>"
+                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=default&query=<%= search || '' %>">Default</a>
+                        
+                        <a class="dropdown-item <%= currentSort === 'priceHighToLow' ? 'active' : '' %>"
+                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=priceHighToLow&query=<%= search || '' %>">Price: High to Low</a>
+                        
+                        <a class="dropdown-item <%= currentSort === 'priceLowToHigh' ? 'active' : '' %>"
+                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=priceLowToHigh&query=<%= search || '' %>">Price: Low to High</a>
+                        
+                        <a class="dropdown-item <%= currentSort === 'nameAtoZ' ? 'active' : '' %>"
+                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=nameAtoZ&query=<%= search || '' %>">Name: A to Z</a>
+                        
+                        <a class="dropdown-item <%= currentSort === 'nameZtoA' ? 'active' : '' %>"
+                            href="?page=<%= currentPage %>&category=<%= selectedCategory || '' %>&sort=nameZtoA&query=<%= search || '' %>">Name: Z to A</a>
+                            </div>
+                            <a href="/shop"><button class="btn-primary" style="border-radius: 10px; padding: 5px;width: 100px;"><strong>Clear All</strong></button></a>
+                        </div>
+                       
                           </form>
                        </div>
                 </aside>
@@ -258,7 +284,7 @@ transform: scale(1.3);
                                 <button class="btn btn-secondary" disabled>Out of Stock</button>
                                 <% } %>
                         </div>
-                    <% } %>
+                         <% } %>
                 </main>
             </div>
         </section>
@@ -270,7 +296,9 @@ transform: scale(1.3);
  
 
     <div class="pagination">
-        <% if (currentPage> 1) { %>
+
+
+         <% if (currentPage> 1) { %>
             <a class="btn"
                 href="?page=<%= currentPage - 1 %>&category=<%= selectedCategory %>&sort=<%= currentSort %>&query=<%=search%>">Prev</a>
             <% } %>
@@ -285,7 +313,7 @@ transform: scale(1.3);
                         <% if (currentPage < totalPages) { %>
                             <a class="btn"
                                 href="?page=<%= currentPage + 1 %>&category=<%= selectedCategory %>&sort=<%= currentSort %>&query=<%=search%>">Next</a>
-                            <% } %>
+                            <% } %> 
    </div>
    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
     <div class="container py-5">
@@ -298,7 +326,7 @@ transform: scale(1.3);
                     
                 </div>
                 <div class="col-lg-6">
-                    <div class="position-relative mx-auto">
+                    <div class="position-relative mx-auto" hidden>
                         <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="number" placeholder="Your Email">
                         <button type="submit" class="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white" style="top: 0; right: 0;">Subscribe Now</button>
                     </div>
@@ -343,7 +371,7 @@ transform: scale(1.3);
          }
      })
      .catch(error => {
-        console.error("Error:", error);
+        
        
        Swal.fire({
                 title: "error",
@@ -395,7 +423,7 @@ transform: scale(1.3);
     }
   })
   .catch((error) => {
-    console.error('Error:', error);
+    
     Swal.fire('Error', 'Something went wrong!', 'error');
   });
 
@@ -415,9 +443,7 @@ transform: scale(1.3);
                         document.getElementById("sortSelect").value = currentSort;
                     }
                 }
-
-                document.addEventListener("DOMContentLoaded", setSelectedSort);
-                
+               
     </script>     
 
 </body>

@@ -8,7 +8,7 @@ const userRouter=require('./routes/userRouter')
 const adminRouter=require('./routes/adminRouter')
 const cors = require('cors');
 const db=require('./config/db')
-const { updateProductSalesPrice } = require('./controllers/admin/offerController');
+//const { updateProductSalesPrice } = require('./controllers/admin/offerController');
 db()
 
 app.use(cors())
@@ -48,7 +48,36 @@ app.use('/admin',adminRouter)
 
 
 
-const PORT=process.env.PORT||3000
+// app.use((err, req, res, next) => {
+    
+//     if (err.name === 'CastError' && err.kind === 'ObjectId') {
+//         return res.status(404).render('page-404');
+//     }
+
+//     res.status(500).render('admin-error');
+// });
+
+
+app.use((req, res) => {
+    res.status(404).render('page-404');
+});
+
+app.use((err, req, res, next) => {
+    console.error("Error:", err);
+
+    if (res.headersSent) {
+        return next(err); 
+    }
+
+    if (err.status === 404) {
+        return res.status(404).render('page-404');
+    }
+    
+    res.status(500).render('admin-error');
+});
+
+
+const PORT=process.env.PORT||4555
 app.listen(PORT, '0.0.0.0',()=>console.log(`server running at http://localhost:${PORT}`))
 
 

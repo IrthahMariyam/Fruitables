@@ -177,7 +177,7 @@
                          
                             <!-- Other tabs -->
                             <li class="nav-item">
-                              <a class="nav-link" data-bs-toggle="tab" href="#orders-history" role="tab">
+                              <a class="nav-link active" href="/orders" role="tab">
                                 <i class="fi-rs-shopping-cart-check mr-10"></i>Orders
                               </a>
                             </li>
@@ -276,58 +276,7 @@
                           </div>
                         </div>
                        </div>
-                        <!-- Orders Tab -->
-                     
-  <div class="tab-pane fade" id="orders-history" role="tabpanel">
-    <div class="card card-green" style="margin-top: 40px;">
-      <div class="card-header text-center" style="background-color: #81C408">
-        <h5 class="mb-0">Order History</h5>
-      </div>
-      <div class="card-body">
-        <% if (orders && orders.length === 0) { %>
-          <p class="text-center">No orders found.</p>
-        <% } else { %>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% orders.forEach(order => { %>
-                <tr>
-                  <td><%= order.orderId %></td>
-                  <td><%= order.createdOn.toLocaleDateString() %></td>
-                  <td>
-                    <% if (order.status.toLowerCase() === 'processing') { %>
-                      <span style="color: yellowgreen;"><%= order.status %></span>
-                    <% } else if (order.status.toLowerCase() === 'delivered') { %>
-                      <span style="color: green;"><%= order.status %></span>
-                    <% } else if (order.status.toLowerCase() === 'cancelled') { %>
-                      <span style="color: red;"><%= order.status %></span>
-                    <% } else if (order.status.toLowerCase() === 'shipped') { %>
-                      <span style="color: yellow;"><%= order.status %></span>
-                    <% } else { %>
-                      <span><%= order.status %></span>
-                    <% } %>
-                  </td>
-                  
-                  <td>₹<%= order.finalAmount %></td>
-                  
-                  <td colspan="2">  <a href="/viewOrderDetails/<%= order._id %>" class="btn border border-secondary rounded-pill px-3 text-primary"> View More</a></td>
-                </tr>
-              <% }); %>
-            </tbody>
-          </table>
-        <% } %>
-      </div>
-    </div>
-  </div>
-  
+                       
                       </div>
                     </div>
                     <!-- End Main Content -->
@@ -345,11 +294,12 @@
         <div class="modal-header">
            <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
            <input type="text" class="form-control" id="userid" value=" <%= user._id %>" hidden> 
-           <div class="text-danger text-center" id="passerror"></div>
+           
             </div> 
            <div class="modal-body"> 
             <form id="changePasswordForm">
               <div class="mb-3">
+                <div class="text-danger text-center" id="passerror"></div>
                  <label for="oldPassword" class="form-label">Old Password</label>
                  
                  <input type="password" class="form-control" id="oldPassword" required> 
@@ -503,18 +453,18 @@
   
   
   <script>
-  // Add this JavaScript to ensure proper tab switching
+ 
 document.addEventListener('DOMContentLoaded', function() {
   const tabLinks = document.querySelectorAll('.dashboard-menu .nav-link[data-bs-toggle="tab"]');
   
   tabLinks.forEach(link => {
     link.addEventListener('click', function(e) {
-      // Remove 'active' class from all tabs
+     
       document.querySelectorAll('.dashboard-content .tab-pane').forEach(pane => {
         pane.classList.remove('show', 'active');
       });
       
-      // Add 'active' class to the target tab
+    
       const targetId = this.getAttribute('href');
       const targetPane = document.querySelector(targetId);
       if (targetPane) {
@@ -664,7 +614,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Submit form for Add
     document.getElementById('addressForm').addEventListener('submit', function (e) {
-    e.preventDefault(); // Prevent form submission
+    e.preventDefault(); 
     
     // Retrieve form values
    
@@ -685,8 +635,8 @@ document.addEventListener('DOMContentLoaded', function() {
    
     
     // Validation
-    const validIndianPattern = /^[6-9]\d{9}$/; // Validates Indian phone numbers
-    const invalidPattern = /^(.)\1{9}$/; // Checks if all digits are the same
+    const validIndianPattern = /^[6-9]\d{9}$/; 
+    const invalidPattern = /^(.)\1{9}$/; 
     
     if (!name || !landmark || !district || !state || !pincode || !phone) {
       document.getElementById('addaddresserror').textContent='Please fill all fields!';
@@ -710,7 +660,7 @@ document.addEventListener('DOMContentLoaded', function() {
    
     // Make API call
     fetch('/addAddress', {
-      method: 'POST',    // Change 'post' to 'POST' to match HTTP method names
+      method: 'POST',   
       headers: {
           'Content-Type': 'application/json'
       },
@@ -731,7 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'address added successfully.',
             'success'
           );
-      window.location.reload(); // Reload page to reflect changes
+      window.location.reload();
   })
   .catch((err) => {
     Swal.fire(
@@ -861,52 +811,13 @@ document.addEventListener('DOMContentLoaded', function() {
       .then((res) => res.json())
       .then((data) => {
         Swal.fire('Success!', 'Address updated successfully.', 'success');
-        window.location.reload(); // Reload page to reflect changes
+        window.location.reload(); 
       })
       .catch((err) => {
         Swal.fire('Error!', 'An error occurred while saving the address.', 'error');
         console.error('Error saving address:', err);
       });
   });
-  
-  
-  
-  // On tab click
-  document.querySelector('[href="#orders-history"]').addEventListener('click', async () => {
-    try {
-      const response = await fetch('/orders/api/history'); // API endpoint to fetch order history
-      const orders = await response.json();
-  
-      const tableBody = document.querySelector('#orders-history tbody');
-      tableBody.innerHTML = ''; // Clear existing rows
-  
-      if (orders.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No orders found.</td></tr>';
-      } else {
-        orders.forEach(order => {
-          const row = `
-            <tr>
-              <td>${order._id}</td>
-              <td>${new Date(order.createdOn).toLocaleDateString()}</td>
-              <td>${order.status}</td>
-              <td>$${order.finalAmount.toFixed(2)}</td>
-              <td>
-                ${order.status === 'Pending' ? `
-                  <form action="/orders/cancel/${order._id}" method="POST">
-                    <button class="btn btn-danger btn-sm">Cancel</button>
-                  </form>` : 'N/A'}
-              </td>
-              <td></td>
-            </tr>`;
-          tableBody.innerHTML += row;
-        });
-      }
-    } catch (err) {
-      console.error('Error fetching order history:', err);
-    }
-  });
-  
-  
   
    function openEditDetails(userId) {
    
@@ -974,6 +885,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   else{
+    
     // Send API request
     fetch( `/updateDetail/${userId}`, {
       method: 'POST', 
@@ -990,7 +902,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .then((data) => {
         Swal.fire('Success!', 'Details updated successfully.', 'success')
        
-      window.location.reload(); // Reload page to reflect changes
+      window.location.reload();
      
     
       })

@@ -56,15 +56,13 @@ router.post('/login',userController.userlogin)
 router.get('/logout',userController.logout)
 
 
-router.get("/shop",userController.loadShopping)
-router.get('/search',productController.searchProducts);
-router.get('/filter',productController.filterProduct)
-router.get('/filtercategory',productController.filterCategory)
+router.get("/shop",productController.loadShopping)
 router.get('/sortproduct',productController.searchProducts)
 router.get("/productDetails",productController.productDetails)
 router.post('/productreview',productController.productReview)
 
 
+router.get('/filtercategory',productController.filterCategory)
 
 //profile routes
 router.get("/userProfile/:userId",userAuth,profileController.loadProfile)
@@ -76,20 +74,24 @@ router.post("/addAddress",userAuth,profileController.addAddress)
 router.get("/getAddress/:id",userAuth,profileController.getAddress)
 router.post("/updateAddress/:id",userAuth,profileController.updateAddress)
 router.post("/deleteAddress/:addressId",userAuth,profileController.deleteAddress)
+router.get('/orders',userAuth,profileController.getOrders)
 
 
-router.post('/orders/cancel/:id',userAuth,orderController.cancelOrder)
-router.post('/orders/reutrnrequest/:id', orderController.returnOrder);
+router.post('/orders/cancel/:id',userAuth,orderController.cancelOrder)//canelorder
+router.post('/order/cancel-product',userAuth,orderController.cancelProductOrder);//single cancel
+router.post('/orders/reutrnrequest/:id',userAuth, orderController.returnOrder);
+router.post('/order/return-product',userAuth,orderController.returnProductOrder);
 router.get('/viewOrderDetails/:orderId',userAuth,orderController.getOrderDetails)
 router.post("/getOrderDetails",userAuth,orderController.getOrder);
 
 
-router.post('/order/cancel-product',userAuth,orderController.cancelProductOrder);
-router.post('/order/return-product',userAuth,orderController.returnProductOrder);
+
+
 router.get('/payment-failed/:orderId',userAuth,orderController.handleFailedPayment);
-router.get('/failedPayment',orderController.loadFailedPaymentPage)
+router.get('/failedPayment/:orderId',orderController.loadFailedPaymentPage)
 router.post('/placeOrder',userAuth,orderController.placeOrder)
 router.post('/razorpayverifyPayment',userAuth,orderController.verifyPayment)
+router.get('/viewfailedOrder/:orderId',userAuth,orderController.viewFailedOrder)
 
 
 //cart routes
@@ -114,7 +116,7 @@ router.post('/removeCoupon',userAuth,couponController.removeCoupon)
 
 //wallet
 router.get('/wallet',userAuth,walletController.getWallet)
-router.post("/wallet/create-order",userAuth,walletController.createAddmoneyWallet)
+router.post("/wallet/create-order",walletController.createAddmoneyToWallet)
 router.post("/wallet/add/money",userAuth,walletController.addMoneyWallet)
 router.post("/wallet/purchase",userAuth,walletController.purchaseUsingWallet)
 
