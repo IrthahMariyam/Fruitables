@@ -460,7 +460,7 @@
                         <div class="form-group">
                             <label for="editDiscountAmount">Discount (%)</label>
                             <input type="number" class="form-control" id="editDiscountAmount" >
-                            <small id="editDiscountError" class="text-danger" style="display: none;">Discount must be between 1 and 100.</small>
+                            <small id="editDiscountError" class="text-danger" style="display: none;">Discount must be between 1 and 70.</small>
                         </div>
                         <div  class="form-group">
                             <label  for="editApplicableType">Applicable Type</label>
@@ -586,18 +586,7 @@
              showError('startDateError', 'Start Date must be on or after current date.');
                isValid = false;
         }
-    //     const tod = new Date();
-    // tod.setHours(0, 0, 0, 0);  
-    
-    
-    // startDate.setHours(0, 0, 0, 0);
-    
-    // if (startDate < tod) {
-    
-    //     showError('startDateError', 'Start Date must be on or after current date.');
-       
-    //     isValid = false;
-    // }
+   
         if (endDate<startDate) {
           
             showError('endDateError', 'End Date must be after start date.');
@@ -808,8 +797,8 @@
             showError('editOfferDescriptionError', 'Description is required.');
             isValid = false;
         }
-        if (!discountAmount || discountAmount < 1 || discountAmount > 100) {
-            showError('editDiscountError', 'Discount must be between 1 and 100.');
+        if (!discountAmount || discountAmount < 1 || discountAmount > 70) {
+            showError('editDiscountError', 'Discount must be between 1 and 70.');
             isValid = false;
         }
         if (!applicableType) {
