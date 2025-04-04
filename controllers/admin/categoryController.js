@@ -60,19 +60,48 @@ const addCategory = async (req, res) => {
 
 const categoryListed = async (req, res) => {
   try {
-    id = req.query.id;
-    await Category.updateOne({ _id: id }, { $set: { isListed: true } });
-    res.redirect("/admin/category");
+    const categoryId = req.query.id;
+    const category = await Category.findById(categoryId);
+    
+    if (!category) {
+        return res.status(404).json({ success: false, message: 'Category not found' });
+    }
+
+    category.isListed = true;
+    await category.save();
+
+    res.status(200).json({ 
+        success: true, 
+        message: 'Category listed successfully',
+        category: {
+            _id: category._id,
+            isListed: category.isListed
+        }
+    });
   } catch (error) {
     res.redirect("/pageerror");
   }
 };
 
 const categoryunListed = async (req, res) => {
-  try {
-    id = req.query.id;
-    await Category.updateOne({ _id: id }, { $set: { isListed: false } });
-    res.redirect("/admin/category");
+  try {const categoryId = req.query.id;
+    const category = await Category.findById(categoryId);
+    
+    if (!category) {
+        return res.status(404).json({ success: false, message: 'Category not found' });
+    }
+
+    category.isListed = false;
+    await category.save();
+
+    res.status(200).json({ 
+        success: true, 
+        message: 'Category unlisted successfully',
+        category: {
+            _id: category._id,
+            isListed: category.isListed
+        }
+    });
   } catch (error) {
     res.redirect("/pageerror");
   }

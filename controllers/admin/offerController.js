@@ -15,6 +15,7 @@ const getOfferPage = async (req, res) => {
 
       
         const offers = await Offer.find()
+        .sort({createdAt:-1})
         .lean()
          
             .skip((page - 1) * limit)
@@ -139,112 +140,109 @@ const createOffer = async (req, res) => {
         await handleOfferChange(savedOffer._id);
       
       
-        res.status(STATUS.CREATED).json({ success: true, message: MESSAGES.OFFER_CREATED});
+        res.status(STATUS.CREATED).json({ success: true, message: MESSAGES.OFFER_CREATED,offerId: offer._id});
     } catch (error) {
         
         res.status(STATUS.SERVER_ERROR).json({ success: false, message: MESSAGES.SERVER_ERROR});
     }
 };
 
-const updateOffer = async (req, res) => {
+  const updateOffer = async (req, res) => {
     try {
+      
+  
+      const { offerId, name, description, discount, applicableType, applicableItems, startDate, endDate } = req.body;
+  
+      if (!offerId || !name || !description || !discount || !applicableType || !applicableItems || !startDate || !endDate) {
         
-        const { offerId, name, description, discount, applicableType, applicableItems, startDate, endDate } = req.body;
-
-        if (!offerId || !name || !description || !discount || !applicableType || !applicableItems || !startDate || !endDate) {
-            return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.FIELD_REQUIRED });
-        }
-
-        if (!Array.isArray(applicableItems) || applicableItems.length === 0) {
-            return res.status(STATUS.BAD_REQUEST).json({ success: false, message: `Please select at least one ${applicableType}` });
-        }
-
-        const existingOffer = await Offer.findById(offerId);
-        if (!existingOffer) {
-            return res.status(STATUS.NOT_FOUND).json({ success: false, message: MESSAGES.OFFER_NOT_FOUND });
-        }
-
+        return res.status(STATUS.BAD_REQUEST).json({ success: false, message: MESSAGES.FIELD_REQUIRED });
+      }
+  
+      if (!Array.isArray(applicableItems) || applicableItems.length === 0) {
         
-        if (existingOffer.applicableType === 'category') {
-            await Category.updateMany(
-                { _id: { $in: existingOffer.applicableItems } },
-                { 
-                    $set: { categoryOffer: 0 }, 
-                    $unset:  { offer: 1 } 
-                   
-                }
-            );
-           
-        } if (existingOffer.applicableType ==='product') {
-            await Product.updateMany(
-                { _id: { $in: existingOffer.applicableItems } },
-                { 
-                    $set: { productOffer: 0 }, 
-                    $unset:  { offer: 1 } 
-                  
-                }
-            );
-        }
-
-        // Update the offer
-        const updatedOffer = await Offer.findByIdAndUpdate(offerId, {
-            name: name.toUpperCase(),
-            description: description,
-            discount: discount,
-            applicableType,
-            applicableItems: applicableItems,
-            startDate,
-            endDate
-        }, { new: true });
-
+        return res.status(STATUS.BAD_REQUEST).json({ success: false, message: `Please select at least one ${applicableType}` });
+      }
+  
+      const existingOffer = await Offer.findById(offerId);
+      if (!existingOffer) {
         
-
-        // Apply the updated offer to new applicable categories or products
-        if (applicableType === 'category') {
-            await Category.updateMany(
-                { _id: { $in: applicableItems } },
-                { 
-                    $set: { categoryOffer: discount, offer: updatedOffer._id },
-                   
-                }
-            );
-           
-        } if (applicableType === 'product') {
-            await Product.updateMany(
-                { _id: { $in: applicableItems } },
-                { 
-                    $set: { productOffer: discount ,offer: updatedOffer._id },
-                  
-                }
-            );
-        }
-        await handleOfferChange(offerId);
-        res.status(STATUS.SUCCESS).json({ success: true, message: MESSAGES.OFFER_UPDATED, offer: updatedOffer });
+        return res.status(STATUS.NOT_FOUND).json({ success: false, message: MESSAGES.OFFER_NOT_FOUND });
+      }
+  
+      if (existingOffer.applicableType === 'category') {
+        await Category.updateMany(
+          { _id: { $in: existingOffer.applicableItems } },
+          { $set: { categoryOffer: 0 }, $unset: { offer: 1 } }
+        );
+        
+      } else if (existingOffer.applicableType === 'product') {
+        await Product.updateMany(
+          { _id: { $in: existingOffer.applicableItems } },
+          { $set: { productOffer: 0 }, $unset: { offer: 1 } }
+        );
+        
+      }
+  
+      const updatedOffer = await Offer.findByIdAndUpdate(
+        offerId,
+        {
+          name: name.toUpperCase(),
+          description,
+          discount,
+          applicableType,
+          applicableItems,
+          startDate,
+          endDate
+        },
+        { new: true }
+      );
+      
+  
+      if (applicableType === 'category') {
+        await Category.updateMany(
+          { _id: { $in: applicableItems } },
+          { $set: { categoryOffer: discount, offer: updatedOffer._id } }
+        );
+        
+      } else if (applicableType === 'product') {
+        await Product.updateMany(
+          { _id: { $in: applicableItems } },
+          { $set: { productOffer: discount, offer: updatedOffer._id } }
+        );
+        
+      }
+  
+      await handleOfferChange(offerId);
+      
+  
+      res.status(STATUS.SUCCESS).json({
+        success: true,
+        message: MESSAGES.OFFER_UPDATED,
+        offer: updatedOffer
+      });
     } catch (error) {
- 
-        res.status(STATUS.SERVER_ERROR).json({ success: false, message: MESSAGES.INTERNAL_ERROR });
+      
+      res.status(STATUS.SERVER_ERROR).json({ success: false, message: MESSAGES.INTERNAL_ERROR });
     }
-};
-
+  };
 // active and deactivate function 
 const activateOffer= async(req,res)=>{
-    const offerId = req.params.id;
-    
-    try {
-        // Find the offer by ID
-        const offer = await Offer.findById(offerId);
-        if (!offer) {
-            res.redirect("/pageerror");
-        }
-
-        // Toggle the isActive status
-        offer.isActive = !offer.isActive;
-
-        // Save the updated offer
-        await offer.save();
-        await handleOfferChange(offerId);
-        // Respond with the new status
-        res.json({ success: true, isActive: offer.isActive });
+    try{  
+        
+        const offerId = req.params.id;
+    const { isActive } = req.body;
+    const offer = await Offer.findById(offerId);
+    if (!offer) {
+      return res.status(404).json({ success: false, message: 'Offer not found' });
+    }
+    offer.isActive = isActive;
+    await offer.save();
+    await handleOfferChange(offerId);
+    res.status(200).json({ 
+      success: true, 
+      message: `Offer ${isActive ? 'activated' : 'deactivated'} successfully`,
+      isActive: offer.isActive 
+    });
     } catch (error) {
         
         res.status(STATUS.SERVER_ERROR).json({ success: false, message:MESSAGES.INTERNAL_ERROR });
@@ -381,7 +379,6 @@ async function handleOfferChange(offerId) {
         throw error;
     }
 }
-
 
 cron.schedule('0 0 * * *', async () => {
    

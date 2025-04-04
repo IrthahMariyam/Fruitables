@@ -31,9 +31,8 @@ router.get("/logout",adminController.logout)
 router.get("/user",adminAuth,userController.findUsers)
 router.get("/searchUser",adminAuth,userController.findUsers)
 router.post("/blockUser/:id",adminAuth,userController.userBlocked)
-router.get("/unblockUser",adminAuth,userController.userunBlocked)
-router.get("/listUser",adminAuth,userController.userListed)
-router.get("/unlistUser",adminAuth,userController.userunListed)
+router.post("/unblockUser/:id",userController.userunBlocked)
+
 
 //category
 router.get("/category",adminAuth,categoryController.categoryInfo)
@@ -50,8 +49,8 @@ router.get("/searchCategory",adminAuth,categoryController.categoryInfo)
 router.get("/products",adminAuth,productController.productInfo)
 router.get("/addProducts",adminAuth,productController.getProductAddPage)
 router.post("/addProducts", adminAuth, productController.addProducts);
-router.get("/listProduct",adminAuth,productController.productListed)
-router.get("/unlistProduct",adminAuth,productController.productunListed)
+router.post("/listProduct/:id",adminAuth,productController.productListed)
+router.post("/unlistProduct/:id",adminAuth,productController.productunListed)
 router.get("/searchProduct",adminAuth,productController.productInfo)
 router.get("/geteditProduct/:id",adminAuth,productController.getEditProduct)
 router.post("/editProduct/:id",adminAuth,productController.postEditProduct)
@@ -62,7 +61,6 @@ router.delete('/deleteImage',adminAuth,productController.deleteSingleImage);
 // Order Management
 router.get('/orders',adminAuth, orderController.listOrders);
 router.post('/orders/updateorderstatus/:orderId', adminAuth,orderController.updateOrderStatus);
-//router.post('/orders/cancel/:id',adminAuth, orderController.cancelOrder);
 router.get('/getorderdetails/:orderid',adminAuth,orderController.getordedetailspage)
 router.post('/order/approve-return/:orderId', adminAuth, orderController.approveReturnRequest);
 router.post('/order/decline-return/:orderId',adminAuth,orderController.declineReturnRequest)

@@ -1,6 +1,6 @@
 <%- include("../../views/partials/admin/header") %> 
 <div class="main-panel">
-  <div class="content-wrapper  bg-white">
+  <div class="content-wrapper bg-white">
     <div class="row">
       <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
@@ -8,11 +8,11 @@
             <h2 class="card-title text-center text-dark">Stock Management</h2>
             <form action="/admin/searchStock" method="GET" id="searchform" class="search-form mb-4">
               <div class="input-group">
-              <input type="text" id="search" name="searchStock" placeholder="Search by name" required  class="form-control">
-              <button type="submit" class="btn btn-primary">Search</button>
+                <input type="text" id="search" name="searchStock" placeholder="Search by name" required class="form-control">
+                <button type="submit" class="btn btn-primary">Search</button>
               </div>
-             </form>
-            <a href="/admin/inventory"><button class="btn btn-primary" style="background-color:#28A745 ; margin-top: -100px;margin-left:900px">Show All </button></a>
+            </form>
+            <a href="/admin/inventory"><button class="btn btn-primary" style="background-color:#28A745; margin-top: -110px; margin-left:410px">Show All</button></a>
             <div class="table-responsive">
               <table class="table table-hover" border="1">
                 <thead>
@@ -20,38 +20,100 @@
                     <th>Product</th>
                     <th>Stock</th>
                     <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% products.forEach(product => { %>
-                <tr>
-                    <td><%= product.productName %></td>
-                    <td><%= product.stock %></td>
-                    <td>
-                        <form action="/admin/inventory/update-stock" method="POST">
-                            <input type="hidden" name="productId" value="<%= product._id %>">
-                            <input type="number" name="stock" value="<%= product.stock %>">
-                            <button type="submit">Update Stock</button>
-                        </form>
-                    </td>
-                </tr>
-                <% }); %>
-            </tbody>
-        </table>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% products.forEach(product => { %>
+                    <tr>
+                      <td><%= product.productName %></td>
+                      <td class="stock-value"><%= product.stock %></td>
+                      <td>
+                        <div class="stock-update-form">
+                          <input type="hidden" class="product-id" value="<%= product._id %>">
+                          <input type="number" class="stock-input form-control text-dark bg-white" value="<%= product.stock %>" min="0" style="display: inline-block; width: 100px; ">
+                          <button class="btn btn-primary update-stock-btn" style="background-color: #28A745;" onclick="updateStock(this.closest('tr'), '<%= product._id %>')">Update Stock</button>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-</div>
+
+  <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+    <% for(let i=1; i<=totalPages; i++) { %>
+      <li class="page-item <%= (i===currentPage) ? 'active' : '' %>">
+        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+      </li>
+    <% } %>
+  </ul>
 </div>
 
-<ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
-<%for(let i=1;i<=totalPages;i++){%>
-<li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
-   <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-</li>
-<%}%>
-</ul>
+<%- include("../../views/partials/admin/footer") %> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function updateStock(row, productId) {
+    const stockInput = row.querySelector('.stock-input');
+    const stockValueCell = row.querySelector('.stock-value');
+    const newStock = stockInput.value;
 
-</div>
+    // Basic validation
+    if (newStock < 0 || isNaN(newStock)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Input',
+            text: 'Stock must be a non-negative number',
+        });
+        return;
+    }
 
+    fetch('/admin/inventory/update-stock', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ productId: productId, stock: newStock })
+    })
+    .then(response => {
+        
+        
+        if (!response.ok) {
+            return response.text().then(text => {
+              
+                throw new Error(`Server error: ${response.status} - ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        
+        
+        if (data.success) {
+            // Update the stock value in the table cell
+            stockValueCell.textContent = newStock;
+            Swal.fire({
+                icon: 'success',
+                title: 'Stock Updated!',
+                text: `Stock updated to ${newStock}`,
+                timer: 2000
+            });
+        } else {
+            throw new Error(data.message || 'Update failed');
+        }
+    })
+    .catch(error => {
+      
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: error.message || 'Failed to update stock',
+        });
+    });
+}
+</script>

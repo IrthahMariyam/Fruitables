@@ -2,166 +2,212 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   
-  <div class="main-panel">
-    <div class="content-wrapper  bg-white">
-      <div class="row">
-        <div class="col-lg-12 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <h2 class="card-title text-center text-dark">Product Details</h2>
-              <form action="/admin/searchProduct" method="GET" id="searchform" class="search-form mb-4">
-                <div class="input-group">
-                <input type="text" id="search" name="searchProduct" placeholder="Search by name" required  class="form-control">
+<div class="main-panel">
+  <div class="content-wrapper bg-white">
+    <div class="row">
+      <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title text-center text-dark">Product Details</h2>
+            <form action="/admin/searchProduct" method="GET" id="searchform" class="search-form mb-4">
+              <div class="input-group">
+                <input type="text" id="search" name="searchProduct" placeholder="Search by name" required class="form-control">
                 <button type="submit" class="btn btn-primary">Search</button>
-                </div>
-              </form>
-              <a href="/admin/addProducts" class="text-white" style="text-decoration: none;margin-top: 50px;">
-                   <button class="btn " style="background-color: #28A745;"   >
-                Add Product
-              </button></a>
-              <a href="/admin/products"><button class="btn btn-primary" style="background-color:#28A745 ; margin-top: -115px;margin-left:300px">Show All </button></a>  
-              <div class="table-responsive">
-                <table class="table table-hover" border="1">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Category</th>
-                      <th>Stock</th>
-                      <th>Regular Price</th>
-                      <th>Sale Price</th>
-                      <th>Images</th>
-                      <th>Actions</th>
-                      <th>delete</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% if (products && products.length > 0) { %>
-
-                      <%for(let i=0;i<products.length;i++){%>
-                        
-                        <tr>
-                          <td>
-                            <%=products[i].productName%>
-                          </td>
-                          <td>
-                            <%=products[i].category.name%>
-                          </td>
-                          <td>
-                            <%=products[i].stock%>
-                          </td>
-                          <td>
-                            <%=products[i].price%>
-                          </td>
-                          <td>
-                            <%=products[i].salesPrice%>
-                          </td>
-                          <td>
-                            <img src="<%=products[i].productImage[0]%>" alt=''>
-                          </td>
-                          <td>
-                            
-                            <%if(products[i].isListed===false){%>
-                              <a href="/admin/listProduct?id=<%=products[i]._id%>" class="text-white" style="text-decoration: none;">
-                                <button class="btn btn-danger" style="width: 60px;">List </button></a>
-                              <%}else{%>
-                               
-                                  <a href="/admin/unlistProduct?id=<%=products[i]._id%>" class="text-white"
-                                    style="text-decoration: none;"> <button class="btn btn-success" style="width: 60px;">UnList</button>  </button></a>
-                              
-                                <%}%>
-                          
-                                <a href="/admin/geteditProduct/<%=products[i]._id%>" class="text-white"
-                                  style="text-decoration: none;">
-                                  <button class="btn btn-warning btn-sm">
-                                    <span class="material-icons">edit</span> 
-                                </button>
-                          </a>
-                        
-                          </td>
-                          <td>
-                         
-                              <button class="btn btn-danger delete-btn  btn-sm" onclick="softDeleteProduct(this.closest('tr'), '<%=products[i]._id%>','<%=products[i].productName%>')"> <span class="material-icons">delete</span> </button>
-                           
-                          </td>
-
-                        </tr>
-                        <% }
-                     
-                      }else { %>
-                          <tr>
-                            <td colspan="5">No products found</td>
-                          </tr>
-                          <% } %>
-
-                  </tbody>
-                </table>
               </div>
+            </form>
+            <a href="/admin/addProducts" class="text-white" style="text-decoration: none; margin-top: 50px;">
+              <button class="btn" style="background-color: #28A745;">Add Product</button>
+            </a>
+            <a href="/admin/products"><button class="btn btn-primary" style="background-color:#28A745; margin-top: -115px; margin-left:300px">Show All</button></a>  
+            <div class="table-responsive">
+              <table class="table table-hover" border="1">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Regular Price</th>
+                    <th>Sale Price</th>
+                    <th>Images</th>
+                    <th>Actions</th>
+                    <th>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (products && products.length > 0) { %>
+                    <% for(let i=0; i<products.length; i++) { %>
+                      <tr>
+                        <td><%= products[i].productName %></td>
+                        <td><%= products[i].category.name %></td>
+                        <td><%= products[i].stock %></td>
+                        <td><%= products[i].price %></td>
+                        <td><%= products[i].salesPrice %></td>
+                        <td><img src="<%= products[i].productImage[0] %>" alt=''></td>
+                        <td>
+                          <% if(products[i].isListed === false) { %>
+                            <button class="btn btn-danger" style="width: 60px;" onclick="toggleListProduct(this.closest('tr'), '<%= products[i]._id %>', false)">
+                              List
+                            </button>
+                          <% } else { %>
+                            <button class="btn btn-success" style="width: 60px;" onclick="toggleListProduct(this.closest('tr'), '<%= products[i]._id %>', true)">
+                              Unlist
+                            </button>
+                          <% } %>
+                          <a href="/admin/geteditProduct/<%= products[i]._id %>" class="text-white" style="text-decoration: none;">
+                            <button class="btn btn-warning btn-sm">
+                              <span class="material-icons">edit</span>
+                            </button>
+                          </a>
+                        </td>
+                        <td>
+                          <button class="btn btn-danger delete-btn btn-sm" onclick="softDeleteProduct(this.closest('tr'), '<%= products[i]._id %>', '<%= products[i].productName %>')">
+                            <span class="material-icons">delete</span>
+                          </button>
+                        </td>
+                      </tr>
+                    <% } %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="8">No products found</td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
-      <%for(let i=1;i<=totalPages;i++){%>
-       <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
-           <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-       </li>
-       <%}%>
-       </ul>
-     
   </div>
+  <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+    <% for(let i=1; i<=totalPages; i++) { %>
+      <li class="page-item <%= (i===currentPage) ? 'active' : '' %>">
+        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+      </li>
+    <% } %>
+  </ul>
+</div>
 
-    <%-include("../../views/partials/admin/footer")%> 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-      document.getElementById('form1').addEventListener('submit', function (e) {
-   
-  
-});
+<%- include("../../views/partials/admin/footer") %> 
 
-     
-      function softDeleteProduct(row,productId,productName) {
- 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Remove duplicate SweetAlert2 script include if already in header
 
+function toggleListProduct(row, productId, isListed) {
+    const listButton = row.querySelector('.btn:not(.btn-sm)'); 
+    const newStatus = !isListed;
 
-
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Yes, delete it!'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      fetch(`/admin/deleteProduct/${productId}`, {
+    fetch(`/admin/${newStatus ? 'listProduct' : 'unlistProduct'}/${productId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
-        },
-        
-        body: JSON.stringify({_id:productId, name: productName})
-      })
-      .then(response => response.json())
-      .then(data => {
-        Swal.fire(
-          'Deleted!',
-          'Product has been deleted.',
-          'success'
-        );
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
        
-        window.location.href = '/admin/products';
-      })
-      .catch(error => {
-        Swal.fire(
-          'Error!',
-          'An error occurred while deleting product.',
-          'error'
-        );
-      });
-    }
-  });
+        
+        if (!response.ok) {
+            return response.text().then(text => {
+                
+                throw new Error(`Server error: ${response.status} - ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        
+        
+        if (data.success) {
+            // Update the button
+            if (newStatus) { // Listing
+                listButton.classList.remove('btn-danger');
+                listButton.classList.add('btn-success');
+                listButton.textContent = 'Unlist';
+                listButton.onclick = () => toggleListProduct(row, productId, true);
+            } else { // Unlisting
+                listButton.classList.remove('btn-success');
+                listButton.classList.add('btn-danger');
+                listButton.textContent = 'List';
+                listButton.onclick = () => toggleListProduct(row, productId, false);
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: newStatus ? 'Listed!' : 'Unlisted!',
+                text: `Product has been ${newStatus ? 'listed' : 'unlisted'} successfully`,
+                timer: 2000
+            });
+        } else {
+            throw new Error(data.message || 'Operation failed');
+        }
+    })
+    .catch(error => {
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: error.message || `Failed to ${newStatus ? 'list' : 'unlist'} product`,
+        });
+    });
 }
 
-      </script>
+function softDeleteProduct(row, productId, productName) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/admin/deleteProduct/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ _id: productId, name: productName })
+            })
+            .then(response => {
+                
+                
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        
+                        throw new Error(`Server error: ${response.status} - ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                
+                
+                if (data.success) {
+                    // Remove the row from the table
+                    row.remove();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'Product has been deleted.',
+                        timer: 2000
+                    });
+                } else {
+                    throw new Error(data.message || 'Deletion failed');
+                }
+            })
+            .catch(error => {
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: error.message || 'An error occurred while deleting product',
+                });
+            });
+        }
+    });
+}
+</script>

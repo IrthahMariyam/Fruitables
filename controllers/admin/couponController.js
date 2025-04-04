@@ -85,7 +85,7 @@ const addCoupon = async (req, res) => {
     await coupon.save();
     res.status(STATUS.CREATED).json({ success: true, message: MESSAGES.CATEGORY_ADDED });
   } catch (error) {
-    console.error(error);
+    
     res.status(STATUS.SERVER_ERROR).json({ success: false, message: MESSAGES.SERVER_ERROR});
   }
 };
@@ -144,18 +144,22 @@ const updateCoupon = async( req,res)=>{
 }
 // coupon activate and deactivate 
 const couponStatus = async (req,res)=>{
-  
+  try{
+ 
   const couponId = req.params.id;
   const { active } = req.body;
-  
-  try {
-  
-      const coupon = await Coupon.findByIdAndUpdate(couponId, { active }, { new: true });  
-      if (!coupon) {
-        res.redirect("/pageerror");
-      }
-      res.status(STATUS.SUCCESS).json({ success:true,message: MESSAGES.CATEGORY_UPDATED, coupon });
-  } catch (error) {
+  const coupon = await Coupon.findById(couponId);
+  if (!coupon) {
+    return res.status(404).json({ success: false, message: 'Coupon not found' });
+  }
+  coupon.active = active;
+  await coupon.save();
+  res.status(200).json({ 
+    success: true, 
+    message: `Coupon ${active ? 'activated' : 'deactivated'} successfully`,
+    isActive: coupon.active 
+  });
+} catch (error) {
       
       res.status(STATUS.SERVER_ERROR).json({success:false, message: MESSAGES.INTERNAL_ERROR });
   }

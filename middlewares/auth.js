@@ -14,8 +14,7 @@ const userAuth = async (req, res, next) => {
         res.locals.user = null; 
         req.session.user=null
        res.render("signup",{message:"user blocked by admin"})
-       // res.redirect('/')
-        // next();
+       
       
        
       }

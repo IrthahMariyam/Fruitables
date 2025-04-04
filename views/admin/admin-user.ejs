@@ -7,7 +7,6 @@
           <div class="card-body">
             <h2 class="card-title text-center text-dark">User Details</h2>
 
-            
             <form action="/admin/searchUser" method="GET" class="search-form mb-4">
               <div class="input-group">
                 <input
@@ -20,8 +19,9 @@
                 />
                 <button type="submit" class="btn" style="background-color: #28A745;">Search</button>
               </div>
+              
             </form>
-
+            <a href="/admin/user"><button class="btn btn-primary" style="background-color:#28A745 ; margin-top:-110px;margin-left:420px">Show All </button></a>  
             <div class="table-responsive">
               <table class="table table-hover" border="1">
                 <thead style="background-color: #28A745;">
@@ -42,31 +42,31 @@
                     <td><%= users[i].phone %></td>
                     <% if(users[i].googleId!==null){ %>
                       <td>Yes</td>
-                      <% }else{ %>
-                        <td>No</td>
-                        <% } %>
+                    <% }else{ %>
+                      <td>No</td>
+                    <% } %>
                     <td>
                       <% if (users[i].isBlocked === false) { %>
                       <button
-                        class="btn btn-danger delete-btn"
-                        name="blockuser"
-                        onclick="blockUser(this.closest('tr'), '<%= users[i]._id %>', '<%= users[i].name %>')"
+                        class="btn btn-danger"
+                        onclick="toggleBlockUser(this.closest('tr'), '<%= users[i]._id %>', '<%= users[i].name %>', false)"
                       >
                         Block
                       </button>
                       <% } else { %>
-                        <a href="/admin/unblockUser?id=<%= users[i]._id %>"
-                        class="text-white"
-                        style="text-decoration: none">
-                      <button class="btn btn-success">Unblock</button></a>
-                       
+                      <button
+                        class="btn btn-success"
+                        onclick="toggleBlockUser(this.closest('tr'), '<%= users[i]._id %>', '<%= users[i].name %>', true)"
+                      >
+                        Unblock
+                      </button>
                       <% } %>
                     </td>
                   </tr>
                   <% } %>
                   <% } else { %>
                   <tr>
-                    <td colspan="3">No users found</td>
+                    <td colspan="5">No users found</td>
                   </tr>
                   <% } %>
                 </tbody>
@@ -79,76 +79,89 @@
   </div>
 
   <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
-    <%for(let i=1;i<=totalPages;i++){%>
-     <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
-         <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-     </li>
-     <%}%>
-     </ul>
-
+    <% for(let i=1; i<=totalPages; i++) { %>
+      <li class="page-item <%= (i===currentPage) ? 'active' : '' %>">
+        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+      </li>
+    <% } %>
+  </ul>
 </div>
 
-<%-include("../../views/partials/admin/footer")%> 
+<%- include("../../views/partials/admin/footer") %> 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-  
-  function blockUser(row,userId,userName) {
-   const buttonlabel=document.querySelector('[name=blockuser]')
-   const currentText = buttonlabel.innerHTML === "Blocked" ? "Blocked" : "Unblocked";
+function toggleBlockUser(row, userId, userName, isBlocked) {
+    const blockButton = row.querySelector('.btn');
+    const newStatus = !isBlocked;
 
- 
-  
-  
     Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, Block user!'
+        title: 'Are you sure?',
+        text: `You are about to ${newStatus ? 'block' : 'unblock'} ${userName}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: `Yes, ${newStatus ? 'block' : 'unblock'} user!`
     }).then((result) => {
-      if (result.isConfirmed) {
-        fetch(`/admin/blockUser/${userId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          
-          body: JSON.stringify({_id:userId, name: userName})
-        })
-        .then(response =>  {
-        if (!response.ok) {
-          throw new Error('Server responded with an error');
+        if (result.isConfirmed) {
+            fetch(`/admin/${newStatus ? 'blockUser' : 'unblockUser'}/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ _id: userId, name: userName })
+            })
+            .then(response => {
+               
+                
+                if (!response.ok) {
+                    return response.text().then(text => {
+                       
+                        throw new Error(`Server error: ${response.status} - ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+              
+                
+                if (data.success) {
+                    // Update the button without reloading
+                    if (newStatus) { 
+    blockButton.classList.remove('btn-success');
+    blockButton.classList.add('btn-danger');
+    blockButton.textContent = 'Unblock';
+    blockButton.onclick = () => toggleBlockUser(row, userId, userName, true);
+} else {
+    blockButton.classList.remove('btn-danger');
+    blockButton.classList.add('btn-success');
+    blockButton.textContent = 'Block';
+    blockButton.onclick = () => toggleBlockUser(row, userId, userName, false);
+}
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: newStatus ? 'Blocked!' : 'Unblocked!',
+                        text: `User ${userName} has been ${newStatus ? 'blocked' : 'unblocked'} successfully`,
+                        timer: 2000
+                    });
+                } else {
+                    throw new Error(data.message || 'Operation failed');
+                }
+            })
+            .catch(error => {
+               
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: error.message || `Failed to ${newStatus ? 'block' : 'unblock'} user`,
+                });
+            });
         }
-        return response.json(); 
-      })
-        .then(data => {
-          if(data.success){
-          Swal.fire(
-            'Blocked!',
-            "Blocked successfully",
-            'success'
-          );
-          }
-          window.location.href = '/admin/user';
-        })
-        .catch(error => {
-          Swal.fire(
-            'Error!',
-            'An error occurred while blocking user.',
-            'error'
-          );
-        });
-      }
     });
-  }
-  
-  
-  
-  
-  </script>
-     
+}
+</script>
 </body>
 </html>

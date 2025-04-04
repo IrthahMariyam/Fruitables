@@ -208,6 +208,7 @@
            
           </li>
           <li class="nav-item menu-items">
+            
             <a class="nav-link" data-toggle="collapse" href="/admin/logout" aria-expanded="false" aria-controls="auth">
               <span class="menu-icon">
                 <i class="fas fa-sign-out-alt"></i>
@@ -264,6 +265,7 @@
             </button>
           </div>
         </nav>
+        
 <div class="main-panel  bg-white">
     <div class="content-wrapper bg-white">
       <div class="row">
@@ -272,65 +274,72 @@
             <div class="card-body">
                 <h2 class="card-title text-center text-dark">Offers List</h2>
                 <button class="btn mb-3" style="background-color: #28A745;" data-bs-toggle="modal" data-bs-target="#createOfferModal">+ Add New Offer</button>
+                             
                 
-            <div class="table-responsive bg-white">
-                <table class="table" border="1">
-                                    <thead >
-                                        <tr>
-                                            <th>Offer Title</th>
-                                            <th>Description</th>
-                                            <th>Discount (%)</th>
-                                            <th> Type</th>
-                                            <th>Items</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Actions</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% offers.forEach((offer, index) => { %>
-                                            <tr id="offer-<%= offer.id %>">
-                                                
-                                                <td><%= offer.name %></td>
-                                                <td><%= offer.description %></td>
-                                                <td><%= offer.discount %></td>
-                                                <td><%= offer.applicableType %></td>
-                                                <td><% if(offer.applicableType=="category"){ %>
-                                                <% offer.applicableItems.forEach(item => { %>
-                                                <%= item.name %><br> 
-                                                <% }) }%>
-                                                  <%if(offer.applicableType=="product"){ %>
-                                                        <% offer.applicableItems.forEach(item => { %>
-                                                            <%= item.productName %><br>
-                                                            <% }) } %>
-                                                </td>
-                                                <td><%= new Date(offer.startDate).toLocaleDateString('en-GB') %></td>
-                                                <td><%= new Date(offer.endDate).toLocaleDateString('en-GB') %></td>
-                                                <td>
-                                                    <button 
-                                                    class="btn <%= offer.isActive ? 'btn-danger' : 'btn-success' %>" 
-                                                    id="btn-<%= offer._id %>" 
-                                                    value="<%= offer._id %>" 
-                                                    onclick="changeStatus(this)">
-                                                    <%= offer.isActive ? 'Deactivate' : 'Activate' %>
-                                                </button>
-                                                    <button class="btn btn-warning edit-button" 
-                                                    data-id="<%= offer._id %>" 
-                                                    data-code="<%= offer.name %>" 
-                                                    data-discount="<%= offer.discount %>" 
-                                                    data-offer-description="<%= offer.description %>"
-                                                    data-applicable-type="<%= offer.applicableType %>"
-                                                    data-applicable-items='<%= JSON.stringify(offer.applicableItems) %>'
-                                                    data-start-date="<%= new Date(offer.startDate).toISOString().split('T')[0] %>" 
-                                                    data-end-date="<%= new Date(offer.endDate).toISOString().split('T')[0] %>"
-                                                    data-toggle="modal" 
-                                                    data-target="#editOfferModal"> <span class="material-icons">edit</span> </button>
-                                                </td>
-                                            </tr> 
-                                        <% }); %>
-                                    </tbody>
-                                </table>
-                            </div>
+                <div class="table-responsive bg-white">
+                  <table class="table" border="1">
+                    <thead>
+                      <tr>
+                        <th>Offer Title</th>
+                        <th>Description</th>
+                        <th>Discount (%)</th>
+                        <th>Type</th>
+                        <th>Items</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% offers.forEach((offer, index) => { %>
+                        <tr id="offer-<%= offer._id %>">
+                          <td><%= offer.name %></td>
+                          <td><%= offer.description %></td>
+                          <td><%= offer.discount %></td>
+                          <td><%= offer.applicableType %></td>
+                          <td>
+                            <% if(offer.applicableType === "category") { %>
+                              <% offer.applicableItems.forEach(item => { %>
+                                <%= item.name %><br> 
+                              <% }) %>
+                            <% } %>
+                            <% if(offer.applicableType === "product") { %>
+                              <% offer.applicableItems.forEach(item => { %>
+                                <%= item.productName %><br>
+                              <% }) %>
+                            <% } %>
+                          </td>
+                          <td><%= new Date(offer.startDate).toLocaleDateString('en-GB') %></td>
+                          <td><%= new Date(offer.endDate).toLocaleDateString('en-GB') %></td>
+                          <td>
+                            <button 
+                              class="btn <%= offer.isActive ? 'btn-danger' : 'btn-success' %> status-btn" 
+                              data-offer-id="<%= offer._id %>"
+                              onclick="changeStatus(this, '<%= offer._id %>', '<%= offer.isActive %>')"
+                            >
+                              <%= offer.isActive ? 'Deactivate' : 'Activate' %>
+                            </button>
+                            <button 
+                              class="btn btn-warning edit-button" 
+                              data-id="<%= offer._id %>" 
+                              data-code="<%= offer.name %>" 
+                              data-discount="<%= offer.discount %>" 
+                              data-offer-description="<%= offer.description %>"
+                              data-applicable-type="<%= offer.applicableType %>"
+                              data-applicable-items='<%= JSON.stringify(offer.applicableItems) %>'
+                              data-start-date="<%= new Date(offer.startDate).toISOString().split('T')[0] %>" 
+                              data-end-date="<%= new Date(offer.endDate).toISOString().split('T')[0] %>"
+                              data-toggle="modal" 
+                              data-target="#editOfferModal"
+                            > 
+                              <span class="material-icons">edit</span> 
+                            </button>
+                          </td>
+                        </tr> 
+                      <% }); %>
+                    </tbody>
+                  </table>
+                </div>
                         </div>
                       </div>
                     </div>
@@ -505,7 +514,7 @@
             </div>
         </div>
     </div>
-    
+    <script src="/admin/assets/vendors/js/vendor.bundle.base.js"></script>
         <script src="/admin/assets/vendors/js/vendor.bundle.base.js"></script>
        
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -587,7 +596,7 @@
                isValid = false;
         }
    
-        if (endDate<startDate) {
+        if (endDate<=startDate) {
           
             showError('endDateError', 'End Date must be after start date.');
           
@@ -660,7 +669,6 @@
             });
         }
     });
-    
     
     function showError(fieldId, message) {
         const errorField = document.getElementById(fieldId);
@@ -821,7 +829,7 @@
             showError('editEndDateError', 'End Date is required.');
             isValid = false;
         }
-        if (endDate<startDate) {
+        if (endDate<=startDate) {
           
           showError('editEndDateError', 'End Date must be after start date.');
         
@@ -894,69 +902,73 @@
             }
         });
     });
-    
-    
-    function showError(fieldId, message) {
-        const errorField = document.getElementById(fieldId);
-        errorField.textContent = message;
-        errorField.style.display = 'block';
-    }
-    
-    
-    function clearErrors() {
-        const errorFields = document.querySelectorAll('.text-danger');
-        errorFields.forEach(function (field) {
-            field.style.display = 'none';
-        });
-    }
-    
-    
-    
-    
-        function changeStatus(button) {
-        const offerId = button.value; 
-        const isActive = button.classList.contains('btn-danger');
-        const action = isActive ? 'deactivate' : 'activate';
-    
+   
+
+function changeStatus(button, offerId, isActive) {
+  const newStatus = !isActive;
+  const action = newStatus ? 'activate' : 'deactivate';
+
+  Swal.fire({
+    title: `Are you sure you want to ${action} this offer?`,
+    text: `This will ${action} the offer immediately.`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: 'Yes, proceed',
+    cancelButtonText: 'No, cancel',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`/admin/offers/action/${offerId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ isActive: newStatus })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => { throw new Error(`Server error: ${response.status} - ${text}`); });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.success) {
+          if (newStatus) {
+            button.classList.remove('btn-success');
+            button.classList.add('btn-danger');
+            button.textContent = 'Deactivate';
+          } else {
+            button.classList.remove('btn-danger');
+            button.classList.add('btn-success');
+            button.textContent = 'Activate';
+          }
+          button.onclick = () => changeStatus(button, offerId, newStatus);
+          Swal.fire({
+            title: "Success!",
+            text: `Offer has been ${action}d successfully.`,
+            icon: "success",
+            timer: 1500
+          });
+        } else {
+          throw new Error(data.message || 'Failed to toggle offer status.');
+        }
+      })
+      .catch(error => {
         
         Swal.fire({
-            title: `Are you sure you want to ${action} this offer?`,
-            text: `Are you sure you want to ${action} this offer?`,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: 'Yes, proceed',
-            cancelButtonText: 'No, cancel',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-              
-                axios.patch(`/admin/offers/action/${offerId}`)
-                    .then(response => {
-                        if (response.data.success) {
-                            
-                            if (response.data.isActive) {
-                                button.classList.remove('btn-success');
-                                button.classList.add('btn-danger');
-                                button.textContent = 'Deactivate';
-                            } else {
-                                button.classList.remove('btn-danger');
-                                button.classList.add('btn-success');
-                                button.textContent = 'Activate';
-                            }
-    
-                          
-                            Swal.fire("Success!", `Offer has been ${action}d successfully.`, "success");
-                        } else {
-                            Swal.fire("Error!", "Failed to toggle offer status.", "error");
-                        }
-                    })
-                    .catch(error => {
-                        
-                        Swal.fire("Error!", "An error occurred while trying to toggle the offer status.", "error");
-                    });
-            }
+          title: "Error!",
+          text: error.message || 'An error occurred while trying to toggle the offer status.',
+          icon: "error",
+          timer: 1500
         });
+      });
     }
+  });
+}
+
+
+</script>
     </script>
     </body>
     </html>

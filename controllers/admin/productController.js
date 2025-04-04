@@ -40,15 +40,24 @@ const listInventory = async (req, res) => {
 const updateStock = async (req, res) => {
     try {
         const { productId, stock } = req.body;
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(STATUS.NOT_fOUND).send(STATUS.PRODUCT_NOT_FOUND);
+
+        if (!productId || stock === undefined) {
+            return res.status(400).json({ success: false, message: 'Product ID and stock value are required' });
         }
 
-        product.stock = stock;
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        product.stock = parseInt(stock, 10); 
         await product.save();
 
-        res.redirect('/admin/inventory');
+        res.status(200).json({ 
+            success: true, 
+            message: 'Stock updated successfully',
+            stock: product.stock 
+        });
     } catch (err) {
         
         res.status(STATUS.SERVER_ERROR).send(MESSAGES.SERVER_ERROR);
@@ -176,9 +185,15 @@ const addProducts = async (req, res) => {
 const productListed=async(req,res)=>{
    
         try {
-            id=req.query.id;
-            await Product.updateOne({_id:id},{$set:{isListed:true}})
-            res.redirect("/admin/products")
+           
+            const productId = req.params.id;
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        product.isListed = true;
+        await product.save();
+        res.status(200).json({ success: true, message: 'Product listed successfully' });
         } catch (error) {
             res.redirect("/pageerror")
         }
@@ -187,9 +202,15 @@ const productListed=async(req,res)=>{
 const productunListed=async(req,res)=>{
    
     try {
-        id=req.query.id;
-        await Product.updateOne({_id:id},{$set:{isListed:false}})
-        res.redirect("/admin/products")
+       
+        const productId = req.params.id;
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        product.isListed = false;
+        await product.save();
+        res.status(200).json({ success: true, message: 'Product unlisted successfully' });
     } catch (error) {
         res.redirect("/pageerror")
     }
@@ -271,16 +292,15 @@ const deleteProduct=async(req,res)=>{
 
 
 try{
-const { name } = req.body;
-const id=req.params.id
 
-const cat = await Product.findOne({_id: id});
-if (cat) {
-  const category = await Product.updateOne({ _id: id }, { $set: { isDeleted: true } });
-  res.status(STATUS.SUCCESS).json({ message: MESSAGES.PRODUCT_DELETE });
-} else {
-    res.redirect("/pageerror");
-}
+const productId = req.params.id;
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        product.isDeleted = true;
+        await product.save();
+        res.status(200).json({ success: true, message: 'Product deleted successfully' });
 }catch (error) {
     res.redirect("/pageerror");}
 }

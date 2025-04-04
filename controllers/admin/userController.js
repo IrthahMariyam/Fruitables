@@ -48,19 +48,22 @@ const findUsers=async(req,res)=>{
 const userBlocked=async (req,res)=>{
 
  try {
-    const { name } = req.body;
-     const {id}=req.params 
-   
-     const user = await User.findById(id);
     
-     if (user) {
-       
-       const blockUser = await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
-     
-       res.status(STATUS.SUCCESS).json({ success:true,message: MESSAGES.USER_BLOCKED });
-     } else {
-        res.redirect("/pageerror");
-     }
+    const userId = req.params.id;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        user.isBlocked = true;
+        await user.save();
+
+        res.status(200).json({ 
+            success: true, 
+            message: 'User blocked successfully',
+            user: { _id: user._id, isBlocked: user.isBlocked }
+        });
    } catch (error) {
     
     res.redirect("/pageerror");
@@ -70,43 +73,34 @@ const userBlocked=async (req,res)=>{
 
 const userunBlocked=async(req,res)=>{
  try {
-     id=req.query.id;
-     await User.updateOne({_id:id},{$set:{isBlocked:false}})
-     res.redirect("/admin/user")
- } catch (error) {
-    
-    res.redirect("/pageerror");
-}
-}
-const userListed=async (req,res)=>{
- try {
-     id=req.query.id;
-     await User.updateOne({_id:id},{$set:{isListed:true}})
-     res.redirect("/admin/user")
- } catch (error) {
-    
-    res.redirect("/pageerror");
- }
-}
+    const userId = req.params.id;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
 
-const userunListed=async(req,res)=>{
- try {
-     id=req.query.id;
-     await User.updateOne({_id:id},{$set:{isListed:false}})
-     res.redirect("/admin/user")
- } catch (error) {
-    
-    res.redirect("/pageerror");
- }
+        user.isBlocked = false;
+        await user.save();
+
+        res.status(200).json({ 
+            success: true, 
+            message: 'User unblocked successfully',
+            user: { _id: user._id, isBlocked: user.isBlocked }
+        });
+}
+ catch (error) {
+    return res.status(500).json({ success: false, message: 'User not found' });
+   
 }
 
 
+}
 
 
 module.exports={
     findUsers,
     userBlocked,
     userunBlocked,
-    userListed,
-    userunListed,
+   
 }
